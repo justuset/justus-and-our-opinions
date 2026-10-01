@@ -2,8 +2,8 @@
 // Media base URL. Dev reads the raw big_assets/ folder; production reads the content-hashed copy next to index.html.
 import { dev } from '$app/environment';
 
-export const ASSET_HASH = 'd09a166288';
-export const ASSET_BASE = dev ? '/big_assets' : './_big_assets.d09a166288';
+export const ASSET_HASH = '83424d1c71';
+export const ASSET_BASE = dev ? '/big_assets' : './_big_assets.83424d1c71';
 
 /** Build a media URL: asset('images/two-up-1.webp') */
 export const asset = (path) => `${ASSET_BASE}/${path}`;

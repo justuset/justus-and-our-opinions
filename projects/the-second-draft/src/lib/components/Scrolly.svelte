@@ -17,7 +17,9 @@
 <script>
   import { onScrollFrame, progressOf, stepOf } from '$lib/scroll.js';
 
-  let { label, steps, stepTexts = [], children } = $props();
+  // `class` lets a caller add the twin utilities (.desktop-only / .mobile-only) to the runway itself.
+  // `bar: false` drops the progress bar, for scrubbed sections where discrete steps mean nothing.
+  let { label, steps, stepTexts = [], class: className = '', bar = true, children } = $props();
   const headingId = $props.id(); // the same id on the server and after hydration
   let step = $state(0);
   let progress = $state(0);
@@ -41,7 +43,7 @@
   }
 </script>
 
-<section class="runway" aria-labelledby={headingId} style:--steps={steps} data-enhanced={enhanced || undefined} {@attach engine}>
+<section class="runway {className}" aria-labelledby={headingId} style:--steps={steps} data-enhanced={enhanced || undefined} {@attach engine}>
   <h2 class="visually-hidden" id={headingId}>{label}</h2>
   {#if stepTexts.length}
     <!-- Every step's text, in order, for screen readers (breakdown §19 #4). -->
@@ -52,12 +54,14 @@
   <div class="sticky">
     {@render children({ step, progress, enhanced })}
     <!-- Markers are server-rendered, so the structure exists without scripting. Marker i sits at i / (n − 1). -->
-    <div class="progress" class:hidden={barHidden} aria-hidden="true">
-      <div class="progress-fill" style:width="{progress * 100}%"></div>
-      {#each { length: steps } as _, i (i)}
-        <span class="progress-marker" class:on={i <= step} style:left="{steps > 1 ? (i / (steps - 1)) * 100 : 0}%"></span>
-      {/each}
-    </div>
+    {#if bar}
+      <div class="progress" class:hidden={barHidden} aria-hidden="true">
+        <div class="progress-fill" style:width="{progress * 100}%"></div>
+        {#each { length: steps } as _, i (i)}
+          <span class="progress-marker" class:on={i <= step} style:left="{steps > 1 ? (i / (steps - 1)) * 100 : 0}%"></span>
+        {/each}
+      </div>
+    {/if}
   </div>
 </section>
 

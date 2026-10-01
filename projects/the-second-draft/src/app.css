@@ -116,6 +116,15 @@ img, svg { display: block; max-width: 100%; }
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* ============ HARDENING (chunk 10) ============
+   Reduced motion: every transition and animation ends instantly. Steps still change; nothing slides or fades.
+   Scene D holds its end frame instead of scrubbing (ScrubStage.svelte).
+   There's no @media (scripting: none) block: the components' base CSS IS the no-script layout, and nothing
+   scroll-specific applies until Scrolly's attachment runs (data-enhanced). There is nothing to undo. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
+
 /* ============ 99. TWINS (chunk 6): keep LAST in this file ============
    Two versions of a visual, one per screen shape (like ai2html artboards), switching at 1024px.
    These only ever HIDE, with !important, so a component's own display (e.g. the header art's flex) can never

@@ -5,12 +5,13 @@
      direct child of <figure>. -->
 <script>
   import { asset } from '$lib/assets.js';
-  let { images, caption, credit } = $props();
+  import { srcset } from '$lib/media.js';
+  let { images, caption, credit, sizes } = $props();
 </script>
 
 <figure class="two-up bleed">
   {#each images as img (img.src)}
-    <img src={asset(img.src)} alt={img.alt} width={img.width} height={img.height} loading="lazy" decoding="async" />
+    <img src={asset(img.src)} srcset={srcset(img.srcset)} {sizes} alt={img.alt} width={img.width} height={img.height} loading="lazy" decoding="async" />
   {/each}
   <figcaption class="group-caption">{caption} <span class="credit">{credit}</span></figcaption>
 </figure>

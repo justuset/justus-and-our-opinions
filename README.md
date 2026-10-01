@@ -13,9 +13,9 @@ separately and embedded, and story copy in **ArchieML**.
 
 ## Status
 
-🛠 **Phase 1 in progress.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[9](docs/plan/phase-1/09-three-scroll-sections.md) are built. Next: [chunk 10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md). After Phase 1, [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack.
+🛠 **Phase 1 in progress.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md) are built, so Phase 1's main path is done. Next: [chunk 11](docs/plan/phase-1/11-optional-svelte-port.md), finishing the port and checking parity. After Phase 1, [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack.
 
-🏗 **Story project in place.** [`projects/the-second-draft/`](projects/the-second-draft/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. Chunks 1–9 are ported.
+🏗 **Story project in place.** [`projects/the-second-draft/`](projects/the-second-draft/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. Chunks 1–10 are ported.
 
 ## Repository layout
 

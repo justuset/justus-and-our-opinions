@@ -1,6 +1,6 @@
 <!-- Section C: items re-arrange on each step (prototype chunk 9). ✅ Ported.
      Each step has a layout: per item, top / left|right / width as % of the stage, rotation, opacity and stacking order.
-     No JS: the items in a row, with every step's caption. Enhanced: an absolute stage where each step's layout is
+     No JS: every step's caption, then the items in a row. Enhanced: an absolute stage where each step's layout is
      written as inline styles and CSS transitions settle them over 0.95s. Portrait screens get 1.6× wider items. -->
 <script>
   import Scrolly from './Scrolly.svelte';
@@ -22,7 +22,14 @@
 <Scrolly {label} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>
   {#snippet children({ step, enhanced })}
     <div class="c-scene" class:enhanced aria-hidden="true" {@attach orientation}>
-      <p class="c-caption">{steps[step].caption}</p>
+      {#if enhanced}
+        <p class="c-caption">{steps[step].caption}</p>
+      {:else}
+        <!-- The stack has one set of cards, so it lists all three captions (Scrolly's hidden list is for screen readers). -->
+        <ol class="c-steps">
+          {#each steps as s, i (i)}<li>{s.caption}</li>{/each}
+        </ol>
+      {/if}
       <div class="c-stage">
         {#each items as item, i (item.image)}
           {@const L = steps[step].layout[i]}
@@ -46,8 +53,9 @@
 </Scrolly>
 
 <style>
-  /* No JS: a row of three, with the first caption above it (the hidden list carries every step for screen readers). */
-  .c-caption { width: var(--col); margin: 0 auto 14px; text-align: center; font: 600 15px / 1.3 var(--font-body); }
+  /* No JS: every caption as a list, then a row of three cards. */
+  .c-steps { width: var(--col); margin: 0 auto 14px; padding-inline-start: 1.25em; color: var(--soft); font: 15px / 1.4 var(--font-body); }
+  .c-caption { margin: 0; text-align: center; font: 600 15px / 1.3 var(--font-body); }
   .c-stage { width: var(--col); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
 

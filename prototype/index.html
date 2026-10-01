@@ -318,18 +318,26 @@
       .connectors { display: block; }
     }
 
-    /* ============ 9. SCROLL ENGINE (chunk 8) ============
-       A runway is a tall section; its first child, the sticky, is one screen tall and pinned to the top
-       until the runway's bottom edge arrives. Scrolling through the runway is the "timeline" JS reads. */
-    .runway { position: relative; height: calc(var(--steps) * var(--runway-step)); }
-    .sticky {
+    /* ============ 9. SCROLL ENGINE (chunk 8, gated in chunk 10) ============
+       Base = a static, readable stack. Everything scroll-specific is under .scrolly-ready, a class the page script adds
+       as its LAST line, so it only exists if the whole engine set up without throwing. JS off, JS blocked, or JS
+       crashing all leave the base: no tall blank runways and no hidden frames (breakdown §19 #2). */
+    .runway { position: relative; margin: 40px 0; }
+    .sticky { position: relative; }
+    .progress { display: none; }
+
+    /* A runway is a tall section; its sticky panel is one screen tall and pinned to the top until the runway's bottom
+       edge arrives. Scrolling through the runway is the "timeline" JS reads. */
+    .scrolly-ready .runway { margin: 0; height: calc(var(--steps) * var(--runway-step)); }
+    .scrolly-ready .sticky {
       position: sticky;
       top: 0;
       height: 100vh;                     /* fallback for browsers without svh */
       height: 100svh;                    /* smallest visible height: doesn't jump when the phone URL bar moves */
       overflow: hidden;
     }
-    .progress {
+    .scrolly-ready .progress {
+      display: block;
       position: absolute;
       bottom: var(--progress-bottom);
       left: 50%;
@@ -352,37 +360,57 @@
     }
     .progress-marker.on { background: var(--ink); }
 
-    /* ============ 10. SCENES (chunk 9) ============
+    /* ============ 10. SCENES (chunk 9, gated in chunk 10) ============
        The engine (section 9) knows nothing about these. Each scene only says what step n looks like.
        One motion idea per scene: A cuts, B fades its words, C settles its objects. */
 
-    /* Shared: frames stack in the same spot; only the active one shows. A hard cut, so no transition. */
-    .frame { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden; }
-    .frame.is-active { opacity: 1; visibility: visible; }
-
-    /* --- A: hard-cut slides. Sizes follow the viewport, so the composition holds on any screen. --- */
-    .a-heading {
-      position: absolute;
-      top: 10vh;
-      inset-inline: 0;
-      margin: 0;
-      padding: 0 20px;
-      text-align: center;
-      font: var(--headline-weight) clamp(22px, 3vw, 34px) / 1.1 var(--font-display);
-    }
-    .a-card { position: relative; width: min(44.85vw, 250px); aspect-ratio: 1; margin: 0; }
+    /* --- Base: every frame and caption, stacked in reading order --- */
+    .frame { width: var(--col); margin: 0 auto 40px; text-align: center; }
+    .a-heading { margin: 0 0 12px; font: var(--headline-weight) clamp(22px, 3vw, 34px) / 1.1 var(--font-display); }
+    .a-card { position: relative; width: min(44.85vw, 250px); aspect-ratio: 1; margin: 0 auto 48px; }
     .a-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .a-label {
       position: absolute;
       top: 100%;
       inset-inline: 0;
       margin: 12px 0 0;
-      text-align: center;
       color: var(--soft);
       font: 600 15px / 1.3 var(--font-body);
     }
+    .a-arrow { display: none; }
+    /* B: `display: contents` dissolves the two list wrappers, so each caption and page is a flex item of .b-wrapper,
+       and the inline `order` interleaves them: caption i = 2i, page i = 2i + 1. */
+    .b-wrapper { width: var(--col); margin: 0 auto; display: flex; flex-direction: column; }
+    .b-text-overlay, .b-content { display: contents; }
+    .b-text { margin: 0 0 10px; text-align: center; font: 20px / 1.3 var(--font-display); }
+    .b-content .frame { width: auto; margin: 0 0 40px; }
+    .b-content img { display: block; width: 100%; height: auto; }
+    .c-caption { width: var(--col); margin: 0 auto 14px; text-align: center; font: 600 15px / 1.3 var(--font-body); }
+    .c-stage { width: var(--col); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .c-painting { margin: 0; }
+    .c-steps { width: var(--col); margin: 0 auto 14px; padding-inline-start: 1.25em; color: var(--soft); font: 15px / 1.4 var(--font-body); }
+    .c-caption { display: none; }
+    .c-painting img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
+
+    /* --- Enhanced: frames stack in one spot; only the active one shows. A hard cut, so no transition. --- */
+    .scrolly-ready .frame {
+      position: absolute;
+      inset: 0;
+      width: auto;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .scrolly-ready .frame.is-active { opacity: 1; visibility: visible; }
+
+    /* A: sizes follow the viewport, so the composition holds on any screen. */
+    .scrolly-ready .a-heading { position: absolute; top: 10vh; inset-inline: 0; margin: 0; padding: 0 20px; }
+    .scrolly-ready .a-card { margin: 0; }
     /* The arrow's position is an API of custom properties: a designer can move one arrow inline, with no new CSS. */
-    .a-arrow {
+    .scrolly-ready .a-arrow {
+      display: block;
       position: absolute;
       top: var(--arrow-top, 50%);
       left: var(--arrow-left, 100%);
@@ -391,35 +419,33 @@
       transform: translateY(-50%);
       overflow: visible;
     }
-    .a-arrow line, .a-arrow polyline { fill: none; stroke: var(--ink); stroke-width: var(--arrow-stroke, 2); }
+    .a-arrow line { fill: none; stroke: var(--ink); stroke-width: var(--arrow-stroke, 2); }
     @media (orientation: portrait) {   /* orientation, not width: a landscape phone shares the desktop arrow layout */
-      .a-arrow line, .a-arrow polyline { stroke-width: var(--arrow-mobile-stroke, 1.5); }
-      .a-arrow.hide-portrait { display: none; }
+      .a-arrow line { stroke-width: var(--arrow-mobile-stroke, 1.5); }
+      .scrolly-ready .a-arrow.hide-portrait { display: none; }
     }
 
-    /* --- B: an image band with fading captions --- */
-    .b-panel { height: 100%; padding: 0 16px; }
-    .b-wrapper { display: flex; flex-direction: column; height: 100%; }
-    .b-text-overlay { position: relative; min-height: 30vh; }       /* phones: caption area on top */
-    .b-text {
+    /* B: an image band with fading captions. */
+    .scrolly-ready .b-panel { height: 100%; padding: 0 16px; }
+    .scrolly-ready .b-wrapper { width: auto; height: 100%; margin: 0; }
+    .scrolly-ready .b-text-overlay { display: block; position: relative; min-height: 30vh; }   /* phones: caption area on top */
+    .scrolly-ready .b-content { display: block; position: relative; flex: 1; }
+    .scrolly-ready .b-text {
       position: absolute;                 /* every caption in the same spot, so different lengths never shift the layout */
       inset-inline: 0;
       bottom: 0;
       width: 90%;
       margin: 0 auto 16px;
-      text-align: center;
-      font: 20px / 1.3 var(--font-display);
       opacity: 0;
       transition: opacity .4s var(--ease-fade);
     }
-    .b-text.is-visible { opacity: 1; }
-    .b-content { position: relative; flex: 1; }
+    .scrolly-ready .b-text.is-visible { opacity: 1; }
     /* Pin the image to the frame. height: 100% alone fails here: the frame is a grid, and a % height inside an
        auto-sized grid row has nothing definite to resolve against, so the image falls back to its natural size. */
-    .b-content img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .scrolly-ready .b-content img { position: absolute; inset: 0; height: 100%; object-fit: contain; }
     @media (min-width: 768px) {
-      .b-panel { padding: 0 40px; }
-      .b-wrapper {                        /* a centered band 65vh tall: 17.5vh empty above and below */
+      .scrolly-ready .b-panel { padding: 0 40px; }
+      .scrolly-ready .b-wrapper {         /* a centered band 65vh tall: 17.5vh empty above and below */
         position: absolute;
         top: 17.5vh;
         bottom: 17.5vh;
@@ -427,34 +453,54 @@
         right: 40px;
         height: auto;
       }
-      .b-text-overlay { min-height: min(20vh, 80px); }
-      .b-content { flex: none; height: calc(100% - min(20vh, 80px)); }
-      .b-text { top: 0; bottom: auto; width: min(545px, 90%); margin: 0 auto; font-size: 1.5rem; line-height: 1.25; }
+      .scrolly-ready .b-text-overlay { min-height: min(20vh, 80px); }
+      .scrolly-ready .b-content { flex: none; height: calc(100% - min(20vh, 80px)); }
+      .scrolly-ready .b-text { top: 0; bottom: auto; width: min(545px, 90%); margin: 0 auto; font-size: 1.5rem; line-height: 1.25; }
     }
 
-    /* --- C: re-arranging paintings. JS writes each step's layout inline; CSS animates the change. --- */
-    .c-caption {
-      position: absolute;
-      top: 6vh;
-      inset-inline: 0;
-      z-index: 5;
-      margin: 0;
-      padding: 0 20px;
-      text-align: center;
-      font: 600 15px / 1.3 var(--font-body);
+    /* C: re-arranging paintings. JS writes each step's layout inline; CSS animates the change. */
+    .scrolly-ready .c-steps {           /* same as .visually-hidden */
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
     }
-    .c-stage { position: absolute; inset: 0; }
-    .c-painting {
+    .scrolly-ready .c-caption { display: block; position: absolute; top: 6vh; inset-inline: 0; z-index: 5; width: auto; margin: 0; padding: 0 20px; }
+    .scrolly-ready .c-stage { position: absolute; inset: 0; width: auto; margin: 0; display: block; }
+    .scrolly-ready .c-painting {
       position: absolute;
-      margin: 0;
       transition: opacity .95s var(--ease-settle), transform .95s var(--ease-settle), top .95s var(--ease-settle),
                   left .95s var(--ease-settle), right .95s var(--ease-settle), width .95s var(--ease-settle);
     }
-    .c-painting img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; box-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+    .scrolly-ready .c-painting img { box-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
 
-    @media (prefers-reduced-motion: reduce) {   /* steps still change, just instantly */
-      .b-text, .c-painting, .progress { transition: none; }
+    /* ============ 11. SCENE D: SCROLL-SCRUBBED LOTTIE (chunk 10) ============
+       The animation's playhead IS the scroll position. Base: the text description. Enhanced: a pinned stage. */
+    .scrub-stage { width: var(--col); margin: 0 auto; }
+    .scrub-fallback { margin: 0; color: var(--soft); font: 16px / 1.5 var(--font-body); text-align: center; }
+    .scrub-anim { display: none; }
+    .scrolly-ready .scrub-stage {      /* flex, not grid: a flex item's % height resolves against this definite height */
+      width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center;
     }
+    .scrolly-ready .scrub-anim { display: block; height: 80%; aspect-ratio: var(--aspect); max-width: calc(100% - 32px); }
+    .scrolly-ready .scrub-anim svg { display: block; }
+    /* Once the animation is on screen, the description moves to screen readers only. If the Lottie fails to load,
+       it stays visible, centered on the stage. */
+    .scrolly-ready .scrub-loaded .scrub-fallback {
+      position: absolute;
+      width: 1px; height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .scrolly-ready .scrub-failed .scrub-anim { display: none; }
+
+    /* ============ 12. HARDENING (chunk 10) ============ */
+    /* Reduced motion: every transition and animation ends instantly. Steps still change; nothing slides or fades.
+       Scene D shows its end frame instead of scrubbing (in JS). */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+    }
+    /* No @media (scripting: none) block: the reference needs one to undo its scroll layout, but here the base CSS IS the
+       no-script layout, and nothing scroll-specific applies until .scrolly-ready. There is nothing left to undo. */
 
     /* Screen-reader-only text: in the accessibility tree, off the screen. */
     .visually-hidden {
@@ -567,8 +613,8 @@
   <p class="g-text">We hide the drafts because we think they make the writer look unsure. I think they do the opposite. A draft shows the moment an idea met resistance and changed shape, and that moment is usually the most persuasive part of the whole process.</p>
 
   <figure class="two-up bleed" data-block="two-up">
-    <img src="assets/two-up-draft-1.webp" alt="The first draft of the opening paragraph, crowded with qualifications." width="800" height="1000" loading="lazy" decoding="async">
-    <img src="assets/two-up-draft-4.webp" alt="The fourth draft of the same paragraph, about half as long." width="800" height="1000" loading="lazy" decoding="async">
+    <img src="assets/two-up-draft-1.webp" srcset="assets/two-up-draft-1-400w.webp 400w, assets/two-up-draft-1.webp 800w" sizes="(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw" alt="The first draft of the opening paragraph, crowded with qualifications." width="800" height="1000" loading="lazy" decoding="async">
+    <img src="assets/two-up-draft-4.webp" srcset="assets/two-up-draft-4-400w.webp 400w, assets/two-up-draft-4.webp 800w" sizes="(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw" alt="The fourth draft of the same paragraph, about half as long." width="800" height="1000" loading="lazy" decoding="async">
     <figcaption class="group-caption">The first and fourth drafts of the same opening paragraph. <span class="credit">Placeholder images</span></figcaption>
   </figure>
 
@@ -610,7 +656,7 @@
       <div class="frame is-active">
         <p class="a-heading">Version 1</p>
         <div class="a-card">
-          <img src="assets/slides/slide-1.jpg" alt="" width="1000" height="1000">
+          <img src="assets/slides/slide-1.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
           <p class="a-label">Explains</p>
             <svg class="a-arrow" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
         </div>
@@ -618,7 +664,7 @@
       <div class="frame">
         <p class="a-heading">Version 2</p>
         <div class="a-card">
-          <img src="assets/slides/slide-2.jpg" alt="" width="1000" height="1000">
+          <img src="assets/slides/slide-2.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
           <p class="a-label">Hedges</p>
             <svg class="a-arrow hide-portrait" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
         </div>
@@ -626,7 +672,7 @@
       <div class="frame">
         <p class="a-heading">Version 3</p>
         <div class="a-card">
-          <img src="assets/slides/slide-3.jpg" alt="" width="1000" height="1000">
+          <img src="assets/slides/slide-3.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
           <p class="a-label">Cuts</p>
             <svg class="a-arrow" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
         </div>
@@ -634,7 +680,7 @@
       <div class="frame">
         <p class="a-heading">Version 4</p>
         <div class="a-card">
-          <img src="assets/slides/slide-4.jpg" alt="" width="1000" height="1000">
+          <img src="assets/slides/slide-4.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
           <p class="a-label">Asks</p>
             <svg class="a-arrow hide-portrait" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
         </div>
@@ -642,7 +688,7 @@
       <div class="frame">
         <p class="a-heading">Version 5</p>
         <div class="a-card">
-          <img src="assets/slides/slide-5.jpg" alt="" width="1000" height="1000">
+          <img src="assets/slides/slide-5.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
           <p class="a-label">Trims</p>
             <svg class="a-arrow" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
         </div>
@@ -650,7 +696,7 @@
       <div class="frame">
         <p class="a-heading">Version 6</p>
         <div class="a-card">
-          <img src="assets/slides/slide-6.jpg" alt="" width="1000" height="1000">
+          <img src="assets/slides/slide-6.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
           <p class="a-label">Lands</p>
         </div>
       </div>
@@ -682,18 +728,18 @@
       <div class="b-panel" aria-hidden="true">
         <div class="b-wrapper">
           <div class="b-text-overlay">
-            <p class="b-text is-visible">Page one: a question in the margin.</p>
-            <p class="b-text">Page two: an arrow moves a sentence up.</p>
-            <p class="b-text">Page three: one word circled.</p>
-            <p class="b-text">Page four: a paragraph struck through.</p>
-            <p class="b-text">Page five: almost clean.</p>
+            <p class="b-text is-visible" style="order: 0">Page one: a question in the margin.</p>
+            <p class="b-text" style="order: 2">Page two: an arrow moves a sentence up.</p>
+            <p class="b-text" style="order: 4">Page three: one word circled.</p>
+            <p class="b-text" style="order: 6">Page four: a paragraph struck through.</p>
+            <p class="b-text" style="order: 8">Page five: almost clean.</p>
           </div>
           <div class="b-content">
-            <div class="frame is-active"><img src="assets/marked-up-1.webp" alt="" width="1200" height="900"></div>
-            <div class="frame"><img src="assets/marked-up-2.webp" alt="" width="1200" height="900"></div>
-            <div class="frame"><img src="assets/marked-up-3.webp" alt="" width="1200" height="900"></div>
-            <div class="frame"><img src="assets/marked-up-4.webp" alt="" width="1200" height="900"></div>
-            <div class="frame"><img src="assets/marked-up-5.webp" alt="" width="1200" height="900"></div>
+            <div class="frame is-active" style="order: 1"><img src="assets/marked-up-1.webp" srcset="assets/marked-up-1-600w.webp 600w, assets/marked-up-1.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 3"><img src="assets/marked-up-2.webp" srcset="assets/marked-up-2-600w.webp 600w, assets/marked-up-2.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 5"><img src="assets/marked-up-3.webp" srcset="assets/marked-up-3-600w.webp 600w, assets/marked-up-3.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 7"><img src="assets/marked-up-4.webp" srcset="assets/marked-up-4-600w.webp 600w, assets/marked-up-4.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 9"><img src="assets/marked-up-5.webp" srcset="assets/marked-up-5-600w.webp 600w, assets/marked-up-5.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
           </div>
         </div>
       </div>
@@ -712,7 +758,8 @@
 
   <section class="runway" data-block="scrolly-c" data-scrolly="c" aria-labelledby="scrolly-c-title" style="--steps: 3">
     <h2 class="visually-hidden" id="scrolly-c-title">Three arguments competing for the lead</h2>
-    <ol class="visually-hidden">
+    <!-- Visible in the stack (one set of cards, three captions); screen-reader-only once the scene runs. -->
+    <ol class="c-steps">
       <li>Three arguments, none leading yet.</li>
       <li>The first argument takes the lead.</li>
       <li>The skeptic's argument moves to the front.</li>
@@ -721,10 +768,10 @@
       <div aria-hidden="true">
         <p class="c-caption">Three arguments, none leading yet.</p>
         <div class="c-stage">
-          <!-- Step 0's layout is written inline here, so the paintings are placed before any script runs. -->
-          <figure class="c-painting" style="top: 25%; left: 6%; width: 37.5%; z-index: 2; opacity: .15; transform: rotate(0deg)"><img src="assets/argument-a.webp" alt="" width="600" height="800"></figure>
-          <figure class="c-painting" style="top: 10%; left: 35%; width: 34%; z-index: 1; opacity: .15; transform: rotate(0deg)"><img src="assets/argument-b.webp" alt="" width="600" height="800"></figure>
-          <figure class="c-painting" style="top: 25%; right: 9%; width: 30%; z-index: 2; opacity: .15; transform: rotate(1deg)"><img src="assets/argument-c.webp" alt="" width="600" height="800"></figure>
+          <!-- Each step's layout is applied by the script. Without it, the cards sit in a plain row (the stack). -->
+          <figure class="c-painting"><img src="assets/argument-a.webp" alt="" width="600" height="800" loading="lazy" decoding="async"></figure>
+          <figure class="c-painting"><img src="assets/argument-b.webp" alt="" width="600" height="800" loading="lazy" decoding="async"></figure>
+          <figure class="c-painting"><img src="assets/argument-c.webp" alt="" width="600" height="800" loading="lazy" decoding="async"></figure>
         </div>
       </div>
       <div class="progress hidden" aria-hidden="true">
@@ -740,7 +787,26 @@
 
   <p class="g-text">What finally decided it was not which point was strongest, but which one a skeptical reader would need to accept before the others could land.</p>
 
-  <section class="scrolly" data-block="scrolly-d" aria-label="A draft condensing into its final form"></section>
+  <!-- Scene D twins: a landscape animation for wide screens, a portrait one for phones. Only the visible twin ever
+       loads its file (the hidden one never intersects the viewport), and the engine skips the hidden one. -->
+  <section class="runway desktop-only" data-block="scrolly-d" data-scrolly="d" data-lottie="assets/scrub-desktop.json" aria-labelledby="scrolly-d-title" style="--steps: 2.5">
+    <h2 class="visually-hidden" id="scrolly-d-title">A draft condensing into its final form</h2>
+    <div class="sticky">
+      <div class="scrub-stage">
+        <p class="scrub-fallback">A long draft condenses, step by step, into a short final paragraph.</p>
+        <div class="scrub-anim" aria-hidden="true" style="--aspect: 1800 / 1200"></div>
+      </div>
+    </div>
+  </section>
+  <section class="runway mobile-only" data-block="scrolly-d" data-scrolly="d" data-lottie="assets/scrub-mobile.json" aria-labelledby="scrolly-d-title-m" style="--steps: 2.5">
+    <h2 class="visually-hidden" id="scrolly-d-title-m">A draft condensing into its final form</h2>
+    <div class="sticky">
+      <div class="scrub-stage">
+        <p class="scrub-fallback">A long draft condenses, step by step, into a short final paragraph.</p>
+        <div class="scrub-anim" aria-hidden="true" style="--aspect: 800 / 1200"></div>
+      </div>
+    </div>
+  </section>
 
   <p class="g-text">Readers will never see most of this, and that is fine. But a little more of it on the page would make the argument more honest about how it was made, and, I suspect, more convincing.</p>
 
@@ -842,12 +908,14 @@
 
   const runways = [...document.querySelectorAll('.runway')].map((el) => ({
     el,
+    kind: el.dataset.scrolly,
     sticky: el.querySelector('.sticky'),
     steps: Math.ceil(parseFloat(getComputedStyle(el).getPropertyValue('--steps'))) || 1,
     bar: el.querySelector('.progress'),
     fill: el.querySelector('.progress-fill'),
     markers: [...el.querySelectorAll('.progress-marker')],
     last: -1,
+    scrub: null,                                   // scene D: set once its Lottie has loaded
   }));
 
   let ticking = false;
@@ -858,6 +926,8 @@
     for (const r of runways) {
       if (r.el.offsetParent === null) continue;    // a hidden twin (display: none): skip it
       const p = progressOf(r.el, r.sticky);
+      // Scrubbed scenes skip the step logic entirely: the playhead follows p on every frame.
+      if (r.kind === 'd') { r.scrub?.(p); continue; }
       const step = stepOf(p, r.steps);
       // cheap writes every frame
       r.fill.style.width = (p * 100).toFixed(2) + '%';
@@ -866,7 +936,7 @@
       if (step === r.last) continue;
       r.last = step;
       r.markers.forEach((m, i) => m.classList.toggle('on', i <= step));
-      renderers[r.el.dataset.scrolly]?.(r.el, step);   // the engine's only link to the scenes
+      renderers[r.kind]?.(r.el, step);             // the engine's only link to the scenes
     }
   }
   // rAF throttle: scroll can fire several times per frame; `ticking` lets through at most one update per frame.
@@ -878,7 +948,57 @@
   const reapply = () => { runways.forEach((r) => (r.last = -1)); update(); };
   addEventListener('resize', reapply);
   portrait.addEventListener('change', reapply);
-  update();
+
+  /* Chunk 10: scene D, a scroll-scrubbed Lottie. Scrub vs autoplay: autoplay runs on a clock; scrub runs on the
+     reader's thumb, so they set the pace and can rewind. */
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let lottieLib;
+  function loadLottie() {                          // the library itself only downloads when a scrub scene is near
+    return (lottieLib ??= new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js';
+      script.onload = () => resolve(window.lottie);
+      script.onerror = reject;
+      document.head.append(script);
+    }));
+  }
+  function setUpScrub(r) {
+    const stage = r.el.querySelector('.scrub-stage');
+    loadLottie()
+      .then((lottie) => {
+        const anim = lottie.loadAnimation({
+          container: stage.querySelector('.scrub-anim'), renderer: 'svg', loop: false, autoplay: false, path: r.el.dataset.lottie,
+        });
+        anim.addEventListener('data_failed', () => stage.classList.add('scrub-failed'));
+        anim.addEventListener('DOMLoaded', () => {
+          const last = anim.totalFrames - 1;
+          stage.classList.add('scrub-loaded');
+          // Reduced motion: show the end state, still. Otherwise frame = p × last (true = a frame number, not ms).
+          r.scrub = reducedMotion.matches ? null : (p) => anim.goToAndStop(p * last, true);
+          anim.goToAndStop(reducedMotion.matches ? last : 0, true);
+          update();
+        });
+      })
+      .catch(() => stage.classList.add('scrub-failed'));   // the text description stays on screen
+  }
+  // Load a twin's animation only when its runway comes within 200px of the viewport. A display: none twin never
+  // intersects, so the hidden twin's file is never requested.
+  const near = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      near.unobserve(e.target);
+      setUpScrub(runways.find((r) => r.el === e.target));
+    }
+  }, { rootMargin: '200px' });
+  runways.filter((r) => r.kind === 'd').forEach((r) => near.observe(r.el));
+
+  /* Last lines: switch the page to the scroll layout. Reaching this line proves every bit of setup above ran without
+     throwing. If anything failed, the class is never added and the reader gets the static stack (breakdown §19 #2).
+     The first measurement has to happen in the scroll layout, so update() runs after the class; if even that throws,
+     the class comes off again. */
+  const root = document.documentElement;
+  root.classList.add('scrolly-ready');
+  try { update(); } catch (err) { root.classList.remove('scrolly-ready'); throw err; }
 </script>
 
 </body>

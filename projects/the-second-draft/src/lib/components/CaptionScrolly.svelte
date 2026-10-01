@@ -4,7 +4,8 @@
 <script>
   import Scrolly from './Scrolly.svelte';
   import { asset } from '$lib/assets.js';
-  let { label, steps } = $props();
+  import { srcset } from '$lib/media.js';
+  let { label, steps, sizes } = $props();
 </script>
 
 <Scrolly {label} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>
@@ -19,7 +20,7 @@
         <div class="b-content">
           {#each steps as s, i (i)}
             <div class="frame" class:is-active={i === step} style:order={i * 2 + 1}>
-              <img src={asset(s.image)} alt="" width="1200" height="900" loading="lazy" decoding="async" />
+              <img src={asset(s.image)} srcset={srcset(s.srcset)} {sizes} alt="" width="1200" height="900" loading="lazy" decoding="async" />
             </div>
           {/each}
         </div>

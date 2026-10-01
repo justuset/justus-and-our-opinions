@@ -32,17 +32,26 @@
           "src": "images/two-up-draft-1.webp",
           "alt": "The first draft of the opening paragraph, crowded with qualifications.",
           "width": 800,
-          "height": 1000
+          "height": 1000,
+          "srcset": {
+            "400w": "images/two-up-draft-1-400w.webp",
+            "800w": "images/two-up-draft-1.webp"
+          }
         },
         {
           "src": "images/two-up-draft-4.webp",
           "alt": "The fourth draft of the same paragraph, about half as long.",
           "width": 800,
-          "height": 1000
+          "height": 1000,
+          "srcset": {
+            "400w": "images/two-up-draft-4-400w.webp",
+            "800w": "images/two-up-draft-4.webp"
+          }
         }
       ],
       "caption": "The first and fourth drafts of the same opening paragraph.",
-      "credit": "Placeholder images"
+      "credit": "Placeholder images",
+      "sizes": "(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw"
     },
     {
       "type": "text",
@@ -121,29 +130,50 @@
         {
           "image": "images/marked-up-1.webp",
           "alt": "Placeholder for marked-up page 1.",
-          "caption": "Page one: a question in the margin."
+          "caption": "Page one: a question in the margin.",
+          "srcset": {
+            "600w": "images/marked-up-1-600w.webp",
+            "1200w": "images/marked-up-1.webp"
+          }
         },
         {
           "image": "images/marked-up-2.webp",
           "alt": "Placeholder for marked-up page 2.",
-          "caption": "Page two: an arrow moves a sentence up."
+          "caption": "Page two: an arrow moves a sentence up.",
+          "srcset": {
+            "600w": "images/marked-up-2-600w.webp",
+            "1200w": "images/marked-up-2.webp"
+          }
         },
         {
           "image": "images/marked-up-3.webp",
           "alt": "Placeholder for marked-up page 3.",
-          "caption": "Page three: one word circled."
+          "caption": "Page three: one word circled.",
+          "srcset": {
+            "600w": "images/marked-up-3-600w.webp",
+            "1200w": "images/marked-up-3.webp"
+          }
         },
         {
           "image": "images/marked-up-4.webp",
           "alt": "Placeholder for marked-up page 4.",
-          "caption": "Page four: a paragraph struck through."
+          "caption": "Page four: a paragraph struck through.",
+          "srcset": {
+            "600w": "images/marked-up-4-600w.webp",
+            "1200w": "images/marked-up-4.webp"
+          }
         },
         {
           "image": "images/marked-up-5.webp",
           "alt": "Placeholder for marked-up page 5.",
-          "caption": "Page five: almost clean."
+          "caption": "Page five: almost clean.",
+          "srcset": {
+            "600w": "images/marked-up-5-600w.webp",
+            "1200w": "images/marked-up-5.webp"
+          }
         }
-      ]
+      ],
+      "sizes": "(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)"
     },
     {
       "type": "text",

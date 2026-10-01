@@ -121,6 +121,7 @@ projects/the-second-draft/
 │  └─ scripts/                  (empty for now; .gitkeep)
 ├─ scripts/
 │  ├─ hash-assets.js
+│  ├─ make-scrub-lottie.js
 │  └─ deploy.js
 ├─ static/
 │  └─ favicon.png
@@ -137,12 +138,13 @@ projects/the-second-draft/
       ├─ assets.js               (generated)
       ├─ scroll.js
       ├─ lottie.js
+      ├─ media.js
       └─ components/
          ├─ Header.svelte, Byline.svelte, Text.svelte, Credits.svelte
          ├─ TwoUp.svelte, Diagram.svelte
          ├─ Scrolly.svelte
          ├─ SlidesScrolly.svelte, CaptionScrolly.svelte, PaintingsScrolly.svelte
-         └─ ScrubLottie.svelte
+         └─ ScrubLottie.svelte, ScrubStage.svelte
 ```
 
 ### Project root
@@ -172,6 +174,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it does |
 |------|-------------|
 | `hash-assets.js` | **Before the build:** hashes every file in `big_assets/` (paths + bytes) and writes `src/lib/assets.js` with the media URL. **After the build (`--copy`):** copies the folder to `dist/_big_assets.<hash>/`, then checks that every media URL in `index.html` points at a real file |
+| `make-scrub-lottie.js` | Writes the two scene D placeholder animations (`big_assets/videos/scrub-desktop.json`, `scrub-mobile.json`): 12 bars of "text" on a page, 7 shrink and fade, 5 close up. Self-authored, so no license to record. A readable example of what's inside a Lottie file (canvas, frame range, layers, keyframes). Run it by hand: `node scripts/make-scrub-lottie.js` |
 | `deploy.js` | Prints the upload plan: every file in `dist/` with its `Cache-Control` header, hashed folders first and `index.html` last. Swap its `upload()` function for your host's CLI to deploy for real (§9) |
 
 ### `static/`
@@ -193,7 +196,8 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `routes/+page.svelte` | **The story page.** A loop over `story.blocks`, where each block's `type` (and `scene` for scroll sections) picks a component from the `BLOCKS` map | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | `lib/assets.js` | **Generated.** `ASSET_BASE` is `/big_assets` in dev and `./_big_assets.<hash>` in production, plus an `asset(path)` helper. Committed, so `npm run dev` works on a fresh clone | Bundled into a chunk |
 | `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list) | A chunk, once imported |
-| `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header, `scrubber()` returns `setProgress(p)` for scroll-scrubbing. Wired up when chunk 10 passes | A lazy chunk, once imported |
+| `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header (chunk 11). `scrubber()` resolves to `seek(p)` once the animation is ready, and **rejects** if the JSON fails, so the caller can keep its text fallback. ✅ Used by `ScrubStage` | A lazy chunk, once imported |
+| `lib/media.js` | `srcset(sources)` turns `{ "400w": path, "800w": path }` from `story.json` into a `srcset` string (chunk 10) | Bundled into the components |
 
 ### `src/lib/components/`: one component per block type
 
@@ -212,7 +216,8 @@ shows which prototype chunk each one mirrors (see §11).
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
 | `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 768px, 0.4s caption fades, hard-cut images (chunk 9) |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `story.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
-| `ScrubLottie.svelte` | Section D: text fallback, with the desktop and mobile Lottie paths ready | ⏳ Scrubbing at chunk 10 |
+| `ScrubLottie.svelte` | Section D: two `Scrolly` runways, one per twin (`class="desktop-only"` / `"mobile-only"`, `bar={false}`) | ✅ Scrubbing (chunk 10) |
+| `ScrubStage.svelte` | One twin's stage. An `{@attach}` **loads** the Lottie when the stage is within 200px (a hidden twin never loads); an `$effect` **feeds** it `progress`. Reduced motion holds the end frame. Text fallback stays visible if loading fails | ✅ (chunk 10) |
 
 "⏳" components already render the **readable, no-JS version** of their block, which is the base state every enhancement builds on.
 
@@ -246,12 +251,12 @@ shows which prototype chunk each one mirrors (see §11).
 | Block | Component | Required fields | Notes for designers |
 |-------|-----------|-----------------|---------------------|
 | `text` | `Text` | `value` | One paragraph. Plain text, so no HTML is injected |
-| `two-up` | `TwoUp` | `images[2]` (`src`, `alt`, `width`, `height`), `caption`, `credit`, `label` | Images at **4:5**. `width`/`height` reserve space so nothing jumps |
+| `two-up` | `TwoUp` | `images[2]` (`src`, `alt`, `width`, `height`, `srcset`), `sizes`, `caption`, `credit`, `label` | Images at **4:5**. `width`/`height` reserve space so nothing jumps. `srcset` lists each file by width (`{ "400w": …, "800w": … }`), and `sizes` describes the slot |
 | `diagram` | `Diagram` | `nodes[]`, `label` | 3–6 short labels, in order |
 | `scrolly` + `scene: "slides"` | `SlidesScrolly` | `steps[]` (`heading`, `card`, `image`, `alt`) | One square image per step. Each step ≈ 1.35 screens of scrolling |
-| `scrolly` + `scene: "captions"` | `CaptionScrolly` | `steps[]` (`image`, `alt`, `caption`) | Write captions to fit about 80px. The longest one sets the overlay height |
+| `scrolly` + `scene: "captions"` | `CaptionScrolly` | `steps[]` (`image`, `alt`, `caption`, `srcset`), `sizes` | Write captions to fit about 80px. The longest one sets the overlay height |
 | `scrolly` + `scene: "paintings"` | `PaintingsScrolly` | `items[]`, `steps[]` (`caption`, `layout[]` with `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z`) | One layout per step per item. `portraitScale` widens items on tall screens |
-| `lottie` + `mode: "scrub"` | `ScrubLottie` | `desktop`, `mobile` (JSON paths), `steps` (runway length), `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS |
+| `lottie` + `mode: "scrub"` | `ScrubLottie` | `desktop`, `mobile` (JSON paths), `steps` (runway length), `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
 
 **Media paths in `story.json` are relative to `big_assets/`** (`images/…`, `videos/…`). Components turn them into full URLs with
 `asset(path)`, so the same file works in dev and production.
