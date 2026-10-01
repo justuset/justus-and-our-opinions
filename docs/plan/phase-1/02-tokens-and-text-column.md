@@ -44,7 +44,7 @@ sans**. Diatour wins on looks, but this is a visual essay. Try both and keep one
 - [x] In responsive mode, drag from **320 to 1600px**. On phones the text runs nearly edge to edge with breathing room, and it
       **locks at 600px and centers** from about 700px.
 - [x] The measured column widths match breakdown §3: **240px at 320, 281px at 375, 600px at 800**. (Hover the paragraph and read the box size.)
-- [x] Line length on desktop is roughly 60–75 characters.
+- [ ] Line length on desktop is roughly 60–75 characters. *(Measured on Linux: sans ~57, serif ~64. Re-check on macOS with Newsreader loaded, see learning log 06.)*
 - [x] Text contrast: DevTools color picker shows AA or better for `--ink` and `--soft` on `--paper`.
 
 ## Watch out
