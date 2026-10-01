@@ -1,0 +1,24 @@
+# Learning log
+
+One entry per meaningful step. Each entry covers what was planned, what actually happened, what broke, and the
+concepts it taught.
+
+| # | Entry | Date |
+|---|-------|------|
+| 01 | [Repo setup, first commit and README](01-repo-setup.md) | 2026-10-01 |
+| 02 | [Researching the reference and writing the plan](02-research-and-plan.md) | 2026-10-01 |
+
+## Entry template
+
+```markdown
+# Learning log NN: <title>
+
+**Date:**  **Chunk:**  **Branch / PR:**
+
+## Goal
+## What I did (commands, files)
+## What broke and how I fixed it
+## Concepts learned
+## What I'd do differently
+## Next
+```
