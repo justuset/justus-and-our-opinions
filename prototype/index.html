@@ -5,6 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Second Draft Is Where the Argument Lives · Our Opinions (demo)</title>
   <meta name="description" content="Demo essay for a hand-built scrollytelling prototype. Invented content.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,550;1,6..72,400&display=swap">
+  <style>
+    /* ============ 1. TOKENS (chunk 2) ============
+       Every value the page uses lives here. If a rule needs a color or a size, it gets a token first. */
+    :root {
+      /* layout: measured from the reference */
+      --gutter: clamp(10px, 12.5vw, 49px);                   /* 12.5vw hits the 49px cap at a 392px screen */
+      --w-body: 600px;                                       /* longest line of body text */
+      --col: min(calc(100% - var(--gutter) * 2), var(--w-body)); /* reaches 600px at a 698px screen */
+      --gap-para: 12.5px;                                    /* measured paragraph spacing */
+      --gap-byline: 24px 32px;                               /* measured: above / below the byline */
+      --gap-credits: 60px 80px;                              /* measured: above / below the credits */
+
+      /* motion: measured from the reference (used from chunk 5) */
+      --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-fade:   cubic-bezier(0.215, 0.61, 0.355, 1);
+      --ease-intro:  cubic-bezier(0.25, 1, 0.5, 1);
+
+      /* color: diatour (dark paper is the house look) */
+      --paper: #121211;
+      --ink: #ededeb;
+      --soft: rgba(235, 235, 240, 0.66);
+      --faint: rgba(235, 235, 240, 0.56);
+      --line: rgba(255, 255, 255, 0.14);
+      --surface: rgba(255, 255, 255, 0.05);
+
+      /* type: diatour faces */
+      --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+      --font-serif-body: 'Newsreader', Georgia, 'Times New Roman', serif;
+
+      /* the body-face decision: one token to flip (see learning log 06) */
+      --font-text: var(--font-body);
+
+      /* reading text: measured 20/30, stepping to 18/27 on phones */
+      --text-size: 20px;
+      --text-leading: 30px;
+      --meta-size: 14px;
+    }
+    @media (max-width: 739px) {
+      :root { --text-size: 18px; --text-leading: 27px; }
+    }
+
+    /* ============ 2. BASE ============ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--paper); color: var(--ink); }
+    body { font-family: var(--font-body); }
+
+    /* ============ 3. THE TEXT COLUMN ============
+       No media query decides the width: min() picks whichever is smaller, the screen minus two gutters or 600px.
+       margin-inline: auto centers it. */
+    .g-text {
+      width: var(--col);
+      margin: 0 auto var(--gap-para);
+      font: var(--text-size) / var(--text-leading) var(--font-text);
+    }
+    @supports (text-wrap: pretty) {
+      .g-text { text-wrap: pretty; }   /* evens the rag, avoids one-word last lines */
+    }
+
+    /* Byline and credits share the column, in the sans "furniture" face */
+    .byline, .credits {
+      width: var(--col);
+      margin-inline: auto;
+      font: 600 var(--meta-size) / 1.4 var(--font-body);
+      color: var(--soft);
+    }
+    .byline { margin-block: var(--gap-byline); }
+    .credits { margin-block: var(--gap-credits); font-weight: 400; color: var(--faint); }
+    .credits p { margin: 0; }
+  </style>
 </head>
 <body>
 

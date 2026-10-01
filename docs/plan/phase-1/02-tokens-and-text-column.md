@@ -6,7 +6,7 @@ two or three breakpoints in one line.
 **Reference:** breakdown §2 (tokens), §3 (column math table), §7 (body text). Diatour colors and fonts: `docs/design-system.md`.
 
 ## Build
-- [ ] `:root` tokens:
+- [x] `:root` tokens:
   ```css
   :root {
     /* layout (measured, from the reference) */
@@ -25,11 +25,11 @@ two or three breakpoints in one line.
     --font-serif-body: 'Newsreader', Georgia, serif;   /* reference uses a serif body; choose one, see below */
   }
   ```
-- [ ] Load Newsreader from Google Fonts (`display=swap`).
-- [ ] `html, body { margin: 0; background: var(--paper); color: var(--ink); }` and `*, *::before, *::after { box-sizing: border-box; }`.
-- [ ] `.g-text { width: var(--col); margin: 0 auto 12.5px; font: 20px/30px var(--font-serif-body); }`, stepping to `18px/27px` below 740px.
-- [ ] `@supports (text-wrap: pretty) { .g-text { text-wrap: pretty; } }`.
-- [ ] Style `.byline` and `.credits` the same width (`var(--col)`), in the sans face, in `--soft` and `--faint`.
+- [x] Load Newsreader from Google Fonts (`display=swap`).
+- [x] `html, body { margin: 0; background: var(--paper); color: var(--ink); }` and `*, *::before, *::after { box-sizing: border-box; }`.
+- [x] `.g-text { width: var(--col); margin: 0 auto 12.5px; font: 20px/30px var(--font-serif-body); }`, stepping to `18px/27px` below 740px.
+- [x] `@supports (text-wrap: pretty) { .g-text { text-wrap: pretty; } }`.
+- [x] Style `.byline` and `.credits` the same width (`var(--col)`), in the sans face, in `--soft` and `--faint`.
 
 **Decision to make and log:** the body face. The reference sets body text in **serif 20/30**, while diatour uses a **system
 sans**. Diatour wins on looks, but this is a visual essay. Try both and keep one.
@@ -41,11 +41,11 @@ sans**. Diatour wins on looks, but this is a visual essay. Try both and keep one
 - Why `margin: 0 auto` centers a block with a set width.
 
 ## Checkpoint
-- [ ] In responsive mode, drag from **320 to 1600px**. On phones the text runs nearly edge to edge with breathing room, and it
+- [x] In responsive mode, drag from **320 to 1600px**. On phones the text runs nearly edge to edge with breathing room, and it
       **locks at 600px and centers** from about 700px.
-- [ ] The measured column widths match breakdown §3: **240px at 320, 281px at 375, 600px at 800**. (Hover the paragraph and read the box size.)
-- [ ] Line length on desktop is roughly 60–75 characters.
-- [ ] Text contrast: DevTools color picker shows AA or better for `--ink` and `--soft` on `--paper`.
+- [x] The measured column widths match breakdown §3: **240px at 320, 281px at 375, 600px at 800**. (Hover the paragraph and read the box size.)
+- [x] Line length on desktop is roughly 60–75 characters.
+- [x] Text contrast: DevTools color picker shows AA or better for `--ink` and `--soft` on `--paper`.
 
 ## Watch out
 - Keep every value in `:root`. If you find yourself typing a hex color or a size in a rule, make it a token.
