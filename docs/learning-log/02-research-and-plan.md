@@ -7,6 +7,8 @@
 Before writing any code, read the existing analysis (the *diatour-nyt* artifacts), decide on an architecture, and
 break the build into chunks small enough to learn from one at a time.
 
+> **Update (same day):** the architecture below was superseded. See [log 03](03-times-shaped-stack.md).
+
 ## What I did
 
 1. **Read three artifacts:** `diatour-nyt` (*Built on Deadline*), `diatour-nyt-frontend` (*Front End, Line by

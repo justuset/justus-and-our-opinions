@@ -19,7 +19,7 @@ Library, Playwright, axe), §VIII.X (Core Web Vitals: LCP 2.5s, INP 200ms, CLS 0
 - [ ] `tests/e2e/a11y.spec.ts`: axe on every story page and on `/styleguide`, in both themes. Fail on any violation.
 - [ ] `tests/e2e/no-js.spec.ts`: `javaScriptEnabled: false`. Headline, body and every figcaption are still present.
 - [ ] `tests/e2e/reduced-motion.spec.ts`: `reducedMotion: 'reduce'`. The tally is full at first paint.
-- [ ] JS budget: after `astro build`, a script sums the gzipped `dist/_astro/*.js` that a story page loads and fails above **120 KB**. Print a per-island table.
+- [ ] JS budgets: after `npm run build`, a script sums the gzipped JS a story page loads. It fails if the React story app goes over **150 KB** or any single graphic embed goes over **40 KB**, and prints a per-bundle table.
 - [ ] Update `ci.yml`: lint → check → unit → build → preflight → e2e (in the Playwright Docker image, so fonts render the same everywhere) → upload the HTML report as an artifact.
 - [ ] Commit baseline screenshots from CI's Linux run, not from your laptop (explain why in the log).
 

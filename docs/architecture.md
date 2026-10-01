@@ -1,89 +1,109 @@
-# Architecture decision: Astro, with Svelte and React islands
+# Architecture: a Times-shaped stack, a React story page plus SvelteKit graphics
 
-**Status:** Proposed (to confirm when chunk 00 starts)
-**Date:** 2026-10-01
+**Status:** Accepted, 2026-10-01. It supersedes the earlier Astro-islands proposal (see "History" at the end).
+**Driving requirement:** use the diatour design system, and stay **as close as possible to how New York Times
+Opinion pages are built**.
 
-## Context
+## What we're imitating
 
-We want one interactive Opinion-style article template that:
+From the diatour-nyt analysis (§III, §VII.III, §VIII):
 
-1. Renders headline, dek, byline, body and images as **plain HTML and CSS** (fast, accessible, readable with no JavaScript).
-2. Uses **Svelte** where the Times uses it: bespoke graphics such as the tally, charts and scrollytelling.
-3. Uses **React** where the Times uses it: recurring product-style formats such as the quiz, poll and roundtable.
-4. Lets an editor change a story by editing a **text file (ArchieML)**, not code.
+| At the Times (as publicly described) | In this project |
+|--------------------------------------|-----------------|
+| The article page is **React**, server-rendered on **Node**, then hydrated in the browser. Data comes from GraphQL | `apps/story`: React 19 + **React Router 7 (framework mode)**, SSR on Node, hydrated with `hydrateRoot` |
+| Recurring formats are React components fed by structured content (a block list) | `BlockRenderer` maps `block.type` → React component (diatour §VIII.VIII) |
+| Graphics and visual essays are built by the graphics desk in **Svelte / SvelteKit**, with **ArchieML** copy and **ai2html** | `apps/graphics`: **SvelteKit** + Svelte 5, ArchieML, an optional ai2html export |
+| Graphics are separate projects **embedded** into the article as server-rendered HTML that then hydrates | Each graphic builds into an **embed bundle**: `fragment.html` + `embed.js` + `embed.css`. The story inlines the fragment on the server, and the Svelte embed hydrates it on the client |
+| Editors write in Google Docs, and code reads ArchieML | `content/stories/*.aml` (a Google Docs fetch is an optional stretch) |
+| CI/CD through GitHub Actions | GitHub Actions |
 
-## Options considered
+> **What we can't copy, and why:** the GraphQL server, the Scoop and Oak CMS, and the Times's internal graphics
+> framework are private. (That framework has been publicly discussed under the name *Birdkit*, built on SvelteKit,
+> but none of this is in the diatour sources. Verify before citing it.) We substitute files and small build
+> scripts at those seams, and keep the **shapes** of the interfaces the same: typed blocks in, server HTML out,
+> hydrate on the client.
 
-| Option | Svelte and React on one page? | Text ships with zero JS? | Learning cost | Verdict |
-|--------|------------------------------|--------------------------|---------------|---------|
-| **Astro + `@astrojs/svelte` + `@astrojs/react`** | Yes, first-class | Yes, by default | Low. Astro files are close to HTML | **Chosen** |
-| Plain Vite + manual `mount()` / `createRoot()` | Yes, by hand | Yes | Medium. You write your own island loader | Done once as a learning exercise (chunk 05) |
-| SvelteKit | React only through workarounds | Mostly | Medium | Rejected: no React |
-| Next.js | Svelte only through workarounds | No. Ships the React runtime | Medium–high | Rejected: no Svelte, heavier |
-
-## Decision
-
-Use **Astro** as the page shell and build tool (it runs on Vite underneath).
+## Diagram
 
 ```
-           ArchieML (.aml)  ──parse──►  story JSON (typed blocks)
-                                              │
-                                     BlockRenderer.astro
-              ┌───────────────┬───────────────┼────────────────┬───────────────┐
-         text / quote      figure          tally / chart      quiz / roundtable
-          (.astro)        (.astro)       (.svelte island)     (.tsx island)
-        static HTML     static HTML    client:visible        client:visible
+ content/stories/three-writers.aml ─────────────► packages/archie  (parse + validate → Story { blocks[] })
+                                                         │
+               ┌─────────────────────────────────────────┴───────────────────────────┐
+               ▼                                                                       ▼
+   apps/story  (React 19, React Router 7, Node SSR)                  apps/graphics  (SvelteKit, Svelte 5)
+   ┌───────────────────────────────────────────┐                    ┌───────────────────────────────────┐
+   │ route /opinion/:slug                       │                    │ src/lib/graphics/Tally.svelte      │
+   │  loader → Story                            │                    │ src/lib/graphics/StatChart.svelte  │
+   │  <Essay> → <BlockRenderer>                 │                    │ src/lib/graphics/Scrolly.svelte    │
+   │    text / quote / figure    → React (SSR)  │                    │ routes/preview/[graphic] (desk     │
+   │    quiz / roundtable        → React (SSR + │                    │   preview pages, prerendered)      │
+   │                               hydrate)     │    build-embeds    │                                     │
+   │    graphic {slug, props}    → <Embed>  ◄───┼────────────────────┤ dist/embeds/<graphic>/             │
+   │       server: inline fragment.html         │                    │   fragment.html  (svelte/server)    │
+   │       client: load embed.js → hydrate()    │                    │   embed.js       (svelte hydrate)   │
+   └───────────────────────────────────────────┘                    │   embed.css                         │
+               ▲                                                     └───────────────────────────────────┘
+               └──────────── packages/design-system  (diatour tokens.css, base.css, components.css) ─────────┘
 ```
 
-**Rule of thumb for picking a layer:**
-
-| If the block… | Build it in | Hydration |
-|---------------|-------------|-----------|
-| only shows content | `.astro` (HTML/CSS) | none |
-| needs a small enhancement (progress bar, share, TOC) | vanilla JS `<script>` in an `.astro` component | runs once |
-| is a bespoke visual or animation | **Svelte 5** (`.svelte`) | `client:visible` |
-| is a stateful, recurring "product" widget | **React 19** (`.tsx`) | `client:visible` or `client:idle` |
-
-## Proposed folder structure
+## Repository layout (npm workspaces)
 
 ```
 justus-and-our-opinions/
-├─ README.md
-├─ docs/                        ← learning log, reference, plan (this folder)
-├─ content/
-│  └─ stories/
-│     └─ three-writers.aml      ← ArchieML story copy
-├─ public/
-│  └─ media/                    ← images, posters, captions (.vtt)
-├─ scripts/
-│  └─ preflight.mjs             ← media budget checker (chunk 09)
-├─ src/
-│  ├─ styles/
-│  │  ├─ tokens.css             ← design tokens (chunk 01)
-│  │  ├─ base.css
-│  │  └─ components.css
-│  ├─ lib/
-│  │  ├─ archie.ts              ← ArchieML → typed blocks (chunk 03)
-│  │  └─ types.ts
-│  ├─ components/
-│  │  ├─ astro/                 ← SiteHeader, StoryHeader, Figure, PullQuote, EndMatter, BlockRenderer
-│  │  ├─ svelte/                ← Tally, StatChart, Scrolly
-│  │  └─ react/                 ← Quiz, Roundtable
-│  ├─ layouts/
-│  │  └─ Essay.astro
-│  └─ pages/
-│     ├─ index.astro            ← list of stories
-│     ├─ styleguide.astro       ← tokens and components on one page
-│     └─ opinion/[slug].astro   ← the template
-├─ tests/
-│  ├─ unit/                     ← Vitest + Testing Library
-│  └─ e2e/                      ← Playwright breakpoint matrix + axe
+├─ package.json                 ← "workspaces": ["apps/*", "packages/*"]
+├─ content/stories/*.aml        ← story copy (ArchieML)
+├─ packages/
+│  ├─ design-system/            ← diatour tokens + base + component CSS (single source for both apps)
+│  └─ archie/                   ← ArchieML → typed Story/Block (TypeScript + Zod)
+├─ apps/
+│  ├─ story/                    ← React Router 7 app: the Opinion article template (product side)
+│  │  └─ app/{routes,components/blocks,components/chrome,embed}
+│  └─ graphics/                 ← SvelteKit app: graphics desk
+│     ├─ src/lib/graphics/      ← one Svelte component per graphic
+│     ├─ src/routes/preview/    ← standalone preview pages per graphic
+│     └─ scripts/build-embeds.mjs
+├─ tests/{unit,e2e}
 └─ .github/workflows/ci.yml
 ```
 
-## Consequences
+## Which layer does a block belong in?
 
-- Positive: Text is static and fast. Each island ships only its own framework runtime, and only when the island scrolls into view.
-- Positive: We learn both frameworks in the role each one actually plays at the Times.
-- Trade-off: Two framework runtimes can load on one page. Chunk 10 sets a budget (JavaScript under 120 KB gzipped per story).
-- Trade-off: Islands can't share React or Svelte state directly. When they have to talk, they use DOM events or a tiny shared store (nanostores).
+| If the block… | Built in | Why (Times analogy) |
+|---------------|----------|---------------------|
+| is text, a quote, a figure or end matter | React, server-rendered | The platform article template |
+| is a recurring interactive format (quiz, poll, roundtable) | React, hydrated | Product features live with the product front end |
+| is a bespoke visual or scrollytelling | Svelte, in the graphics app, embedded | The graphics desk builds it and the article embeds it |
+| is a static annotated chart drawn by a designer | ai2html export, embedded as a fragment | The newsroom's Illustrator → HTML path |
+
+## The embed contract (the seam between React and Svelte)
+
+```ts
+// block in the story
+{ type: 'graphic', id: 'tally-1', graphic: 'tally', props: { total: 42, label: 'car-free blocks', span: 'since 2019' },
+  ratio?: '16 / 9' }
+
+// files produced by apps/graphics for each graphic
+dist/embeds/tally/fragment.js   // export function render(props): { html, css }   (server, svelte/server)
+dist/embeds/tally/embed.js      // export function hydrate(target, props)          (client, svelte hydrate)
+dist/embeds/tally/embed.css
+```
+
+- **Server:** the story's `<Embed>` calls `render(props)` and outputs
+  `<div class="embed" data-graphic="tally" data-props='…' dangerouslySetInnerHTML={{ __html: html }} />`.
+  React hydration leaves that inner HTML alone, because the string is the same on server and client.
+- **Client:** `<Embed>` uses an IntersectionObserver to `import('/embeds/tally/embed.js')` when the embed nears
+  the viewport, then calls `hydrate(el, props)`. The wrapper reserves space (`aspect-ratio`) so nothing shifts.
+- **Isolation:** each `<Embed>` sits in a React `ErrorBoundary`. Inside, the Svelte graphic uses `<svelte:boundary>`.
+
+## Trade-offs (said honestly)
+
+- **More moving parts than Astro.** You learn real seams: SSR, hydration, embed bundles and workspaces. That's the point.
+- **The whole article hydrates with React**, as the Times page does. Its JS cost is real, so chunk 10 sets budgets
+  (React app ≤ 150 KB gzipped, each embed ≤ 40 KB).
+- **Two dev servers** (`story` on :5173, `graphics` on :5174). A root `npm run dev` runs both.
+
+## History
+
+- **v1 (superseded): Astro shell with Svelte and React islands.** It was simpler and lighter, but no Times page works that
+  way. Dropped on 2026-10-01 at the user's request to stay close to the Times's front-end practice. The
+  hand-rolled island exercise survives as the embed pipeline in chunk 05.

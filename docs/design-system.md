@@ -1,7 +1,11 @@
 # Design system: the "diatour" editorial look
 
 These tokens come from the CSS of the `diatour-nyt` artifacts. The dark theme is the source. The light theme is
-derived from it (one light rule in the source uses `#121212` ink). Chunk 01 turns this file into `src/styles/tokens.css`.
+derived from it (one light rule in the source uses `#121212` ink). Chunk 01 turns this file into `packages/design-system/tokens.css`, which both apps import.
+
+**This is the visual source of truth.** When `layout-system.md` (from the NYT layout guide) conflicts with it on
+looks, diatour wins. The layout system governs units (px here = Figma values, rem in code), fluid scaling and
+breakpoints. The fluid `--step-*` tokens in `layout-system.md` §2 are derived from the type table below.
 
 ## Color
 

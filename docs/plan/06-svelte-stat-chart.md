@@ -1,36 +1,34 @@
-# Chunk 06: Svelte island, part 2: Stat-to-chart with a table fallback
+# Chunk 06: Graphic: Stat-to-chart with a table fallback
 
-**Goal:** A small chart component that turns two to six numbers in the ArchieML doc into an accessible SVG bar or
-slope chart, **plus the same numbers as a real table**, all from one data object so they can't drift apart.
+**Goal:** A graphics-desk component that turns two to six numbers from the ArchieML doc into an accessible SVG bar or
+slope chart **plus the same numbers as a table**, all from one data object, and embeds it through the chunk 05 pipeline.
 
-**Reference:** diatour-nyt §VI.III (SVG with `title`/`desc`, `<details>` table, 320px first), §VI.VII.2
-(two or three chart types only, D3 scales for the math only, required `source` field, 3:1 contrast),
-§II "D3 is mostly two scales".
+**Reference:** diatour-nyt §VI.III (SVG `title`/`desc`, `<details>` table, 320px first), §VI.VII.2 (only two or three
+types, D3 scales for the math only, required `source`, 3:1 contrast), §III.II and §VII.VII (ai2html).
+**Skills:** `svelte-runes`, `svelte-template-directives`, `svelte-styling`; `svelte-layerchart` for the comparison task.
 
 ## Learn first
-- [d3-scale](https://d3js.org/d3-scale) (`scaleLinear`, `scaleBand`), and only that module
-- [W3C: Complex images](https://www.w3.org/WAI/tutorials/images/complex/), [MDN: SVG `<desc>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/desc)
-- [LayerCake](https://layercake.graphics/) (read it, decide whether you need it, and write why in the log)
-- [Chartability](https://chartability.fizz.studio/) heuristics
+- [d3-scale](https://d3js.org/d3-scale), and only `scaleLinear` and `scaleBand`
+- [W3C: Complex images](https://www.w3.org/WAI/tutorials/images/complex/), [Chartability](https://chartability.fizz.studio/)
+- [ai2html docs](http://ai2html.org/) (read even if you skip the stretch)
 
 ## Tasks
-- [ ] ArchieML block: `{.chart}` with `type: bar|slope`, `title`, `description`, `unit`, `source`, and a `[.data]` list of `label` / `value` (and `then` / `now` for slope).
-- [ ] `src/components/svelte/StatChart.svelte`:
-  - [ ] `npm i d3-scale`. Import **only** `scaleLinear` and `scaleBand`.
-  - [ ] Width from `bind:clientWidth` on a wrapper (Svelte's built-in ResizeObserver), designed at 320px first.
-  - [ ] `<svg role="img" aria-labelledby="t d">` with `<title>` and `<desc>` generated from the data.
-  - [ ] Labels **on** the bars (no legend). Values as text. Marks at 3:1 contrast or better against `--paper` in both themes.
-  - [ ] `<details><summary>View as a table</summary><table>` built from the same object, with `<caption>` and `<th scope>`.
-  - [ ] `<figcaption>` with the source. **No source = the build fails** (chunk 03 validation).
-  - [ ] One motion idea: bars grow from 0 on first view, disabled under reduced motion.
-- [ ] Render the chart in the demo story.
+- [ ] ArchieML: `{.graphic} graphic: stat-chart` with props `type: bar|slope`, `title`, `description`, `unit`, `source`, and `[.data]`.
+- [ ] `StatChart.svelte`:
+  - [ ] Width from `bind:clientWidth`. Design at 320px first. Scales come from `$derived`.
+  - [ ] `<svg role="img" aria-labelledby>` with `<title>` and `<desc>` generated from the data.
+  - [ ] Labels on the bars, values as text, marks at ≥3:1 contrast in both diatour themes.
+  - [ ] `<details><summary>View as a table</summary>` with a table built from the same object (`<caption>`, `<th scope>`).
+  - [ ] Source in the `figcaption`. One motion idea (bars grow) that is off under reduced motion.
+- [ ] Embed entries (`stat-chart.server.ts`, `stat-chart.client.ts`) and a preview route.
+- [ ] **Comparison:** rebuild one chart with LayerChart (`svelte-layerchart` skill). Compare bytes, accessibility and control in a table in the log. Keep whichever wins.
+- [ ] *Stretch, the Times's Illustrator path:* make a three-artboard chart in Illustrator, export with ai2html, and embed the HTML fragment through a `graphic: ai2html` block.
 
 ## Done when
-- VoiceOver/NVDA reads the title, description and the table.
-- Charts are legible at 320px and don't overflow at 1440px.
-- Lighthouse accessibility for the page stays at 100.
+- A screen reader reads the title, description and table. Lighthouse accessibility is 100.
+- The chart is legible at 320px and holds at 1440px, in the text column and at `bleed` width.
 
 ## Concepts to write about
-- Scales: domain → range, and why that's 80% of D3
-- One data object → SVG, description and table: "single source of truth"
-- When a chart should be cut (the "honest test" from §VI.IV)
+- Scales: domain → range
+- One data object → SVG, description and table
+- Hand-rolled D3 vs LayerChart vs ai2html: when each fits

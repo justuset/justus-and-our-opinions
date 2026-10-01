@@ -7,6 +7,7 @@ concepts it taught.
 |---|-------|------|
 | 01 | [Repo setup, first commit and README](01-repo-setup.md) | 2026-10-01 |
 | 02 | [Researching the reference and writing the plan](02-research-and-plan.md) | 2026-10-01 |
+| 03 | [Layout guide, Svelte skills, and switching to a Times-shaped stack](03-times-shaped-stack.md) | 2026-10-01 |
 
 ## Entry template
 

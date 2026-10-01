@@ -84,9 +84,9 @@ appearing twice, and a comment count that goes stale.
 > "Server: headline, dek, byline, body text, images and static charts. Client: only the interactive islands …
 > so text never waits on JavaScript."
 
-The frontend artifact lists **Astro** ("mostly static pages with interactive islands in any framework") as
-an option next to Next.js, React Router and plain Vite. Astro is the only one of these that runs **Svelte and React
-islands on the same page** while shipping zero JavaScript for the text. See `docs/architecture.md`.
+The project keeps the principle (text never waits on JavaScript) but follows the Times's actual shape: the
+article is **React rendered on a Node server and hydrated**, and **graphics come from a separate Svelte/SvelteKit
+project and are embedded** as server-rendered fragments. See `docs/architecture.md`.
 
 ## 6. React template pattern (diatour-nyt §VIII.VIII)
 
@@ -98,7 +98,7 @@ const BLOCKS = { text: TextBlock, quote: PullQuote, image: Figure,
                  chart: lazy(() => import('./blocks/Chart')) };
 ```
 
-We use the same idea at the Astro level: `BlockRenderer.astro` maps `block.type` to an Astro, Svelte or React component.
+We use this pattern directly in `apps/story`: `BlockRenderer.tsx` maps `block.type` to a React component, or to `<Embed>` for Svelte graphics.
 
 ## 7. Scrollytelling engine (diatour-nyt-frontend §VIII.VI)
 

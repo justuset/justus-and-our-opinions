@@ -1,31 +1,32 @@
-# Chunk 04: Vanilla JavaScript enhancements
+# Chunk 04: Hydration and page behaviors
 
-**Goal:** Add the small behaviors every story gets, in **plain JavaScript**, with no framework. Each one must be
-progressive: the page from chunk 02 still works if the script never runs.
+**Goal:** Turn on client hydration (as the Times article does) and add the behaviors every story gets: reading
+progress, a contents drawer, share and footnotes. Each one must leave the server-rendered page fully usable if JS fails.
 
-**Reference:** diatour-nyt §VIII.V (event loop, delegation, observers, rAF), §VIII.IV (popover, dialog, view
-transitions, Custom Highlight API), and the diatour artifacts' own TOC drawer and read-progress dots.
+**Reference:** diatour-nyt §VIII.V (event loop, observers, rAF, passive listeners), §VIII.VII (`useEffectEvent`),
+§VIII.X (INP, focus, `aria-live`), §VIII.IV (popover, anchor positioning, Custom Highlight API), and the diatour
+artifacts' own TOC drawer with read dots. Guide §4 (CLS).
 
 ## Learn first
-- [What the heck is the event loop anyway?](https://www.youtube.com/watch?v=8aGhZQkoFbQ) (talk)
-- [MDN: IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API), [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API), [Web Share API](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share)
-- [Astro: scripts and event handling](https://docs.astro.build/en/guides/client-side-scripts/)
+- [react.dev: `hydrateRoot`](https://react.dev/reference/react-dom/client/hydrateRoot) and [hydration mismatches](https://react.dev/reference/react-dom/client/hydrateRoot#handling-different-client-and-server-content)
+- [What the heck is the event loop anyway?](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
+- [MDN: IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API), [Web Share API](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share), [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
 
 ## Tasks
-- [ ] `src/lib/motion.ts`: `prefersReducedMotion()` plus a `matchMedia` change listener. Every animation in the project imports this.
-- [ ] **Reading progress bar:** a thin top bar, scroll handler throttled with `requestAnimationFrame`, `{ passive: true }`. Decorative, so `aria-hidden`. It tracks position rather than animating, so it stays on under reduced motion. Note that decision in the log.
-- [ ] **TOC drawer:** `details`/`summary` built from the story's `h2`s at build time. The script marks the current section (IntersectionObserver) and adds a "read" dot (saved in `localStorage` inside try/catch).
-- [ ] **Share:** `navigator.share` when it's available. Otherwise copy the link to the clipboard and announce "Link copied" in an `aria-live="polite"` region.
-- [ ] **Method note:** a "How we did this" `popover` button. No JS needed, just the feature.
-- [ ] **Footnotes:** anchor links with `:target` styling. Then try [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) for side notes on wide screens, with plain footnotes as the fallback.
-- [ ] Wire each behavior as `<script>` inside its Astro component (Astro bundles and dedupes it).
+- [ ] Confirm hydration: open `entry.client.tsx` and find the `hydrateRoot` call. Add a deliberate mismatch (`new Date()` in render), read the warning, then fix it the right way: the server renders an absolute `<time>`, and the relative label is set after mount.
+- [ ] `app/lib/motion.ts`: a `usePrefersReducedMotion()` hook (SSR-safe, defaults to `true` on the server).
+- [ ] `ReadingProgress`: decorative (`aria-hidden`). The scroll listener is passive and throttled with rAF, with the logic in `useEffectEvent`.
+- [ ] `ContentsDrawer`: diatour `details`/`summary` built from the story's headings on the server. On the client, it marks the current section with IntersectionObserver and shows "read" dots (`localStorage` in try/catch).
+- [ ] `ShareButton`: `navigator.share` when available, otherwise copy to clipboard plus an `aria-live="polite"` "Link copied." The server render is a plain link.
+- [ ] Method note: a "How we did this" `popover` (it works before hydration).
+- [ ] Footnotes: anchor links with `:target` styling. *Stretch:* CSS anchor positioning for side notes at the ≥75em tier.
 
 ## Done when
-- Disabling JavaScript (DevTools → Run command → "Disable JavaScript") leaves a fully readable page with working anchor links.
-- The Performance panel shows no long tasks (over 50ms) while scrolling.
-- Share works on a phone (native sheet) and on desktop (copy + announcement read by VoiceOver/NVDA).
+- With JS off, the page from chunk 02 works fully: anchor links, the contents `details` and the method popover.
+- No hydration warnings in the console.
+- The Performance panel shows no long tasks over 50ms while scrolling. CLS is 0.00.
 
 ## Concepts to write about
-- Event delegation with `closest()`
-- Why `requestAnimationFrame` beats `setInterval` for visual updates
-- What "progressive enhancement" bought you when the script failed
+- What hydration does, and why a mismatch happens
+- `useEffectEvent`: why the listener sees fresh props without re-subscribing
+- Progressive enhancement, as seen from React

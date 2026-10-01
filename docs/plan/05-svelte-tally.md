@@ -1,34 +1,44 @@
-# Chunk 05: Svelte island, part 1: the Tally
+# Chunk 05: Graphics desk and the embed pipeline, first graphic: Tally
 
-**Goal:** First Svelte 5 component: a row of marks that fills in as the reader arrives (e.g. "42 car-free blocks
-since 2019"). Then build the same island **by hand without Astro**, to see what Astro does for you.
+**Goal:** Build the first Svelte 5 graphic in the SvelteKit graphics app, then the **embed pipeline** that lets
+the React story server-render it and hydrate it, the Times pattern of desk-built graphics embedded in the article template.
 
-**Reference:** diatour-nyt §VI.II (tally sketch in Svelte 5), §VI.VII.1 (tally template: edge cases, ArchieML
-fields), §II.VI (Vue → Svelte runes mapping: `ref` → `$state`, `computed` → `$derived`, `watch` → `$effect`).
+**Reference:** diatour-nyt §VI.II (tally sketch), §VI.VII.1 (tally template: edge cases, ArchieML fields),
+§III.II (Svelte at the Times), §II.VI (Vue → runes). `docs/architecture.md`, "The embed contract."
+**Skills:** `svelte-runes`, `svelte-template-directives` (`{@attach}`), `svelte-styling`, `sveltekit-structure`
+(prerender, `<svelte:boundary>`, ssr-hydration reference).
 
 ## Learn first
-- [Svelte tutorial](https://svelte.dev/tutorial), the "Basic Svelte" section (runes, props, each blocks, bindings)
-- [Svelte docs: `$state`, `$derived`, `$effect`, `$props`](https://svelte.dev/docs/svelte/what-are-runes)
-- [Astro client directives](https://docs.astro.build/en/reference/directives-reference/#client-directives)
+- [Svelte tutorial](https://svelte.dev/tutorial): Basic Svelte, runes, each blocks, attachments
+- [Svelte: `mount` / `hydrate`](https://svelte.dev/docs/svelte/imperative-component-api) and [`svelte/server` `render`](https://svelte.dev/docs/svelte/svelte-server)
+- [SvelteKit: page options, `prerender`](https://svelte.dev/docs/kit/page-options)
 
 ## Tasks
-- [ ] `src/components/svelte/Tally.svelte` with props `total`, `label` and `span`.
-  - [ ] The marks are `aria-hidden`. The count is **live text** in a `figcaption` (`42 car-free blocks since 2019`), so screen readers get the fact, not 42 spans.
-  - [ ] Fill in when 50% visible (IntersectionObserver in `$effect`, with `disconnect` as cleanup).
-  - [ ] Reduced motion: show the full count immediately.
-  - [ ] Large counts (over 100) group into tens.
-  - [ ] CSS grid plus a container query, so marks resize to the column.
-  - [ ] Style with tokens only. Marks use `--ink` at low opacity, filled marks at full `--ink`.
-- [ ] Map `tally` in `BlockRenderer.astro` → `<Tally client:visible {...block} />`.
-- [ ] **No-JS fallback:** the server-rendered HTML already shows all marks filled. Animation is the enhancement. (Check: does `client:visible` server-render the component? Yes. Confirm in the page source.)
-- [ ] **Under the hood exercise** (`experiments/manual-island/`): a plain Vite page that finds `<div data-island="tally" data-props='{"total":42}'>` and calls Svelte's `mount(Tally, { target, props })` when it's visible. Write 10 lines in the log comparing it with Astro's output.
+### The graphic
+- [ ] `apps/graphics/src/lib/graphics/Tally.svelte`, with `let { total, label, span } = $props()`.
+  - [ ] Marks are `aria-hidden`. The count is **live text** in a `figcaption`.
+  - [ ] Server render: all marks filled (the no-JS end state). On the client, reset and fill when 50% visible, with an **`{@attach}`** function that creates and disconnects the IntersectionObserver (not `$effect` + `bind:this`).
+  - [ ] Reduced motion: stay full. Large counts (over 100) group into tens. Grid + container query sizing. Tokens only.
+- [ ] Wrap the graphic in `<svelte:boundary>` with a quiet failed state.
+- [ ] Preview route `src/routes/preview/[graphic]/+page.svelte` with three example prop sets. The desk can review graphics without the story.
+
+### The pipeline
+- [ ] `apps/graphics/src/embeds/tally.server.ts` → `export function render(props) { return svelteRender(Tally, { props }) }`.
+- [ ] `apps/graphics/src/embeds/tally.client.ts` → `export function hydrate(target, props) { return svelteHydrate(Tally, { target, props }) }`.
+- [ ] `scripts/build-embeds.mjs`: Vite library builds, SSR for `*.server.ts` and browser for `*.client.ts`, written to `dist/embeds/<graphic>/`, plus `manifest.json` (file hashes).
+- [ ] Story side, `app/components/embed/Embed.tsx`:
+  - [ ] In the loader (server), import `dist/embeds/<graphic>/fragment.js` and call `render(props)`. Pass `{ html, css }` to the component.
+  - [ ] Render `<figure className="embed" style={{ aspectRatio }} data-graphic data-props dangerouslySetInnerHTML={{ __html: html }} />`, memoized so React never re-renders its children.
+  - [ ] On the client, an IntersectionObserver triggers a dynamic `import(embedUrl)` → `hydrate(el, props)`. Clean up with `unmount` on route change.
+  - [ ] Wrap it in an `ErrorBoundary`.
+- [ ] Map `graphic` blocks in `BlockRenderer` → `<Embed>`. Add `{.graphic} graphic: tally …` to the demo `.aml`.
 
 ## Done when
-- The tally animates once, never replays on scroll back, and stops cleanly when you navigate away.
-- With reduced motion on, it's full on first paint.
-- The Svelte runtime downloads **only when** the tally nears the viewport (check the Network tab).
+- The tally appears in the **page source** of the React story (server-rendered) and animates once on scroll.
+- The Network panel shows `embed.js` for the tally loading only near the viewport. React and Svelte both run on the page with no hydration warnings.
+- Breaking the embed (throw in `hydrate`) leaves the server HTML in place and the essay intact.
 
 ## Concepts to write about
-- Runes vs Vue's composition API: the side-by-side table
-- What "hydration" means, and what Astro's `<astro-island>` element is doing
-- Why the count must be text, not just marks
+- `{@attach}` vs `$effect` + `bind:this`
+- `render()` → `hydrate()`: Svelte's SSR contract, side by side with React's
+- Why the story app knows only `{ graphic, props }`: team boundaries as code boundaries

@@ -1,40 +1,38 @@
-# Chunk 02: Static essay skeleton (HTML and CSS only)
+# Chunk 02: Server-rendered essay (React SSR, no client behaviors yet)
 
-**Goal:** The whole article page, hard-coded, with **no JavaScript at all**. This is the baseline every island
-improves on, and the version a reader on a bad connection or with JS off gets.
+**Goal:** The full Opinion article as **React components rendered on the server**, which is how the Times article
+template works. It uses the diatour look and the guide's three-rail layout, and it's fully readable before any
+JavaScript runs.
 
-**Reference:** diatour-nyt §VI.I (page modules), §VIII.II (essay skeleton, landmarks), §VIII.III (named grid
-lines, container queries), and §VI.VI (QA: the floating button covering text, the duplicate image).
+**Reference:** diatour-nyt §VI.I (page modules), §VIII.II (essay skeleton, landmarks), §VI.VI (QA bugs to
+design against); `docs/layout-system.md` §3–5 (rails, breakpoint choreography, source order, defensive layout);
+guide §2 and §4.
 
 ## Learn first
+- [React Router: route modules, `meta` and `links`](https://reactrouter.com/start/framework/route-module)
 - [web.dev Learn HTML: semantic HTML](https://web.dev/learn/html/semantic-html)
-- [Josh Comeau: interactive guide to CSS Grid](https://www.joshwcomeau.com/css/interactive-guide-to-grid/)
-- [Every Layout](https://every-layout.dev/) (the Stack and Center layouts)
+- [Josh Comeau: interactive guide to Grid](https://www.joshwcomeau.com/css/interactive-guide-to-grid/)
+- [Tufte CSS: sidenotes](https://edwardtufte.github.io/tufte-css/#sidenotes)
 
 ## Tasks
-- [ ] `src/layouts/Essay.astro`: `<html lang>`, `<head>` metadata (title, description, Open Graph, canonical), skip link, `<header>` / `<main>` / `<footer>` landmarks.
-- [ ] Astro components (static) in `src/components/astro/`:
-  - [ ] `SiteHeader`: the "Our Opinions" wordmark (not a Times logo) and a section link. Sticky, slim.
-  - [ ] `StoryHeader`: kicker (`Opinion | Guest Essay`), `h1`, dek, byline with avatar and `<time datetime>`.
-  - [ ] `ActionRow`: share, gift and save as `<button>`s and links. Static for now.
-  - [ ] `Figure`: `figure` + `figcaption` + `.credit`.
-  - [ ] `PullQuote`: `blockquote` + `cite`.
-  - [ ] `Section`: `section[aria-labelledby]` + `h2`.
-  - [ ] `EndMatter`: about the author, "More from Our Opinions" (three static cards).
-- [ ] Body grid: `grid-template-columns: [full-start] 1fr [content-start] min(68ch, 100% - 2rem) [content-end] 1fr [full-end]`, with `.bleed` and `.wide` breakouts.
-- [ ] Cards use container queries (`container: card / inline-size`), so they adapt to their column, not the viewport.
-- [ ] Reserve a lane for a future floating button on phones (`padding-right` / `padding-bottom` with `env(safe-area-inset-*)`) — the QA bug from the teardown.
-- [ ] Hard-code the demo story's copy into `src/pages/opinion/three-writers.astro`.
-- [ ] Print stylesheet: hide the chrome, show link URLs after links.
+- [ ] `app/root.tsx`: `<html lang>`, theme attribute, skip link, `<Meta/> <Links/>` (title, description, Open Graph, canonical).
+- [ ] Chrome components (`app/components/chrome/`): `SiteHeader` (the "Our Opinions" wordmark, not a Times logo), `ActionRow` (share, gift and save as real buttons and links, no behavior yet), `EndMatter`.
+- [ ] Story components (`app/components/story/`): `StoryHeader` (kicker `Opinion | Guest Essay`, `h1`, dek), `StoryMeta` (avatar, bio, `<time dateTime>`, a contents placeholder), `Figure`, `PullQuote`, `Callout`, `Section`.
+- [ ] Layout from `layout-system.md` §3: `.story-body` with `StoryMeta` in the left rail and callouts floating into the right rail. Implement all **four tiers** (≥75em, 60–75em, 48–60em, <48em).
+- [ ] Source order = single-column reading order. Callouts follow their paragraph in the JSX.
+- [ ] Defensive layout: `min-width: 0` on grid children, `overflow-wrap: anywhere` on links and code, `aspect-ratio` on media placeholders.
+- [ ] Reserve a lane for floating controls on phones (`padding-inline-end`, `env(safe-area-inset-*)`). This fixes the teardown's floating-share bug before it exists.
+- [ ] Route `app/routes/opinion.$slug.tsx`, with the demo copy hard-coded in a TS object for now (chunk 03 replaces it).
+- [ ] Print stylesheet.
+- [ ] *Exercise:* write `scripts/ssr-by-hand.mjs`, which calls `renderToString(<StoryHeader …/>)` from `react-dom/server` and prints the HTML. Compare it with what the framework does.
 
 ## Done when
-- The page passes [validator.w3.org](https://validator.w3.org/nu/) with no errors.
-- Keyboard: Tab reaches the skip link first, then every control in a logical order, with a visible focus ring.
-- 320, 375, 768, 1024 and 1440px all look intentional (screenshot each one into `docs/learning-log/img/`).
-- The heading outline (from a headings bookmarklet or DevTools) reads `h1 → h2 → h3` with no skipped levels.
-- The built page loads **0 bytes of JS**.
+- With JavaScript disabled, the article is complete and readable at every tier.
+- Screenshots at 375, 800, 1000 and 1280px show the four tiers (`docs/learning-log/img/`).
+- The [Nu HTML validator](https://validator.w3.org/nu/) shows no errors. The heading outline is `h1 → h2 → h3`. A keyboard user reaches the skip link first.
+- At 200% zoom, the layout drops a tier instead of overflowing (em-based queries).
 
 ## Concepts to write about
-- Why `<time datetime>` matters for machines and screen readers
-- `min(68ch, 100% - 2rem)`: how one expression gives you a measure and a gutter
-- Landmarks vs ARIA roles: don't add a role the native element already provides
+- What the server sends vs what React does on hydration (chunk 04 adds hydration)
+- Why source order matters more than visual order
+- How the float-into-the-rail sidenote works at each tier

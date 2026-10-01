@@ -1,37 +1,35 @@
-# Chunk 07: Svelte island, part 3: Scrollytelling
+# Chunk 07: Graphic: Scrollytelling
 
-**Goal:** A reusable scroll-driven section: a sticky graphic that changes state as text steps cross the middle
-of the screen. This is the signature "interactive story" pattern.
+**Goal:** The signature visual-essay pattern: a sticky graphic that changes state as text steps cross the middle of
+the screen. It's built by the graphics desk and embedded full-bleed in the React story.
 
 **Reference:** diatour-nyt-frontend §VIII.VI (step engine, `rootMargin: "-50% 0px -50% 0px"`, declarative states,
-ResizeObserver, mobile layout), its quiz Q (why not `getBoundingClientRect()` on every scroll), and diatour-nyt
-§III.III (restraint: one motion idea, everything can switch off).
+ResizeObserver, mobile layout), and its quiz on why not to call `getBoundingClientRect()` on every scroll. diatour-nyt §III.III (restraint).
+**Skills:** `svelte-runes`, `svelte-template-directives` (`{@attach}`, `{@render}` snippets), `svelte-styling`.
 
 ## Learn first
-- [Scrollama](https://github.com/russellsamora/scrollama) README (understand it, then build without it)
-- [The Pudding: Responsive scrollytelling best practices](https://pudding.cool/process/responsive-scrollytelling/)
-- [Mike Bostock: How to Scroll](https://bost.ocks.org/mike/scroll/)
-- [Svelte: snippets](https://svelte.dev/docs/svelte/snippet) (for passing the graphic into the scroller)
+- [Scrollama](https://github.com/russellsamora/scrollama) (understand it, then build without it)
+- [The Pudding: responsive scrollytelling](https://pudding.cool/process/responsive-scrollytelling/), [Mike Bostock: How to Scroll](https://bost.ocks.org/mike/scroll/)
+- [Svelte snippets](https://svelte.dev/docs/svelte/snippet)
 
 ## Tasks
-- [ ] ArchieML block: `{.scrolly}` with a `graphic` key (which visual to use) and a `[.steps]` list (`text`, `state`).
-- [ ] `src/components/svelte/Scrolly.svelte`:
-  - [ ] Steps are real `<p>`s in normal flow. With no JS, the story reads top to bottom, and the graphic shows its final state once as a static figure.
-  - [ ] Graphic wrapper: `position: sticky; top: 0; height: 100svh`.
-  - [ ] One IntersectionObserver for all steps, using `rootMargin: "-50% 0px -50% 0px"`. Set `active = Number(el.dataset.step)`.
-  - [ ] States are **declarative**: `graphicState = states[active]`. Step 3 looks the same whether you came from 2 or from 4.
-  - [ ] Render the graphic through a snippet prop, so any visual (the StatChart from chunk 06, a map, an image sequence) can plug in.
-  - [ ] Phones: one column, graphic full-bleed behind text cards with a solid `--paper` backing for contrast.
+- [ ] ArchieML: `{.graphic} graphic: scrolly`, with `visual` (which graphic to drive) and `[.steps]` (`text`, `state`).
+- [ ] `Scrolly.svelte`:
+  - [ ] Steps are real `<p>`s. Server render: steps in order, then the visual's final state as a static figure, which is the no-JS story.
+  - [ ] Visual wrapper: `position: sticky; inset-block-start: 0; block-size: 100svh`.
+  - [ ] One IntersectionObserver for all steps, attached with `{@attach}`. `active` is `$state`, and `visualState = $derived(states[active])` (declarative).
+  - [ ] The visual is passed as a **snippet** (`{@render visual(visualState)}`), so StatChart, a map or an image sequence can plug in.
+  - [ ] Phones (<48em): visual full-bleed, with text cards on a solid `--paper` backing.
   - [ ] Reduced motion: jump between states without tweening.
-- [ ] A demo graphic: the chart from chunk 06, highlighting one bar per step.
-- [ ] Keyboard check: scrolling with Space, Page Down and arrow keys changes the state at each step, and Tab reaches any links inside the steps.
+- [ ] Embed it as `bleed` in the story. The `<Embed>` wrapper must not cut off `position: sticky` (no `overflow` on ancestors; check `contain` too).
+- [ ] A demo that drives StatChart, highlighting one bar per step.
 
 ## Done when
-- No scroll event listeners at all (search the code for `addEventListener('scroll'`, which should return nothing).
-- Works on iOS Safari (real device or Playwright WebKit). Watch the URL bar resize, momentum scroll and `100svh`.
-- Fast-flicking up and down never leaves the graphic in a mixed state.
+- The code has no scroll listeners.
+- Works in iOS Safari or Playwright WebKit (URL bar resizing, momentum scroll, `svh`).
+- Fast flicks never leave a mixed state. Space, Page Down and the arrow keys step through it correctly.
 
 ## Concepts to write about
-- Why IntersectionObserver beats measuring every scroll event
-- The three ways sticky breaks (overflow on an ancestor, no `top`, a parent too short)
-- Declarative vs imperative state for animations
+- IntersectionObserver vs measuring on scroll
+- Three ways `sticky` breaks, and the one the embed wrapper almost caused
+- Snippets as "slots with arguments"

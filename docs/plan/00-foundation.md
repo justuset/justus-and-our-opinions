@@ -1,36 +1,36 @@
-# Chunk 00: Project foundation
+# Chunk 00: Monorepo foundation
 
-**Goal:** A running Astro project with Svelte and React wired in, formatting, linting and a CI skeleton, so
-every later chunk starts from a clean, checked base.
+**Goal:** One repo with two apps shaped like the Times's two front-end worlds (a React story page and a SvelteKit
+graphics desk) and two shared packages, all linted, type-checked and built in CI.
 
-**Reference:** diatour-nyt §VIII.IX (Vite, TypeScript, lint, tests) and §XI (Git, GitHub, deployment). See also `docs/architecture.md`.
+**Reference:** `docs/architecture.md`; diatour-nyt §III.I (React + Node SSR), §III.II (Svelte graphics
+toolkit), §VIII.IX (Vite, TypeScript, lint), §XI (Git, GitHub, deployment).
+**Skills:** `svelte-deployment` (Vite + plugin versions), `sveltekit-structure` (project layout).
 
 ## Learn first
-- [Astro: Getting started](https://docs.astro.build/en/getting-started/) and [Islands architecture](https://docs.astro.build/en/concepts/islands/)
-- [Astro + Svelte](https://docs.astro.build/en/guides/integrations-guide/svelte/), [Astro + React](https://docs.astro.build/en/guides/integrations-guide/react/)
-- [Node version managers (nvm / fnm)](https://nodejs.org/en/download/package-manager)
+- [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces)
+- [React Router 7: framework mode, installation](https://reactrouter.com/start/framework/installation) and [rendering strategies](https://reactrouter.com/start/framework/rendering)
+- [SvelteKit: creating a project](https://svelte.dev/docs/kit/creating-a-project) and [project structure](https://svelte.dev/docs/kit/project-structure)
 
 ## Tasks
-- [ ] Install Node LTS (22 or later). Add `.nvmrc` with the version number.
-- [ ] `npm create astro@latest .` → choose **Empty**, **TypeScript: strict**, install deps, don't init git (already done).
-- [ ] `npx astro add svelte react`. Read the diff it makes to `astro.config.mjs` and `package.json`.
-- [ ] Add a `.gitignore` (`node_modules/`, `dist/`, `.astro/`, `test-results/`, `playwright-report/`).
-- [ ] Prettier with `prettier-plugin-astro` and `prettier-plugin-svelte`. Add a `format` script.
-- [ ] ESLint (flat config) with `eslint-plugin-astro`, `eslint-plugin-svelte`, `eslint-plugin-react-hooks`, `jsx-a11y`. Add a `lint` script.
-- [ ] `npm run check`, which runs `astro check` for types.
-- [ ] One proof page, `src/pages/index.astro`, rendering a tiny Svelte counter and a tiny React counter, both `client:visible`.
-- [ ] `.github/workflows/ci.yml`: install → `lint` → `check` → `build` on every push and PR.
-- [ ] `.editorconfig` (2 spaces, LF, final newline).
+- [ ] Node LTS (22+), `.nvmrc`, `.editorconfig`, `.gitignore` (`node_modules`, `build`, `dist`, `.svelte-kit`, `.react-router`, test reports).
+- [ ] Root `package.json` with `"private": true` and `"workspaces": ["apps/*", "packages/*"]`.
+- [ ] `apps/story`: `npx create-react-router@latest apps/story` (TypeScript). Keep **`ssr: true`** (Node server rendering, like the Times). Rename the package to `@opinion/story`.
+- [ ] `apps/graphics`: `npx sv create apps/graphics` (minimal, TypeScript, Prettier, ESLint, Vitest). Add `@sveltejs/adapter-static` and set `prerender = true` in the root layout. Rename to `@opinion/graphics`. Dev port 5174.
+- [ ] `packages/design-system`: an empty `tokens.css` and a `package.json` with `"exports": { "./tokens.css": "./tokens.css", … }`.
+- [ ] `packages/archie`: TypeScript library with a stub `parseStory()`.
+- [ ] Both apps import `@opinion/design-system/tokens.css`. Prove it by setting `body { background: var(--paper) }` from the token.
+- [ ] Root scripts: `dev` (both apps in parallel with `npm-run-all2` or `concurrently`), `build`, `check`, `lint`, `format`.
+- [ ] One shared Prettier config (with `prettier-plugin-svelte`) and an ESLint flat config (react-hooks, jsx-a11y, svelte).
+- [ ] `.github/workflows/ci.yml`: `npm ci` → lint → check → build on push and PR.
 
 ## Done when
-- `npm run dev` serves the proof page, and both counters work.
-- `npm run build && npm run preview` works. **View the page source**: the counters' text is in the HTML before any JS runs.
-- CI is green on the pushed branch.
+- `npm run dev` serves the story app on :5173 and the graphics app on :5174.
+- **View source** on the story page: the HTML arrives already rendered (SSR), before any JS runs.
+- Changing a token in `packages/design-system` updates **both** apps.
+- CI is green.
 
-## Concepts to write about in the log
-- What `client:visible` actually does (look at the network tab: when does the Svelte runtime download?)
-- The difference between `dependencies` and `devDependencies`
-- Why we commit `package-lock.json`
-
-## Commit plan
-`chore: scaffold astro project` → `chore: add svelte and react integrations` → `chore: add prettier and eslint` → `ci: add build workflow`
+## Concepts to write about
+- What a workspace symlink is (`ls -la node_modules/@opinion`)
+- SSR vs CSR vs prerender: which one each app uses, and why
+- Why the graphics app is a separate project (the Times graphics desk analogy)
