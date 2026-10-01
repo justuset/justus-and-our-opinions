@@ -185,7 +185,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it is | Becomes in `dist/` |
 |------|-----------|--------------------|
 | `app.html` | The document shell around every page. Holds `<html lang>`, the viewport meta, the **chunk 5 `<head>` script** (`.js` class + 2.5s failsafe), the Google Fonts link, and the `%sveltekit.head%` / `%sveltekit.body%` slots SvelteKit fills | The outside of `index.html` |
-| `app.css` | **Global** tokens and base rules: gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities. Ported from the prototype's chunks 2–5 | `assets/0.<hash>.css` |
+| `app.css` | **Global** tokens and base rules: gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Ported from the prototype's chunks 2–6 | `assets/0.<hash>.css` |
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
 | `routes/+layout.svelte` | The root layout: imports `app.css` once and renders the page inside it | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
@@ -202,11 +202,11 @@ shows which prototype chunk each one mirrors (see §11).
 
 | Component | Renders | Status |
 |-----------|---------|--------|
-| `Header.svelte` | Kicker, headline, dek and the art stage. A fixed 675px box, height-scaled art, and the intro fade-up after `document.fonts.ready` (via an `{@attach}`) | ✅ Ported (chunks 4–5) |
+| `Header.svelte` | Kicker, headline, dek and the art stage. A fixed 675px box, height-scaled **twin** art (portrait for phones, landscape for desktop), and the intro fade-up after `document.fonts.ready` (via an `{@attach}`) | ✅ Ported (chunks 4–6) |
 | `Byline.svelte` | "By … · `<time>`" in the text column | ✅ Ported (chunks 1–2) |
 | `Text.svelte` | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
-| `TwoUp.svelte` | Two images + one shared caption, full bleed | ⏳ Markup final. Side-by-side layout at chunk 6 |
+| `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>` | ⏳ List final. Desktop stage + SVG connectors at chunk 7 |
 | `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ⏳ Static stack. Engine at chunk 8 |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ⏳ Hard cuts at chunk 9 |

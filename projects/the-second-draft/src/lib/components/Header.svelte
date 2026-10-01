@@ -1,7 +1,9 @@
-<!-- Header: headline, dek and the art stage (prototype chunks 4 and 5).
+<!-- Header: headline, dek and the art stage (prototype chunks 4, 5 and 6). ✅ Ported.
      A fixed-height box with two absolutely positioned layers: art behind, copy on top.
      The art scales by height, so it crops at the sides and never squashes.
-     Planned: the art stage becomes a twin Lottie (big_assets/videos/hero/hero.json) in chunk 10; the SVG stays as the no-JS poster. -->
+     The art comes as twins (chunk 6): a portrait artboard for phones and a landscape one for desktop. Only one displays
+     at a time (the .mobile-only / .desktop-only utilities at the end of app.css).
+     Planned: a twin Lottie (big_assets/videos/hero/hero.json) in chunk 11, with these SVGs kept as the no-JS poster. -->
 <script>
   let { kicker, kind, headline, dek } = $props();
 
@@ -19,7 +21,23 @@
     <h1 class="headline">{headline}</h1>
     <p class="subtitle">{dek}</p>
   </div>
-  <div class="header-art">
+  <div class="header-art mobile-only">
+    <!-- 800×1200 portrait artboard. The copy covers about the top 55% on phones, so the art sits below it. -->
+    <svg viewBox="0 0 800 1200" aria-hidden="true" focusable="false">
+      <g class="art-page">
+        <rect x="120" y="760" width="460" height="560" transform="rotate(-7 350 1040)" />
+        <rect x="240" y="720" width="460" height="560" />
+      </g>
+      <g class="art-lines">
+        <path d="M300 820h340M300 870h340M300 920h280M300 1000h340M300 1050h300" />
+      </g>
+      <g class="art-ring">
+        <circle cx="660" cy="1080" r="90" />
+        <circle cx="110" cy="130" r="60" />
+      </g>
+    </svg>
+  </div>
+  <div class="header-art desktop-only">
     <!-- 1800×1200 landscape artboard. Key content in the middle 40% (x 540–1260). The circles are the squash test. -->
     <svg viewBox="0 0 1800 1200" aria-hidden="true" focusable="false">
       <g class="art-page">

@@ -54,6 +54,20 @@
   --dek-size: 1.1rem;
   --dek-measure: 30ch;
   --gap-byline-desktop: 100px;
+
+  /* two-up (chunk 6): phone values, overridden at 640px and 1250px */
+  --two-up-margin: 40px;
+  --two-up-pad: 20px;
+  --two-up-gap: 12px;
+  --two-up-max: none;
+  --caption-size: 15px;
+  --caption-leading: 1.2;
+}
+@media (min-width: 640px) {
+  :root { --two-up-margin: 70px; --caption-leading: 30px; }
+}
+@media (min-width: 1250px) {
+  :root { --two-up-margin: 100px; --two-up-pad: 64px; --two-up-max: 1440px; }
 }
 @media (max-width: 739px) {
   :root { --text-size: 18px; --text-leading: 27px; }
@@ -87,3 +101,10 @@ img, svg { display: block; max-width: 100%; }
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+
+/* ============ 99. TWINS (chunk 6): keep LAST in this file ============
+   Two versions of a visual, one per screen shape (like ai2html artboards), switching at 1024px.
+   These only ever HIDE, with !important, so a component's own display (e.g. the header art's flex) can never
+   un-hide the wrong twin. That's the cascade bug in the reference template. */
+@media (max-width: 1023.98px) { .desktop-only { display: none !important; } }
+@media (min-width: 1024px)    { .mobile-only  { display: none !important; } }

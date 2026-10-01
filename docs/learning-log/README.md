@@ -15,6 +15,7 @@ concepts it taught.
 | 08 | [Phase 1, chunk 4: the header](08-chunk-4-header.md) | 2026-10-01 |
 | 09 | [Phase 1, chunk 5: intro motion](09-chunk-5-intro-motion.md) | 2026-10-01 |
 | 10 | [The Birdkit-style story project](10-birdkit-story-project.md) | 2026-10-01 |
+| 11 | [Phase 1, chunk 6: two-up images and twins](11-chunk-6-two-up-and-twins.md) | 2026-10-01 |
 
 ## Entry template
 

@@ -74,6 +74,21 @@
       --intro-stagger: .2s;      /* the dek follows the headline */
       --intro-rise: 15px;        /* headline starts this far down */
       --intro-rise-dek: 10px;
+
+      /* two-up (measured): phone values here, overridden at 640px and 1250px below */
+      --two-up-margin: 40px;
+      --two-up-pad: 20px;
+      --two-up-gap: 12px;
+      --two-up-max: none;
+      --caption-size: 15px;
+      --caption-leading: 1.2;
+      --twin-switch: 1024px;   /* documentation only: media queries can't read custom properties, so 1024px is repeated below */
+    }
+    @media (min-width: 640px) {
+      :root { --two-up-margin: 70px; --caption-leading: 30px; }
+    }
+    @media (min-width: 1250px) {
+      :root { --two-up-margin: 100px; --two-up-pad: 64px; --two-up-max: 1440px; }
     }
     @media (max-width: 739px) {
       :root { --text-size: 18px; --text-leading: 27px; }
@@ -220,6 +235,45 @@
        On body alone (as in the reference) there's no scrollbar, but script can still nudge the page 8px sideways
        (scrollTo, scrollIntoView, find-in-page). Clipping html as well removes the overflow entirely. */
     html, body { overflow-x: clip; }
+
+    /* ============ 7. TWO-UP (chunk 6) ============
+       Mobile-first: these base rules ARE the phone layout. Each min-width query below only adds to them. */
+    /* The <figure> itself is the flex container: <figcaption> must be a direct child of <figure>, so there's no inner wrapper. */
+    .two-up {
+      display: flex;
+      flex-direction: column;
+      gap: var(--two-up-gap);
+      margin-block: var(--two-up-margin);
+      margin-inline: 0;                  /* figure has a default 40px side margin; .bleed does the positioning */
+      padding-inline: var(--two-up-pad);
+      max-width: var(--two-up-max);      /* caps growth on very wide screens (.bleed still centers it) */
+    }
+    .two-up img {
+      display: block;                    /* no inline-image gap under the picture */
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 5;               /* width/height attributes reserve the space too, so nothing jumps */
+      object-fit: cover;
+    }
+    .group-caption {
+      padding-top: 9px;
+      font: var(--caption-size) / var(--caption-leading) var(--font-body);
+      color: var(--soft);
+    }
+    .group-caption .credit { color: var(--faint); }
+    @media (min-width: 640px) {
+      .two-up { flex-flow: row wrap; }
+      .two-up img { flex: 1 1 0; min-width: 0; }   /* basis 0: both images get exactly half, whatever their content */
+      .group-caption { flex: 0 0 100%; margin-top: 4px; padding-top: 0; }   /* 100% basis + wrap = its own row, no wrapper */
+    }
+
+    /* ============ 99. TWINS (chunk 6): keep LAST in the stylesheet ============
+       Two versions of a visual, one for each shape of screen, like ai2html artboards. Switch at 1024px.
+       These utilities only ever HIDE. A "show" rule (display: block) would override each component's own display,
+       e.g. the header art's flex. They come last, with !important, so no component rule can undo them: that ordering
+       is exactly the cascade bug in the reference, where .header-art { display: flex } beat .desktop-only. */
+    @media (max-width: 1023.98px) { .desktop-only { display: none !important; } }
+    @media (min-width: 1024px)    { .mobile-only  { display: none !important; } }
   </style>
 </head>
 <body>
@@ -240,7 +294,7 @@
     { type: "byline",  author: "A. Writer", date: "2026-10-01" },
     { type: "text",    value: "Every essay you have read in a newspaper…" },
     { type: "text",    value: "We hide the drafts…" },
-    { type: "two-up",  images: [{ src: "draft-1.jpg", alt: "…" }, { src: "draft-4.jpg", alt: "…" }],
+    { type: "two-up",  images: [{ src: "two-up-draft-1.webp", alt: "…" }, { src: "two-up-draft-4.webp", alt: "…" }],
                        caption: "The first and fourth drafts of the same opening paragraph." },
     { type: "text",    value: "…" },
     { type: "text",    value: "…" },
@@ -267,7 +321,26 @@
       <h1 class="headline">The Second Draft</h1>
       <p class="subtitle">Most of what a reader sees was decided after the first version failed. That is where the argument lives.</p>
     </div>
-    <div class="header-art">
+    <!-- Twin art (chunk 6): a landscape artboard for desktop and a portrait one for phones, each composed for its shape.
+         Only one is displayed at any width (see section 99 of the CSS). -->
+    <div class="header-art mobile-only">
+      <!-- 800×1200 portrait artboard. On a phone the copy covers roughly the top 55% of the header, so the art sits
+           below it and keeps that band clear. Rendered 450px wide at 675px tall: a 375px screen crops ~37px each side. -->
+      <svg viewBox="0 0 800 1200" aria-hidden="true" focusable="false">
+        <g class="art-page">
+          <rect x="120" y="760" width="460" height="560" transform="rotate(-7 350 1040)"/>
+          <rect x="240" y="720" width="460" height="560"/>
+        </g>
+        <g class="art-lines">
+          <path d="M300 820h340M300 870h340M300 920h280M300 1000h340M300 1050h300"/>
+        </g>
+        <g class="art-ring">
+          <circle cx="660" cy="1080" r="90"/>
+          <circle cx="110" cy="130" r="60"/>
+        </g>
+      </svg>
+    </div>
+    <div class="header-art desktop-only">
       <!-- Placeholder art: three manuscript pages and two coffee rings, drawn on an 1800×1200 landscape artboard.
            It scales by height, so the sides crop on narrow screens. Key content sits in the middle 40% (x 540–1260).
            The circles are the squash test: if they ever turn oval, the art is being stretched. -->
@@ -294,7 +367,11 @@
 
   <p class="g-text">We hide the drafts because we think they make the writer look unsure. I think they do the opposite. A draft shows the moment an idea met resistance and changed shape, and that moment is usually the most persuasive part of the whole process.</p>
 
-  <section class="two-up bleed" data-block="two-up" aria-label="Two drafts of the same opening, side by side"></section>
+  <figure class="two-up bleed" data-block="two-up">
+    <img src="assets/two-up-draft-1.webp" alt="The first draft of the opening paragraph, crowded with qualifications." width="800" height="1000" loading="lazy" decoding="async">
+    <img src="assets/two-up-draft-4.webp" alt="The fourth draft of the same paragraph, about half as long." width="800" height="1000" loading="lazy" decoding="async">
+    <figcaption class="group-caption">The first and fourth drafts of the same opening paragraph. <span class="credit">Placeholder images</span></figcaption>
+  </figure>
 
   <p class="g-text">Look at the first and the fourth version of the same opening. The first one explains. The fourth one asks the reader to notice something. Nothing about the facts changed between them. What changed was the writer's sense of who was on the other side of the page.</p>
 
