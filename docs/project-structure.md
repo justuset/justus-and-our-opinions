@@ -192,7 +192,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `routes/+page.js` | Runs at build time: imports `content/story.json` and hands it to the page as `data.story` | Inlined into `index.html` |
 | `routes/+page.svelte` | **The story page.** A loop over `story.blocks`, where each block's `type` (and `scene` for scroll sections) picks a component from the `BLOCKS` map | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | `lib/assets.js` | **Generated.** `ASSET_BASE` is `/big_assets` in dev and `./_big_assets.<hash>` in production, plus an `asset(path)` helper. Committed, so `npm run dev` works on a fresh clone | Bundled into a chunk |
-| `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). The math is in place, and it's wired up when Phase 1 chunk 8 passes | A chunk, once imported |
+| `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list) | A chunk, once imported |
 | `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header, `scrubber()` returns `setProgress(p)` for scroll-scrubbing. Wired up when chunk 10 passes | A lazy chunk, once imported |
 
 ### `src/lib/components/`: one component per block type
@@ -208,7 +208,7 @@ shows which prototype chunk each one mirrors (see §11).
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>`. At ≥1024px a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
-| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ⏳ Static stack. Engine at chunk 8 |
+| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. No-JS = readable stack |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ⏳ Hard cuts at chunk 9 |
 | `CaptionScrolly.svelte` | Section B: images + captions | ⏳ 65vh band + fades at chunk 9 |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `story.json` | ⏳ Re-arranging at chunk 9 |

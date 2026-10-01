@@ -4,12 +4,12 @@
 //   progress      = scrolled into the runway ÷ (runway height − sticky panel height), clamped 0..1
 //   step          = min(steps − 1, floor(progress × steps))
 //
-// STATUS: the math is here so components can import it; Scrolly.svelte wires it up when prototype chunk 8 passes.
+// Used by Scrolly.svelte's {@attach}. ✅ Ported from prototype chunk 8.
 
 /** How far through a runway the reader is, 0 → 1. Divides by the sticky panel's height, not innerHeight (breakdown §19 #10). */
-export function progressOf(runway, sticky = runway.firstElementChild) {
+export function progressOf(runway, sticky = runway.querySelector('.sticky')) {
   const r = runway.getBoundingClientRect();
-  const span = r.height - (sticky?.getBoundingClientRect().height ?? window.innerHeight);
+  const span = r.height - (sticky?.offsetHeight ?? window.innerHeight);
   return span <= 0 ? 0 : Math.min(1, Math.max(0, -r.top / span));
 }
 

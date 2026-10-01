@@ -11,15 +11,15 @@ step     = floor(progress × steps)
 **Reference:** breakdown §10 (the math, with verified numbers) and §15 #6–7, #11.
 
 ## Build
-- [ ] CSS:
+- [x] CSS:
   ```css
   :root { --runway-step: 135svh; }
   .runway { position: relative; height: calc(var(--steps) * var(--runway-step)); }
   .sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
   ```
-- [ ] Turn the `scrolly-a` placeholder into `<section class="runway" data-scrolly="a" style="--steps: 6"><div class="sticky">…</div></section>`.
+- [x] Turn the `scrolly-a` placeholder into `<section class="runway" data-scrolly="a" style="--steps: 6"><div class="sticky">…</div></section>`.
       Give the sticky a visible test background for now.
-- [ ] JS:
+- [x] JS:
   ```js
   function progressOf(el) {
     const r = el.getBoundingClientRect();
@@ -44,10 +44,10 @@ step     = floor(progress × steps)
   addEventListener('resize', () => { runways.forEach(r => r.last = -1); update(); });
   update();
   ```
-- [ ] Progress bar inside each sticky: `.progress` (absolute, bottom 24px, centered, `width: min(240px, 60vw)`, 3px tall, `--line` background)
+- [x] Progress bar inside each sticky: `.progress` (absolute, bottom 24px, centered, `width: min(240px, 60vw)`, 3px tall, `--line` background)
       → `.progress-fill` (width `p × 100%`, `--ink`). Plus **one marker per step** at `left: i/(n−1) × 100%`, turned on when `i ≤ step`.
-- [ ] Hide the bar when `p ≤ 0 || p ≥ 1` (`.hidden { opacity: 0 }`, `transition: opacity .3s`).
-- [ ] Build markers in HTML (write the six `<span class="progress-marker">` by hand) rather than in JS, so the structure exists without scripting.
+- [x] Hide the bar when `p ≤ 0 || p ≥ 1` (`.hidden { opacity: 0 }`, `transition: opacity .3s`).
+- [x] Build markers in HTML (write the six `<span class="progress-marker">` by hand) rather than in JS, so the structure exists without scripting.
 
 ## Learn
 - Why the panel sticks: `sticky; top: 0` inside a parent much taller than the screen. It's pinned until the parent's bottom edge arrives.
@@ -58,15 +58,20 @@ step     = floor(progress × steps)
 - `svh` vs `vh`: on phones `100vh` includes the area behind the URL bar, while `svh` is the smallest visible height and doesn't jump.
 
 ## Checkpoint
-- [ ] The console logs progress climbing **0 → 1** and the step **0 → 5** as you scroll through runway A.
-- [ ] At 1280×900, the step changes at about every **1065px** of scroll (use `scrollTo(0, …)` in the console to test exact offsets).
-- [ ] The progress bar fills smoothly, markers light up one at a time, and the bar **hides** before and after the runway.
-- [ ] Performance panel, a 5s scroll recording: no long tasks, and `update` runs at most once per frame.
+- [x] The console logs progress climbing **0 → 1** and the step **0 → 5** as you scroll through runway A.
+- [x] At 1280×900, the step changes at about every **1065px** of scroll (use `scrollTo(0, …)` in the console to test exact offsets).
+- [x] The progress bar fills smoothly, markers light up one at a time, and the bar **hides** before and after the runway.
+- [x] Performance panel, a 5s scroll recording: no long tasks, and `update` runs at most once per frame.
 
 ## Watch out
 - An ancestor with `overflow: hidden | auto` breaks `sticky` (that's why chunk 3 used `clip`).
 - The reference divides by `innerHeight` while the panel is `100svh`. On phones with a moving URL bar they differ slightly
   (breakdown §19 #10). Try measuring the `.sticky` element's height instead and note the difference.
 
-## Port (after the checkpoint passes)
+## Result
+Built and verified: see [learning log 13](../../learning-log/13-chunk-8-scroll-engine.md). Measured at 1280×900: runway
+**7290px**, steps change at **1065 / 2130 / 3195 / 4260 / 5325px** into the runway, bar hidden before and after,
+and 50 scroll events inside one frame produce **1** `update()`. The engine divides by the sticky's height (the "Watch out" fix).
+
+## Port (after the checkpoint passes) ✅
 Into `projects/the-second-draft/`: `src/lib/scroll.js` (already holds `progressOf`, `stepOf`, `onScrollFrame`) and `src/lib/components/Scrolly.svelte`: an `{@attach}` registers the runway, sets `step`/`progress`, and adds `data-enhanced`. The tall-runway and sticky rules apply only under `[data-enhanced]`. Add the progress bar and markers. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

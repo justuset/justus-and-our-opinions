@@ -1,18 +1,41 @@
-<!-- Scrolly: the shared scroll section (prototype chunk 8).
+<!-- Scrolly: the shared scroll section (prototype chunk 8). ✅ Engine ported.
      A tall runway (height = steps × 135svh) holds a sticky, screen-sized panel. How far the reader has scrolled through
      the runway decides the step. The section components (Slides/Caption/Paintings/ScrubLottie) render INSIDE it and
      receive { step, progress } through the children snippet.
 
-     STATUS: renders the no-JS state, a readable stack (step 0, progress 0, runway not tall, panel not sticky).
-     When chunk 8 passes: an {@attach} registers the runway with $lib/scroll.js and adds data-enhanced, and only
-     [data-enhanced] gets the tall runway and sticky panel (the .scrolly-ready gate from chunk 10). -->
+     Two states:
+     - Server / no JS: a readable stack (step 0, progress 0, runway not tall, panel not sticky, no progress bar).
+     - Enhanced: the {@attach} below sets `enhanced`, which writes data-enhanced, and only [data-enhanced] gets the tall runway, the pinned
+       panel and the progress bar. If the script never runs, the reader still gets every step's content.
+     The attribute is written in the template (not with runway.dataset) on purpose: Svelte removes scoped CSS selectors
+     that match nothing in the markup, so a runtime-only attribute would have its rules pruned. -->
 <script>
+  import { onScrollFrame, progressOf, stepOf } from '$lib/scroll.js';
+
   let { label, steps, stepTexts = [], children } = $props();
   let step = $state(0);
   let progress = $state(0);
+  let enhanced = $state(false); // true once the engine runs in the browser
+  // The bar only shows while the panel is pinned (derived, not stored).
+  let barHidden = $derived(progress <= 0 || progress >= 1);
+
+  /** Attachment: registers this runway with the shared engine. Runs in the browser only, cleans up on destroy. */
+  function engine(runway) {
+    const sticky = runway.querySelector('.sticky');
+    enhanced = true;
+    const stop = onScrollFrame(() => {
+      if (runway.offsetParent === null) return; // a hidden twin: skip it
+      progress = progressOf(runway, sticky);
+      step = stepOf(progress, steps); // Svelte only re-renders the scene when the value actually changes
+    });
+    return () => {
+      stop();
+      enhanced = false;
+    };
+  }
 </script>
 
-<section class="runway" aria-label={label} style:--steps={steps}>
+<section class="runway" aria-label={label} style:--steps={steps} data-enhanced={enhanced || undefined} {@attach engine}>
   {#if stepTexts.length}
     <!-- Every step's text, in order, for screen readers (breakdown §19 #4). -->
     <ol class="visually-hidden">
@@ -21,11 +44,52 @@
   {/if}
   <div class="sticky">
     {@render children({ step, progress })}
+    <!-- Markers are server-rendered, so the structure exists without scripting. Marker i sits at i / (n − 1). -->
+    <div class="progress" class:hidden={barHidden} aria-hidden="true">
+      <div class="progress-fill" style:width="{progress * 100}%"></div>
+      {#each { length: steps } as _, i (i)}
+        <span class="progress-marker" class:on={i <= step} style:left="{steps > 1 ? (i / (steps - 1)) * 100 : 0}%"></span>
+      {/each}
+    </div>
   </div>
 </section>
 
 <style>
-  /* Base state = a readable stack. The enhanced (sticky, tall-runway) rules are added in chunk 8. */
+  /* Base state = a readable stack. */
   .runway { position: relative; margin: 40px 0; }
   .sticky { position: relative; }
+  .progress { display: none; }
+
+  /* Enhanced: the runway / sticky pattern. */
+  .runway[data-enhanced] { height: calc(var(--steps) * var(--runway-step)); }
+  [data-enhanced] .sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh; /* fallback for browsers without svh */
+    height: 100svh;
+    overflow: hidden;
+  }
+  [data-enhanced] .progress {
+    display: block;
+    position: absolute;
+    bottom: var(--progress-bottom);
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--progress-w);
+    height: 3px;
+    background: var(--line);
+    transition: opacity 0.3s;
+  }
+  .progress.hidden { opacity: 0; }
+  .progress-fill { height: 100%; background: var(--ink); }
+  .progress-marker {
+    position: absolute;
+    top: 50%;
+    width: var(--marker);
+    height: var(--marker);
+    border-radius: 50%;
+    background: var(--line);
+    transform: translate(-50%, -50%);
+  }
+  .progress-marker.on { background: var(--ink); }
 </style>

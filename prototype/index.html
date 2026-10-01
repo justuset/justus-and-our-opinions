@@ -91,6 +91,12 @@
       --diagram-pad: 6rem clamp(10px, 6vw, 72px) 9.25rem;
       --node-border: 1.5px;
       --connector-lift: 40;                            /* px the curve's control point rises or dips (read by JS) */
+
+      /* scroll engine (chunk 8, measured) */
+      --runway-step: 135svh;                           /* scroll distance each step gets */
+      --progress-w: min(240px, 60vw);
+      --progress-bottom: 24px;
+      --marker: 9px;
     }
     @media (min-width: 640px) {
       :root { --two-up-margin: 70px; --caption-leading: 30px; }
@@ -312,6 +318,49 @@
       .connectors { display: block; }
     }
 
+    /* ============ 9. SCROLL ENGINE (chunk 8) ============
+       A runway is a tall section; its first child, the sticky, is one screen tall and pinned to the top
+       until the runway's bottom edge arrives. Scrolling through the runway is the "timeline" JS reads. */
+    .runway { position: relative; height: calc(var(--steps) * var(--runway-step)); }
+    .sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;                     /* fallback for browsers without svh */
+      height: 100svh;                    /* smallest visible height: doesn't jump when the phone URL bar moves */
+      overflow: hidden;
+    }
+    .sticky-test {                       /* chunk 8 only: a visible stand-in until chunk 9 draws the scenes */
+      height: 100%;
+      display: grid;
+      place-content: center;
+      background: var(--surface);
+      color: var(--soft);
+      font: 15px/1.4 ui-monospace, monospace;
+      text-align: center;
+    }
+    .progress {
+      position: absolute;
+      bottom: var(--progress-bottom);
+      left: 50%;
+      transform: translateX(-50%);
+      width: var(--progress-w);
+      height: 3px;
+      background: var(--line);
+      transition: opacity .3s;
+    }
+    .progress.hidden { opacity: 0; }
+    .progress-fill { height: 100%; width: 0; background: var(--ink); }
+    .progress-marker {
+      position: absolute;
+      top: 50%;
+      width: var(--marker);
+      height: var(--marker);
+      border-radius: 50%;
+      background: var(--line);
+      transform: translate(-50%, -50%);
+    }
+    .progress-marker.on { background: var(--ink); }
+
     /* ============ 99. TWINS (chunk 6): keep LAST in the stylesheet ============
        Two versions of a visual, one for each shape of screen, like ai2html artboards. Switch at 1024px.
        These utilities only ever HIDE. A "show" rule (display: block) would override each component's own display,
@@ -439,7 +488,24 @@
 
   <p class="g-text">The stages look tidy in a diagram. In practice the arrow from revising back to drafting gets used far more than the one that points to publishing. Here is one paragraph moving through all four.</p>
 
-  <section class="scrolly" data-block="scrolly-a" aria-label="One paragraph through six versions"></section>
+  <section class="runway" data-block="scrolly-a" data-scrolly="a" aria-label="One paragraph through six versions" style="--steps: 6">
+    <div class="sticky">
+      <div class="sticky-test" aria-hidden="true">
+        <p>Runway A · test panel (chunk 8)<br>progress <output class="debug-p">0.000</output> · step <output class="debug-step">0</output></p>
+      </div>
+      <!-- Progress bar: the markers are written here, not built by JS, so the structure exists without scripting.
+           Six steps, so marker i sits at i / 5 of the bar. -->
+      <div class="progress hidden" aria-hidden="true">
+        <div class="progress-fill"></div>
+        <span class="progress-marker" style="left: 0%"></span>
+        <span class="progress-marker" style="left: 20%"></span>
+        <span class="progress-marker" style="left: 40%"></span>
+        <span class="progress-marker" style="left: 60%"></span>
+        <span class="progress-marker" style="left: 80%"></span>
+        <span class="progress-marker" style="left: 100%"></span>
+      </div>
+    </div>
+  </section>
 
   <p class="g-text">By the sixth version the paragraph is shorter, plainer and much harder to disagree with. Most of the cuts were not about style. They removed claims the writer could not yet support.</p>
 
@@ -502,6 +568,61 @@
   for (const diagram of document.querySelectorAll('.diagram')) {
     new ResizeObserver(() => drawConnectors(diagram)).observe(diagram.querySelector('.diagram-inner'));
   }
+
+  /* Chunk 8: the scroll engine, built once for every runway on the page.
+     progress = how far into the runway ÷ the distance the panel stays pinned; step = floor(progress × steps). */
+  function progressOf(runway, sticky) {
+    const r = runway.getBoundingClientRect();
+    // Divide by the sticky's own height, not innerHeight: the panel is 100svh, and on phones innerHeight
+    // grows when the URL bar hides, so the two disagree (the reference's bug, breakdown §19 #10).
+    const span = r.height - sticky.offsetHeight;
+    return span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
+  }
+  function stepOf(progress, steps) {
+    return Math.min(steps - 1, Math.floor(progress * steps));   // p = 1 would give `steps`, one past the end
+  }
+
+  const runways = [...document.querySelectorAll('.runway')].map((el) => ({
+    el,
+    sticky: el.querySelector('.sticky'),
+    steps: Math.ceil(parseFloat(getComputedStyle(el).getPropertyValue('--steps'))) || 1,
+    bar: el.querySelector('.progress'),
+    fill: el.querySelector('.progress-fill'),
+    markers: [...el.querySelectorAll('.progress-marker')],
+    debugP: el.querySelector('.debug-p'),
+    debugStep: el.querySelector('.debug-step'),
+    last: -1,
+  }));
+
+  let ticking = false;
+  window.updateCount = 0;                          // checkpoint aid: how many times update() has run
+  function update() {
+    ticking = false;
+    window.updateCount++;
+    for (const r of runways) {
+      if (r.el.offsetParent === null) continue;    // a hidden twin (display: none): skip it
+      const p = progressOf(r.el, r.sticky);
+      const step = stepOf(p, r.steps);
+      // cheap writes every frame
+      r.fill.style.width = (p * 100).toFixed(2) + '%';
+      r.bar.classList.toggle('hidden', p <= 0 || p >= 1);
+      if (r.debugP) r.debugP.textContent = p.toFixed(3);
+      // anything heavier waits for the step to change
+      if (step === r.last) continue;
+      r.last = step;
+      r.markers.forEach((m, i) => m.classList.toggle('on', i <= step));
+      if (r.debugStep) r.debugStep.textContent = step;
+      console.log(`runway ${r.el.dataset.scrolly}: step ${step} (progress ${p.toFixed(3)})`);
+      // chunk 9: render the scene for this step here
+    }
+  }
+  // rAF throttle: scroll can fire several times per frame; `ticking` lets through at most one update per frame.
+  // passive: we promise never to preventDefault, so the browser never waits on us before scrolling.
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', () => { runways.forEach((r) => (r.last = -1)); update(); });
+  update();
 </script>
 
 </body>

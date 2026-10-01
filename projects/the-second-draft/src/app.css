@@ -70,6 +70,12 @@
   --diagram-pad: 6rem clamp(10px, 6vw, 72px) 9.25rem;
   --node-border: 1.5px;
   --connector-lift: 40;
+
+  /* scroll engine (chunk 8, measured) */
+  --runway-step: 135svh;
+  --progress-w: min(240px, 60vw);
+  --progress-bottom: 24px;
+  --marker: 9px;
 }
 @media (min-width: 640px) {
   :root { --two-up-margin: 70px; --caption-leading: 30px; }
