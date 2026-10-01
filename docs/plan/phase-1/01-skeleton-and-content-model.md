@@ -9,15 +9,15 @@ disabled: in DevTools, ⌘⇧P → "Disable CSS" isn't built in, so just read it
 ## Build
 Semantic markup only, **no CSS**:
 
-- [ ] `prototype/index.html` with `<!doctype html>`, `<html lang="en">`, `<meta charset>`, the viewport meta and a `<title>`.
-- [ ] `<article class="story">` containing, in order:
-  - [ ] `<header class="header">` with `<h1 class="headline">`, `<p class="subtitle">` (the dek) and an empty `<div class="header-art">`.
-  - [ ] `<p class="byline">By … <time datetime="2026-10-01">Oct. 1, 2026</time></p>`.
-  - [ ] About **10 `<p class="g-text">`** of invented demo copy, spread between the visual blocks.
-  - [ ] Empty placeholder `<section>`s for each visual block, each with an `aria-label` and a `data-block` name:
+- [x] `prototype/index.html` with `<!doctype html>`, `<html lang="en">`, `<meta charset>`, the viewport meta and a `<title>`.
+- [x] `<article class="story">` containing, in order:
+  - [x] `<header class="header">` with `<h1 class="headline">`, `<p class="subtitle">` (the dek) and an empty `<div class="header-art">`.
+  - [x] `<p class="byline">By … <time datetime="2026-10-01">Oct. 1, 2026</time></p>`.
+  - [x] About **10 `<p class="g-text">`** of invented demo copy, spread between the visual blocks.
+  - [x] Empty placeholder `<section>`s for each visual block, each with an `aria-label` and a `data-block` name:
         `two-up`, `diagram`, `scrolly-a`, `scrolly-b`, `scrolly-c`, `scrolly-d`.
-  - [ ] `<footer class="credits">`.
-- [ ] Above the article, add a comment that writes the page **as data**, the shape the Times would store:
+  - [x] `<footer class="credits">`.
+- [x] Above the article, add a comment that writes the page **as data**, the shape the Times would store:
   ```js
   /* content model
   [
@@ -38,9 +38,9 @@ Semantic markup only, **no CSS**:
 - ArchieML in two minutes: [archieml.org](http://archieml.org/). The same list, written by an editor in a Google Doc.
 
 ## Checkpoint
-- [ ] With no CSS at all, the page reads like a well-formed document: headline, dek, byline, paragraphs, credits.
-- [ ] DevTools → Elements → Accessibility → **full-page accessibility tree**: the order is headline → dek → byline → text → each named section → credits.
-- [ ] [Nu HTML Checker](https://validator.w3.org/nu/#textarea): no errors.
+- [x] With no CSS at all, the page reads like a well-formed document: headline, dek, byline, paragraphs, credits.
+- [x] DevTools → Elements → Accessibility → **full-page accessibility tree**: the order is headline → dek → byline → text → each named section → credits.
+- [x] [Nu HTML Checker](https://validator.w3.org/nu/#textarea): no errors.
 - [ ] Turn on VoiceOver (⌘F5) or NVDA and read the page top to bottom. Nothing surprising.
 
 ## Watch out

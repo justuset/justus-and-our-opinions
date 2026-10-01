@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Second Draft Is Where the Argument Lives · Our Opinions (demo)</title>
+  <meta name="description" content="Demo essay for a hand-built scrollytelling prototype. Invented content.">
+</head>
+<body>
+
+<!--
+  Phase 1 · Chunk 1: skeleton and content model.
+  Semantic markup only. No CSS, no JavaScript yet.
+
+  The page is a flat list of sibling blocks: text, visual, text, visual.
+  A newsroom stores that list as data (ArchieML in a Google Doc, or JSON) and a loop renders it.
+  This is the same page written as data. Chunk 11 renders from a file shaped like this.
+
+  content model
+  [
+    { type: "header",  headline: "The Second Draft Is Where the Argument Lives",
+                       dek: "Most of what a reader finally sees was decided after the first version failed.",
+                       art: { mobile: "header-mobile.svg", desktop: "header-desktop.svg" } },
+    { type: "byline",  author: "A. Writer", date: "2026-10-01" },
+    { type: "text",    value: "Every essay you have read in a newspaper…" },
+    { type: "text",    value: "We hide the drafts…" },
+    { type: "two-up",  images: [{ src: "draft-1.jpg", alt: "…" }, { src: "draft-4.jpg", alt: "…" }],
+                       caption: "The first and fourth drafts of the same opening paragraph." },
+    { type: "text",    value: "…" },
+    { type: "text",    value: "…" },
+    { type: "diagram", nodes: ["Idea", "Draft", "Revise", "Ship"] },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "slides",  steps: [ { heading: "…", card: "…" }, … ×6 ] },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "band",    steps: [ { image: "…", caption: "…" }, … ×5 ] },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "arrange", steps: [ { caption: "…", layout: [ {top, left, width, rot, op, z}, … ] }, … ×3 ] },
+    { type: "text",    value: "…" },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "scrub",   animation: { mobile: "scrub-mobile.json", desktop: "scrub-desktop.json" }, steps: 2.5 },
+    { type: "text",    value: "…" },
+    { type: "credits", value: "…" }
+  ]
+-->
+
+<article class="story">
+
+  <header class="header">
+    <p class="kicker">Our Opinions | Guest Essay · Demo</p>
+    <h1 class="headline">The Second Draft Is Where the Argument Lives</h1>
+    <p class="subtitle">Most of what a reader finally sees was decided after the first version failed. We should show more of that work.</p>
+    <div class="header-art"></div>
+  </header>
+
+  <p class="byline">By A. Writer · <time datetime="2026-10-01">Oct. 1, 2026</time></p>
+
+  <p class="g-text">Every essay you have read in a newspaper arrived looking finished. The sentences sit in order, the argument advances, and the conclusion feels as if it had been waiting at the end of the road all along. That calm is a performance. Behind it are versions that went nowhere, paragraphs that argued the opposite and an opening that was rewritten until it stopped apologizing.</p>
+
+  <p class="g-text">We hide the drafts because we think they make the writer look unsure. I think they do the opposite. A draft shows the moment an idea met resistance and changed shape, and that moment is usually the most persuasive part of the whole process.</p>
+
+  <section class="two-up" data-block="two-up" aria-label="Two drafts of the same opening, side by side"></section>
+
+  <p class="g-text">Look at the first and the fourth version of the same opening. The first one explains. The fourth one asks the reader to notice something. Nothing about the facts changed between them. What changed was the writer's sense of who was on the other side of the page.</p>
+
+  <p class="g-text">Editors know this rhythm well. It rarely runs in a straight line, but it does have stages, and each stage asks a different question of the work.</p>
+
+  <section class="diagram" data-block="diagram" aria-label="The four stages of an essay"></section>
+
+  <p class="g-text">The stages look tidy in a diagram. In practice the arrow from revising back to drafting gets used far more than the one that points to publishing. Here is one paragraph moving through all four.</p>
+
+  <section class="scrolly" data-block="scrolly-a" aria-label="One paragraph through six versions"></section>
+
+  <p class="g-text">By the sixth version the paragraph is shorter, plainer and much harder to disagree with. Most of the cuts were not about style. They removed claims the writer could not yet support.</p>
+
+  <section class="scrolly" data-block="scrolly-b" aria-label="Five marked-up pages from the editing process"></section>
+
+  <p class="g-text">Marked-up pages tell the same story from the editor's side: questions in the margin, arrows that move a sentence to where it belongs, a single word circled because it promises more than the evidence delivers.</p>
+
+  <section class="scrolly" data-block="scrolly-c" aria-label="Three arguments competing for the lead"></section>
+
+  <p class="g-text">Choosing which argument leads is the hardest call in the whole process. Each of the three had a claim on the top of the page, and each made the other two read differently depending on where it sat.</p>
+
+  <p class="g-text">What finally decided it was not which point was strongest, but which one a skeptical reader would need to accept before the others could land.</p>
+
+  <section class="scrolly" data-block="scrolly-d" aria-label="A draft condensing into its final form"></section>
+
+  <p class="g-text">Readers will never see most of this, and that is fine. But a little more of it on the page would make the argument more honest about how it was made, and, I suspect, more convincing.</p>
+
+  <footer class="credits">
+    <p>Demo content. The essay, author and drafts are invented for a front-end study project. Illustrations and animations are placeholders.</p>
+  </footer>
+
+</article>
+
+</body>
+</html>

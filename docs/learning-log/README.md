@@ -9,6 +9,7 @@ concepts it taught.
 | 02 | [Researching the reference and writing the plan](02-research-and-plan.md) | 2026-10-01 |
 | 03 | [Layout guide, Svelte skills, and switching to a Times-shaped stack](03-times-shaped-stack.md) | 2026-10-01 |
 | 04 | [The scrolly template breakdown and the two-phase plan](04-scrolly-breakdown-and-two-phase-plan.md) | 2026-10-01 |
+| 05 | [Phase 1, chunk 1: skeleton and content model](05-chunk-1-skeleton.md) | 2026-10-01 |
 
 ## Entry template
 

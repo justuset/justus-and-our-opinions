@@ -13,7 +13,7 @@ separately and embedded, and story copy in **ArchieML**.
 
 ## Status
 
-📐 **Planning done.** Next: **Phase 1, [chunk 1](docs/plan/phase-1/01-skeleton-and-content-model.md)**, which rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, ten chunks with a browser checkpoint each. Then [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack.
+🛠 **Phase 1 in progress.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. [Chunk 1](docs/plan/phase-1/01-skeleton-and-content-model.md) is built. Next: [chunk 2](docs/plan/phase-1/02-tokens-and-text-column.md). After Phase 1, [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack.
 
 ## Start here
 
