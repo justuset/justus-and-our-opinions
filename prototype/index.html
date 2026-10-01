@@ -77,6 +77,24 @@
     .byline { margin-block: var(--gap-byline); }
     .credits { margin-block: var(--gap-credits); font-weight: 400; color: var(--faint); }
     .credits p { margin: 0; }
+
+    /* ============ 4. FULL-BLEED BREAKOUT (chunk 3) ============
+       Any block can escape the text column by itself. No wrapper divs.
+       left: 50% puts the block's left edge at its parent's center; translateX(-50%) pulls it back by half
+       its own width (50vw), so it is centered on the viewport whatever column it sits in.
+       Note: transform makes this the containing block for position: fixed children. Never nest a fixed element inside. */
+    .bleed {
+      position: relative;
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    /* 100vw includes the vertical scrollbar on Windows and Linux (15px here), so a bleed block is wider than the page
+       and a horizontal scrollbar appears. clip (not hidden) cuts that overflow off without creating a scroll container,
+       so position: sticky keeps working (chunk 8); with hidden, sticky stops sticking.
+       On body alone (as in the reference) there's no scrollbar, but script can still nudge the page 8px sideways
+       (scrollTo, scrollIntoView, find-in-page). Clipping html as well removes the overflow entirely. */
+    html, body { overflow-x: clip; }
   </style>
 </head>
 <body>
@@ -131,7 +149,7 @@
 
   <p class="g-text">We hide the drafts because we think they make the writer look unsure. I think they do the opposite. A draft shows the moment an idea met resistance and changed shape, and that moment is usually the most persuasive part of the whole process.</p>
 
-  <section class="two-up" data-block="two-up" aria-label="Two drafts of the same opening, side by side"></section>
+  <section class="two-up bleed" data-block="two-up" aria-label="Two drafts of the same opening, side by side"></section>
 
   <p class="g-text">Look at the first and the fourth version of the same opening. The first one explains. The fourth one asks the reader to notice something. Nothing about the facts changed between them. What changed was the writer's sense of who was on the other side of the page.</p>
 

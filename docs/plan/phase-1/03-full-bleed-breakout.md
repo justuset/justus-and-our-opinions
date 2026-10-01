@@ -6,14 +6,14 @@ markup.
 **Reference:** breakdown §4.
 
 ## Build
-- [ ] The utility:
+- [x] The utility:
   ```css
   .bleed { position: relative; width: 100vw; left: 50%; transform: translateX(-50%); }
   body   { overflow-x: clip; }
   ```
-- [ ] A temporary test block between two paragraphs: `<section class="bleed test" aria-label="test">` with `height: 200px; background: var(--surface)`
+- [x] A temporary test block between two paragraphs: `<section class="bleed test" aria-label="test">` with `height: 200px; background: var(--surface)`
       and a 1px `--line` border.
-- [ ] Put `.bleed` on the `two-up` placeholder section too (it stays full width from here on).
+- [x] Put `.bleed` on the `two-up` placeholder section too (it stays full width from here on).
 
 ## Learn
 - How it works: `left: 50%` puts the block's left edge at the parent's center, and `translateX(-50%)` pulls it back by half its
@@ -24,11 +24,12 @@ markup.
   break chunk 8. `clip` doesn't.
 
 ## Checkpoint
-- [ ] The test block spans the full window at 320, 800 and 1600px, while the paragraphs stay in the column.
-- [ ] **No horizontal scrollbar.** To see the bug on a Mac, turn on System Settings → Appearance → "Show scroll bars: Always",
+- [x] The test block spans the full window at 320, 800 and 1600px, while the paragraphs stay in the column.
+- [x] **No horizontal scrollbar.** To see the bug on a Mac, turn on System Settings → Appearance → "Show scroll bars: Always",
       remove `overflow-x: clip`, check that a scrollbar appears, then put `clip` back.
-- [ ] Remove the test block when the checkpoint passes.
+- [x] Remove the test block when the checkpoint passes.
 
 ## Watch out
+- **Found while building:** `body { overflow-x: clip }` alone still lets script scroll the page 8px sideways. We clip `html` too (see learning log 07).
 - `transform` makes the element the containing block for any `position: fixed` children. Never put a fixed element inside `.bleed`.
 - The transform-free alternative (used in Phase 2): `margin-inline: calc(50% - 50vw)`. Try it and note which you prefer.
