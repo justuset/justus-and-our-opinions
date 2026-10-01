@@ -1,7 +1,12 @@
 <!-- Scrolly: the shared scroll section (prototype chunk 8). ✅ Engine ported.
      A tall runway (height = steps × 135svh) holds a sticky, screen-sized panel. How far the reader has scrolled through
      the runway decides the step. The section components (Slides/Caption/Paintings/ScrubLottie) render INSIDE it and
-     receive { step, progress } through the children snippet.
+     receive { step, progress, enhanced } through the children snippet. Scenes need `enhanced` because their scoped
+     CSS can't see this component's data-enhanced attribute; each scene puts class:enhanced on its own wrapper.
+
+     Accessibility: a visually hidden heading names the section, and a visually hidden <ol> holds every step's text.
+     Scenes mark their visuals aria-hidden, because inactive frames are visibility: hidden once enhanced and a
+     screen reader would never reach them (breakdown §19 #4).
 
      Two states:
      - Server / no JS: a readable stack (step 0, progress 0, runway not tall, panel not sticky, no progress bar).
@@ -13,6 +18,7 @@
   import { onScrollFrame, progressOf, stepOf } from '$lib/scroll.js';
 
   let { label, steps, stepTexts = [], children } = $props();
+  const headingId = $props.id(); // the same id on the server and after hydration
   let step = $state(0);
   let progress = $state(0);
   let enhanced = $state(false); // true once the engine runs in the browser
@@ -35,7 +41,8 @@
   }
 </script>
 
-<section class="runway" aria-label={label} style:--steps={steps} data-enhanced={enhanced || undefined} {@attach engine}>
+<section class="runway" aria-labelledby={headingId} style:--steps={steps} data-enhanced={enhanced || undefined} {@attach engine}>
+  <h2 class="visually-hidden" id={headingId}>{label}</h2>
   {#if stepTexts.length}
     <!-- Every step's text, in order, for screen readers (breakdown §19 #4). -->
     <ol class="visually-hidden">
@@ -43,7 +50,7 @@
     </ol>
   {/if}
   <div class="sticky">
-    {@render children({ step, progress })}
+    {@render children({ step, progress, enhanced })}
     <!-- Markers are server-rendered, so the structure exists without scripting. Marker i sits at i / (n − 1). -->
     <div class="progress" class:hidden={barHidden} aria-hidden="true">
       <div class="progress-fill" style:width="{progress * 100}%"></div>
@@ -92,4 +99,7 @@
     transform: translate(-50%, -50%);
   }
   .progress-marker.on { background: var(--ink); }
+  @media (prefers-reduced-motion: reduce) {
+    [data-enhanced] .progress { transition: none; } /* same specificity as the rule that sets it */
+  }
 </style>

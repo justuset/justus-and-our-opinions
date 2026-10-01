@@ -208,10 +208,10 @@ shows which prototype chunk each one mirrors (see §11).
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>`. At ≥1024px a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
-| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. No-JS = readable stack |
-| `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ⏳ Hard cuts at chunk 9 |
-| `CaptionScrolly.svelte` | Section B: images + captions | ⏳ 65vh band + fades at chunk 9 |
-| `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `story.json` | ⏳ Re-arranging at chunk 9 |
+| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
+| `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
+| `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 768px, 0.4s caption fades, hard-cut images (chunk 9) |
+| `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `story.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
 | `ScrubLottie.svelte` | Section D: text fallback, with the desktop and mobile Lottie paths ready | ⏳ Scrubbing at chunk 10 |
 
 "⏳" components already render the **readable, no-JS version** of their block, which is the base state every enhancement builds on.
