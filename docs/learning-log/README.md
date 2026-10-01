@@ -13,6 +13,7 @@ concepts it taught.
 | 06 | [Phase 1, chunk 2: tokens and the text column](06-chunk-2-tokens-and-column.md) | 2026-10-01 |
 | 07 | [Phase 1, chunk 3: full-bleed breakout](07-chunk-3-full-bleed.md) | 2026-10-01 |
 | 08 | [Phase 1, chunk 4: the header](08-chunk-4-header.md) | 2026-10-01 |
+| 09 | [Phase 1, chunk 5: intro motion](09-chunk-5-intro-motion.md) | 2026-10-01 |
 
 ## Entry template
 
