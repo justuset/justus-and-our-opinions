@@ -207,7 +207,7 @@ shows which prototype chunk each one mirrors (see §11).
 | `Text.svelte` | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
-| `Diagram.svelte` | The process as an `<ol>` | ⏳ List final. Desktop stage + SVG connectors at chunk 7 |
+| `Diagram.svelte` | The process as an `<ol>`. At ≥1024px a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
 | `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ⏳ Static stack. Engine at chunk 8 |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ⏳ Hard cuts at chunk 9 |
 | `CaptionScrolly.svelte` | Section B: images + captions | ⏳ 65vh band + fades at chunk 9 |

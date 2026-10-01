@@ -83,6 +83,14 @@
       --caption-size: 15px;
       --caption-leading: 1.2;
       --twin-switch: 1024px;   /* documentation only: media queries can't read custom properties, so 1024px is repeated below */
+
+      /* connector diagram (measured) */
+      --diagram-margin: 2.3125rem;
+      --diagram-gap: 18px;
+      --diagram-stage: 1200px;                         /* desktop stage cap */
+      --diagram-pad: 6rem clamp(10px, 6vw, 72px) 9.25rem;
+      --node-border: 1.5px;
+      --connector-lift: 40;                            /* px the curve's control point rises or dips (read by JS) */
     }
     @media (min-width: 640px) {
       :root { --two-up-margin: 70px; --caption-leading: 30px; }
@@ -267,6 +275,43 @@
       .group-caption { flex: 0 0 100%; margin-top: 4px; padding-top: 0; }   /* 100% basis + wrap = its own row, no wrapper */
     }
 
+    /* ============ 8. CONNECTOR DIAGRAM (chunk 7) ============
+       Two layers: CSS grid positions the boxes; an SVG on top draws arrows between wherever the boxes ended up.
+       Phones: a plain stacked list in the text column, no arrows. Desktop: a 4-column stage up to 1200px wide. */
+    .diagram { position: relative; width: var(--col); margin: var(--diagram-margin) auto; }
+    .diagram-inner { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--diagram-gap); }
+    .node {
+      position: relative;
+      z-index: 3;                        /* boxes sit above the arrows */
+      padding: 12px 14px;
+      border: var(--node-border) solid var(--ink);
+      background: var(--paper);          /* hides any arrow passing behind a box */
+      font: 600 15px / 1.3 var(--font-body);
+    }
+    .connectors {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      z-index: 2;
+      display: none;                     /* no arrows on phones */
+      color: var(--ink);
+      pointer-events: none;
+    }
+    .connectors path { fill: none; stroke: currentColor; stroke-width: var(--node-border); }
+    @media (min-width: 1024px) {
+      .diagram {
+        width: 100vw;
+        max-width: var(--diagram-stage);
+        left: 50%;
+        transform: translateX(-50%);     /* the same breakout as .bleed, capped at 1200px */
+        padding: var(--diagram-pad);
+      }
+      .diagram-inner { grid-template-columns: repeat(4, 1fr); column-gap: 6%; align-items: center; }
+      .connectors { display: block; }
+    }
+
     /* ============ 99. TWINS (chunk 6): keep LAST in the stylesheet ============
        Two versions of a visual, one for each shape of screen, like ai2html artboards. Switch at 1024px.
        These utilities only ever HIDE. A "show" rule (display: block) would override each component's own display,
@@ -377,7 +422,20 @@
 
   <p class="g-text">Editors know this rhythm well. It rarely runs in a straight line, but it does have stages, and each stage asks a different question of the work.</p>
 
-  <section class="diagram" data-block="diagram" aria-label="The four stages of an essay"></section>
+  <section class="diagram" data-block="diagram" aria-label="The four stages of an essay">
+    <!-- A process is an ordered list: screen readers announce "list, 4 items" and the order survives without CSS. -->
+    <ol class="diagram-inner">
+      <li class="node">Idea</li>
+      <li class="node">Draft</li>
+      <li class="node">Revise</li>
+      <li class="node">Ship</li>
+    </ol>
+    <!-- The arrows. Two paths whose "d" attribute the script rewrites; decorative, so hidden from screen readers. -->
+    <svg class="connectors" aria-hidden="true" focusable="false">
+      <path class="connector-curves" d=""/>
+      <path class="connector-heads" d=""/>
+    </svg>
+  </section>
 
   <p class="g-text">The stages look tidy in a diagram. In practice the arrow from revising back to drafting gets used far more than the one that points to publishing. Here is one paragraph moving through all four.</p>
 
@@ -412,6 +470,38 @@
      document.fonts.ready is a promise; older browsers without the Font Loading API just reveal immediately. */
   (document.fonts ? document.fonts.ready : Promise.resolve())
     .then(() => document.documentElement.classList.add('is-ready'));
+
+  /* Chunk 7: draw the diagram's arrows from where the boxes actually are.
+     Read every box position first, then write the two paths once (reading after writing forces extra layouts). */
+  function drawConnectors(diagram) {
+    const svg = diagram.querySelector('.connectors');
+    if (getComputedStyle(svg).display === 'none') return;          // phones: no arrows
+
+    // --- read ---
+    const box = svg.getBoundingClientRect();
+    const nodes = [...diagram.querySelectorAll('.node')].map((n) => n.getBoundingClientRect());
+    const lift = parseFloat(getComputedStyle(diagram).getPropertyValue('--connector-lift')) || 40;
+
+    // --- compute: one quadratic curve + one arrowhead per neighbouring pair ---
+    let curves = '', heads = '';
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const a = nodes[i], b = nodes[i + 1];
+      const x1 = a.right - box.left, y1 = a.top + a.height / 2 - box.top;   // right edge of box i, vertical middle
+      const x2 = b.left - box.left - 6, y2 = b.top + b.height / 2 - box.top; // just short of box i+1's left edge
+      const mid = (x1 + x2) / 2, dy = lift * (i % 2 ? 1 : -1);              // alternate up, down, up…
+      curves += `M${x1},${y1} Q${mid},${y1 + dy} ${x2},${y2} `;
+      heads += `M${x2 - 7},${y2 - 5} L${x2},${y2} L${x2 - 7},${y2 + 5} `;
+    }
+
+    // --- write ---
+    svg.querySelector('.connector-curves').setAttribute('d', curves.trim());
+    svg.querySelector('.connector-heads').setAttribute('d', heads.trim());
+  }
+
+  // ResizeObserver fires whenever the grid changes size: window resize, zoom, fonts loading, text wrapping.
+  for (const diagram of document.querySelectorAll('.diagram')) {
+    new ResizeObserver(() => drawConnectors(diagram)).observe(diagram.querySelector('.diagram-inner'));
+  }
 </script>
 
 </body>

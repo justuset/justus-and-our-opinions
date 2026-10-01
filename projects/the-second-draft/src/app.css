@@ -62,6 +62,14 @@
   --two-up-max: none;
   --caption-size: 15px;
   --caption-leading: 1.2;
+
+  /* connector diagram (chunk 7) */
+  --diagram-margin: 2.3125rem;
+  --diagram-gap: 18px;
+  --diagram-stage: 1200px;
+  --diagram-pad: 6rem clamp(10px, 6vw, 72px) 9.25rem;
+  --node-border: 1.5px;
+  --connector-lift: 40;
 }
 @media (min-width: 640px) {
   :root { --two-up-margin: 70px; --caption-leading: 30px; }
