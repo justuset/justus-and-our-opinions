@@ -1,4 +1,4 @@
-# Chunk 11: Package the template for other people
+# Phase 2 · Chunk 12: Package the template for other people
 
 **Goal:** Turn the project into something a designer or editor can use without you: docs, a block catalog,
 a scaffold command, a public preview and a retrospective.

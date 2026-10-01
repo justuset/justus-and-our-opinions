@@ -1,4 +1,4 @@
-# Chunk 03: Content model with ArchieML
+# Phase 2 · Chunk 03: Content model with ArchieML
 
 **Goal:** Story copy moves into `content/stories/*.aml`. The shared `@opinion/archie` package parses and
 validates it into typed blocks, and the React template renders them through a block map, the pattern in diatour §VIII.VIII.

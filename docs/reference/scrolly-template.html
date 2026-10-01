@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrolly Template</title>
+<!--
+  Responsive scrollytelling template.
+  Recreates the layout + fluid mechanics of a Birdkit-style interactive with original placeholder content.
+  Every value marked "measured" was read from the reference page; swap fonts/assets for your own.
+-->
+<style>
+/* ============ 1. TOKENS ============ */
+:root {
+  --gutter: clamp(10px, 12.5vw, 49px);          /* measured: fluid side gutter */
+  --w-body: 600px;                               /* measured: text column cap */
+  --col: min(calc(100% - var(--gutter) * 2), var(--w-body));
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1); /* measured: painting moves */
+  --ease-fade: cubic-bezier(0.215, 0.61, 0.355, 1); /* measured: caption fades */
+  --ease-intro: cubic-bezier(0.25, 1, 0.5, 1);   /* measured: headline intro */
+  --serif-display: "Libre Caslon Condensed", "Georgia", serif; /* stand-in for Cheltenham Cond */
+  --serif-body: "Source Serif 4", Georgia, "Times New Roman", serif; /* stand-in for Imperial */
+  --ink: #313036;
+  --ink-head: #333;
+  --bg: #fff;
+  --runway-step: 135svh;                         /* ~1350px per step at a 1000px viewport */
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { overflow-x: clip; } /* 100vw breakouts include the scrollbar on Windows; clip prevents sideways scroll */
+img, svg { display: block; max-width: 100%; }
+
+/* ============ 2. VISIBILITY TWINS ============ */
+/* Separate desktop/mobile components instead of one reflowing asset. Measured switch: 1024px. */
+.desktop-only { display: none; }
+@media screen and (min-width: 1024px) {
+  .desktop-only { display: block; }
+  .mobile-only { display: none; }
+}
+
+/* ============ 3. FULL-BLEED BREAKOUT ============ */
+/* Any block can escape the text column from inside a centered parent. */
+.bleed { position: relative; width: 100vw; left: 50%; transform: translateX(-50%); }
+
+/* ============ 4. BODY TEXT ============ */
+.story { width: 100%; }
+.g-text {
+  width: var(--col);
+  margin: 0 auto 12.5px;              /* measured */
+  font: 20px/30px var(--serif-body);  /* measured: 20/30 at all widths */
+}
+@media (max-width: 739px) { .g-text { font-size: 18px; line-height: 27px; } } /* assumption: NYT body steps down on phones */
+@supports (text-wrap: pretty) { .g-text { text-wrap: pretty; } }
+
+/* ============ 5. HEADER ============ */
+.header {
+  height: 675px;                      /* measured: fixed, not vh, above 360px */
+  margin-top: 90px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.header-copy {
+  position: absolute; top: 12%; left: 0; right: 0; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 20px; text-align: center; pointer-events: none;
+}
+.headline {
+  max-width: 6ch;                     /* forces one word per line on phones */
+  margin: 2px auto 6px;
+  font: 700 58px/1 var(--serif-display);
+  text-transform: uppercase; color: var(--ink-head);
+  opacity: 0; transform: translateY(15px);
+  transition: opacity .8s var(--ease-intro), transform .8s var(--ease-intro);
+}
+.subtitle {
+  max-width: 30ch; margin: 0 auto;
+  font: italic 1.1rem/1.4 var(--serif-body);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .8s var(--ease-intro) .2s, transform .8s var(--ease-intro) .2s;
+}
+.is-ready .headline, .is-ready .subtitle { opacity: 1; transform: none; }
+.header-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.header-art svg { height: 100% !important; width: auto !important; } /* height-driven scale: art crops at the sides, never squashes */
+
+@media screen and (max-width: 359px) {
+  .header { height: 67vh; }
+  .header-copy { top: 13%; }
+  .headline { font-size: 44px; }
+  .subtitle { font-size: .85rem; }
+}
+@media screen and (min-width: 1024px) {
+  .header-copy { top: 0; bottom: 0; justify-content: center; }
+  .headline { max-width: 12ch; font-size: clamp(72px, 7.2vw, 96px); line-height: .92; }
+  .subtitle { max-width: 32ch; margin-bottom: 16px; font-size: clamp(16px, 1.4vw, 20px); }
+  .header-art.desktop-only { display: flex; width: 80%; max-width: 1080px; left: 50%; transform: translateX(-50%); }
+}
+@media screen and (min-width: 1024px) and (orientation: landscape) { .byline { margin-bottom: 100px; } }
+.byline { width: var(--col); margin: 24px auto 32px; font: 600 14px/1.4 system-ui, sans-serif; }
+
+/* ============ 6. TWO-UP IMAGES ============ */
+.two-up { margin: 40px 0; padding: 0 20px; }
+.two-up-grid { display: flex; flex-direction: column; gap: 12px; }
+.two-up-grid figure { margin: 0; }
+.ph { aspect-ratio: 4 / 5; background: linear-gradient(135deg, #d9d4cc, #b7b0a5); }
+.group-caption { font: 15px/1.2 system-ui, sans-serif; padding-top: 9px; color: #666; }
+@media (min-width: 640px) {
+  .two-up { margin: 70px 0; }
+  .two-up-grid { flex-flow: row wrap; }
+  .two-up-grid figure { flex: 1 1 0; }
+  .group-caption { flex: 0 0 100%; line-height: 30px; margin-top: 4px; }
+}
+@media (min-width: 1250px) {
+  .two-up { padding: 0 64px; max-width: 1440px; margin: 100px 0; left: 50%; } /* caps growth on huge screens */
+}
+
+/* ============ 7. CONNECTOR DIAGRAM ============ */
+/* Mobile: lives in the text column. Desktop: breaks out to a 1200px stage. */
+.diagram { position: relative; width: var(--col); margin: 2.3125rem auto; }
+.diagram-inner { position: relative; display: grid; gap: 18px; }
+.diagram .node { padding: 12px 14px; border: 1.5px solid var(--ink); font: 600 15px/1.3 system-ui, sans-serif; background: var(--bg); position: relative; z-index: 3; }
+.diagram .connectors { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 2; display: none; }
+@media (min-width: 1024px) {
+  .diagram { width: 100vw; max-width: 1200px; left: 50%; transform: translateX(-50%); padding: 6rem clamp(10px, 6vw, 72px) 9.25rem; position: relative; }
+  .diagram-inner { grid-template-columns: repeat(4, 1fr); gap: 6%; align-items: center; }
+  .diagram .connectors { display: block; }
+}
+
+/* ============ 8. SCROLLY CORE (shared by all three sections) ============ */
+.runway { position: relative; height: calc(var(--steps) * var(--runway-step)); }
+.sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.progress { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(240px, 60vw); height: 3px; background: #ddd; transition: opacity .3s; z-index: 5; }
+.progress.hidden { opacity: 0; }
+.progress-fill { height: 100%; width: 0; background: var(--ink); }
+.progress-marker { position: absolute; top: -3px; width: 9px; height: 9px; border-radius: 50%; background: #ddd; transform: translateX(-50%); }
+.progress-marker.on { background: var(--ink); }
+.frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; display: grid; place-items: center; }
+.frame.is-active { opacity: 1; visibility: visible; } /* hard cut, matching the reference's first section */
+
+/* --- Section A: stacked slides, element sizes tied to viewport width --- */
+.a-card { width: min(44.85vw, 250px); aspect-ratio: 1; background: #e8e3da; display: grid; place-items: center; font: 700 2rem/1 var(--serif-display); position: relative; }
+.a-arrow { position: absolute; top: var(--arrow-top, 50%); left: var(--arrow-left, 100%); width: var(--arrow-length, 80px); height: 16px; transform: translateY(-50%); }
+.a-arrow line { stroke: var(--ink); stroke-width: var(--arrow-stroke, 2); }
+@media (orientation: portrait) { .a-arrow line { stroke-width: var(--arrow-mobile-stroke, 1.5); } .a-arrow.hide-portrait { display: none; } }
+.a-heading { position: absolute; top: 10vh; left: 0; right: 0; text-align: center; font: 700 clamp(22px, 3vw, 34px)/1.1 var(--serif-display); padding: 0 20px; }
+
+/* --- Section B: image stage + caption band, all in vh --- */
+.b-panel { display: flex; flex-direction: column; height: 100%; padding: 0 16px; }
+.b-text-overlay { position: relative; min-height: 30vh; }
+.b-text { position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; width: 90%; text-align: center; font: 20px/1.3 var(--serif-display); opacity: 0; transition: opacity .4s var(--ease-fade); }
+.b-text.is-visible { opacity: 1; }
+.b-content { position: relative; flex: 1; }
+.b-content .frame .ph { width: 100%; height: 100%; aspect-ratio: auto; }
+@media screen and (min-width: 768px) {
+  .b-panel { padding: 0 40px; }
+  .b-wrapper { position: absolute; top: 17.5vh; bottom: 17.5vh; left: 40px; right: 40px; display: flex; flex-direction: column; } /* 65vh centered band */
+  .b-text-overlay { min-height: min(20vh, 80px); }
+  .b-content { height: calc(100% - min(20vh, 80px)); flex: none; }
+  .b-text { top: 0; bottom: auto; width: min(545px, 90%); font-size: 1.5rem; line-height: 1.25; }
+}
+
+/* --- Section C: scattered paintings that re-arrange per step --- */
+.c-caption { position: absolute; top: 6vh; left: 0; right: 0; text-align: center; font: 600 15px/1.3 system-ui, sans-serif; padding: 0 20px; z-index: 5; }
+.c-stage { position: absolute; inset: 0; }
+.c-painting {
+  position: absolute; opacity: .15; pointer-events: none;
+  transition: opacity .95s var(--ease-settle), transform .95s var(--ease-settle), top .95s var(--ease-settle),
+              left .95s var(--ease-settle), right .95s var(--ease-settle), width .95s var(--ease-settle);
+}
+.c-painting .ph { aspect-ratio: 3 / 4; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+
+/* --- Section D: scroll-scrubbed animation --- */
+.scrub-stage { width: 100%; height: 100%; display: grid; place-items: center; }
+.scrub-stage svg { height: 80%; width: auto; }
+
+/* ============ 9. REDUCED MOTION / NO-JS ============ */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+@media (scripting: none) {
+  .runway { height: auto; }
+  .sticky { position: static; height: auto; }
+  .frame { position: relative; opacity: 1; visibility: visible; min-height: 60vh; }
+  .headline, .subtitle { opacity: 1; transform: none; }
+}
+
+.credits { width: var(--col); margin: 60px auto 80px; font: 13px/1.5 system-ui, sans-serif; color: #777; }
+</style>
+</head>
+<body>
+<article class="story">
+
+  <!-- HEADER: twin art, intro animation -->
+  <header class="header bleed" id="header">
+    <div class="header-copy">
+      <h1 class="headline">Placeholder Headline Here</h1>
+      <p class="subtitle">A short italic dek sits under the headline and wraps at about thirty characters.</p>
+    </div>
+    <div class="header-art desktop-only">
+      <svg viewBox="0 0 1800 1200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <circle cx="300" cy="600" r="220" fill="#efe9df"/><circle cx="1500" cy="600" r="260" fill="#e6e0d5"/>
+      </svg>
+    </div>
+    <div class="header-art mobile-only">
+      <svg viewBox="0 0 800 1200" aria-hidden="true"><circle cx="400" cy="1000" r="260" fill="#efe9df"/></svg>
+    </div>
+  </header>
+  <div class="byline">By Your Name · Oct. 1, 2026</div>
+
+  <p class="g-text">Body paragraphs are plain siblings, each capped at a 600px column with fluid gutters on phones.</p>
+  <p class="g-text">Visual blocks break out of this column by themselves; the text never needs a wrapper.</p>
+
+  <!-- TWO-UP -->
+  <div class="two-up bleed">
+    <div class="two-up-grid">
+      <figure><div class="ph"></div></figure>
+      <figure><div class="ph"></div></figure>
+      <figcaption class="group-caption">One caption shared by both images, forced onto its own row.</figcaption>
+    </div>
+  </div>
+
+  <p class="g-text">A connector diagram follows. It stacks on phones and spreads into a wide stage on desktop.</p>
+
+  <!-- DIAGRAM -->
+  <div class="diagram">
+    <div class="diagram-inner" id="diagram">
+      <div class="node">Idea</div><div class="node">Draft</div><div class="node">Revise</div><div class="node">Ship</div>
+    </div>
+    <svg class="connectors" id="connectors" aria-hidden="true"></svg>
+  </div>
+
+  <p class="g-text">Scroll section A: hard-cut slides with a progress bar.</p>
+
+  <!-- SCROLLY A -->
+  <section class="runway" data-scrolly="a" style="--steps:6">
+    <div class="sticky">
+      <div class="progress hidden"><div class="progress-fill"></div></div>
+      <div class="frames"></div>
+    </div>
+  </section>
+
+  <p class="g-text">Scroll section B: a vh-based image band with fading captions.</p>
+
+  <!-- SCROLLY B -->
+  <section class="runway" data-scrolly="b" style="--steps:5">
+    <div class="sticky">
+      <div class="progress hidden"><div class="progress-fill"></div></div>
+      <div class="b-panel"><div class="b-wrapper">
+        <div class="b-text-overlay"></div>
+        <div class="b-content"></div>
+      </div></div>
+    </div>
+  </section>
+
+  <p class="g-text">Scroll section C: paintings re-arrange on each step.</p>
+
+  <!-- SCROLLY C -->
+  <section class="runway" data-scrolly="c" style="--steps:3">
+    <div class="sticky">
+      <div class="progress hidden"><div class="progress-fill"></div></div>
+      <p class="c-caption"></p>
+      <div class="c-stage"></div>
+    </div>
+  </section>
+
+  <p class="g-text">Scroll section D: scrubbed animation, separate desktop and mobile assets.</p>
+
+  <!-- SCROLLY D: scrubbed -->
+  <section class="runway desktop-only" data-scrolly="d" style="--steps:2.5">
+    <div class="sticky"><div class="scrub-stage"><svg viewBox="0 0 1800 1200"><circle id="dotD" cx="200" cy="600" r="120" fill="#b7b0a5"/></svg></div></div>
+  </section>
+  <section class="runway mobile-only" data-scrolly="d" style="--steps:2.5">
+    <div class="sticky"><div class="scrub-stage"><svg viewBox="0 0 800 1200"><circle id="dotM" cx="400" cy="200" r="100" fill="#b7b0a5"/></svg></div></div>
+  </section>
+
+  <p class="g-text">Closing paragraph.</p>
+  <section class="credits">Credits line: illustrations, development, editing.</section>
+</article>
+
+<script>
+/* ===== Content data (swap for your own) ===== */
+const A = ["One", "Two", "Three", "Four", "Five", "Six"];
+const B = ["First caption.", "Second caption.", "Third caption.", "Fourth caption.", "Fifth caption."];
+/* Section C: one layout per step, per painting. Values in % so the stage scales with the viewport. */
+const C = {
+  captions: ["Step one caption", "Step two caption", "Step three caption"],
+  layouts: [
+    [{top:25,left:6,width:37.5,rot:0,op:.15,z:2},{top:10,left:35,width:34,rot:0,op:.15,z:1},{top:25,right:9,width:30,rot:1,op:.15,z:2}],
+    [{top:15,left:4,width:40,rot:-3,op:1,z:3},{top:12,left:38,width:30,rot:2,op:.4,z:1},{top:30,right:4,width:28,rot:4,op:.4,z:2}],
+    [{top:20,left:20,width:30,rot:0,op:.4,z:1},{top:15,left:35,width:36,rot:-2,op:1,z:3},{top:22,right:12,width:26,rot:3,op:1,z:2}],
+  ],
+  portraitScale: 1.6 /* paintings get relatively wider on tall screens */
+};
+
+/* ===== Build DOM ===== */
+const qs = (s, r = document) => r.querySelector(s);
+const qa = (s, r = document) => [...r.querySelectorAll(s)];
+
+function buildProgress(sec, n) {
+  const p = qs(".progress", sec);
+  for (let i = 0; i < n; i++) {
+    const m = document.createElement("div");
+    m.className = "progress-marker";
+    m.style.left = (n === 1 ? 0 : (i / (n - 1)) * 100) + "%";
+    p.appendChild(m);
+  }
+}
+
+const secA = qs('[data-scrolly="a"]');
+qs(".frames", secA).innerHTML = A.map((t, i) => `
+  <div class="frame"><div class="a-heading">Slide ${i + 1}</div>
+    <div class="a-card">${t}
+      ${i < A.length - 1 ? `<svg class="a-arrow ${i % 2 ? "hide-portrait" : ""}" style="--arrow-length:min(18vw,120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>` : ""}
+    </div></div>`).join("");
+buildProgress(secA, A.length);
+
+const secB = qs('[data-scrolly="b"]');
+qs(".b-text-overlay", secB).innerHTML = B.map(t => `<p class="b-text">${t}</p>`).join("");
+qs(".b-content", secB).innerHTML = B.map((_, i) => `<div class="frame"><div class="ph" style="filter:hue-rotate(${i * 40}deg)"></div></div>`).join("");
+buildProgress(secB, B.length);
+
+const secC = qs('[data-scrolly="c"]');
+qs(".c-stage", secC).innerHTML = C.layouts[0].map(() => `<div class="c-painting"><div class="ph"></div></div>`).join("");
+buildProgress(secC, C.layouts.length);
+
+/* ===== Connector diagram: redraw paths from live element positions ===== */
+function drawConnectors() {
+  const svg = qs("#connectors");
+  if (getComputedStyle(svg).display === "none") return;
+  const box = svg.getBoundingClientRect();
+  const nodes = qa("#diagram .node").map(n => n.getBoundingClientRect());
+  let d = "";
+  for (let i = 0; i < nodes.length - 1; i++) {
+    const a = nodes[i], b = nodes[i + 1];
+    const x1 = a.right - box.left, y1 = a.top + a.height / 2 - box.top;
+    const x2 = b.left - box.left - 6, y2 = b.top + b.height / 2 - box.top;
+    const mid = (x1 + x2) / 2, lift = 40 * (i % 2 ? 1 : -1);
+    d += `<path d="M${x1},${y1} Q${mid},${y1 + lift} ${x2},${y2}" fill="none" stroke="#313036" stroke-width="1.5"/>
+          <path d="M${x2 - 7},${y2 - 5} L${x2},${y2} L${x2 - 7},${y2 + 5}" fill="none" stroke="#313036" stroke-width="1.5"/>`;
+  }
+  svg.innerHTML = d;
+}
+new ResizeObserver(drawConnectors).observe(qs("#diagram"));
+
+/* ===== Scroll engine: one rAF-throttled listener drives every runway ===== */
+const runways = qa(".runway").map(el => ({ el, kind: el.dataset.scrolly, steps: 0, last: -1 }));
+runways.forEach(r => {
+  r.steps = r.kind === "a" ? A.length : r.kind === "b" ? B.length : r.kind === "c" ? C.layouts.length : 1;
+});
+
+function progressOf(el) {
+  const r = el.getBoundingClientRect();
+  const span = r.height - window.innerHeight;  // distance the sticky panel stays pinned
+  return Math.min(1, Math.max(0, -r.top / span));
+}
+
+function applyC(sec, step) {
+  const portrait = matchMedia("(orientation: portrait)").matches;
+  qa(".c-painting", sec).forEach((p, i) => {
+    const L = C.layouts[step][i];
+    const w = portrait ? Math.min(L.width * C.portraitScale, 70) : L.width;
+    Object.assign(p.style, {
+      top: L.top + "%", width: w + "%", zIndex: L.z, opacity: L.op,
+      transform: `rotate(${L.rot}deg)`,
+      left: L.left != null ? L.left + "%" : "auto",
+      right: L.right != null ? L.right + "%" : "auto",
+    });
+  });
+  qs(".c-caption", sec).textContent = C.captions[step];
+}
+
+function update() {
+  ticking = false;
+  for (const r of runways) {
+    if (r.el.offsetParent === null) continue; // hidden twin (desktop-only / mobile-only)
+    const p = progressOf(r.el);
+    const bar = qs(".progress", r.el);
+    if (bar) {
+      bar.classList.toggle("hidden", p <= 0 || p >= 1);
+      qs(".progress-fill", bar).style.width = p * 100 + "%";
+    }
+    if (r.kind === "d") { scrub(r.el, p); continue; }
+
+    const step = Math.min(r.steps - 1, Math.floor(p * r.steps));
+    if (step === r.last) continue;
+    r.last = step;
+    qa(".progress-marker", r.el).forEach((m, i) => m.classList.toggle("on", i <= step));
+    if (r.kind === "a" || r.kind === "b") qa(".frame", r.el).forEach((f, i) => f.classList.toggle("is-active", i === step));
+    if (r.kind === "b") qa(".b-text", r.el).forEach((t, i) => t.classList.toggle("is-visible", i === step));
+    if (r.kind === "c") applyC(r.el, step);
+  }
+}
+
+/* Scrubbed animation. With Lottie: anim.goToAndStop(p * (anim.totalFrames - 1), true) */
+function scrub(el, p) {
+  const dot = qs("circle", el);
+  if (dot.id === "dotD") dot.setAttribute("cx", 200 + p * 1400);
+  else dot.setAttribute("cy", 200 + p * 800);
+}
+
+let ticking = false;
+const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+addEventListener("scroll", onScroll, { passive: true });
+addEventListener("resize", () => { runways.forEach(r => r.last = -1); onScroll(); drawConnectors(); });
+matchMedia("(orientation: portrait)").addEventListener("change", () => { runways.forEach(r => r.last = -1); onScroll(); });
+
+/* Intro: reveal headline once fonts are ready (avoids a reflow mid-animation) */
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => qs("#header").classList.add("is-ready"));
+applyC(secC, 0);
+update();
+</script>
+</body>
+</html>

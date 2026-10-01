@@ -1,4 +1,4 @@
-# Chunk 12 (optional): An AI-assisted newsroom tool, with a human in the loop
+# Phase 2 · Chunk 13 (optional): An AI-assisted newsroom tool, with a human in the loop
 
 **Goal:** One internal tool, not reader-facing: an **alt-text and credit checker** that finds media missing alt
 text or credits, streams AI-drafted alt text, and lets a person approve, edit or reject each draft before anything is saved.

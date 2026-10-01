@@ -1,4 +1,4 @@
-# Chunk 05: Graphics desk and the embed pipeline, first graphic: Tally
+# Phase 2 · Chunk 05: Graphics desk and the embed pipeline, first graphic: Tally
 
 **Goal:** Build the first Svelte 5 graphic in the SvelteKit graphics app, then the **embed pipeline** that lets
 the React story server-render it and hydrate it, the Times pattern of desk-built graphics embedded in the article template.

@@ -1,4 +1,4 @@
-# Chunk 09: Media: lead art, video, audio, and a preflight script
+# Phase 2 · Chunk 10: Media: lead art, video, audio, and a preflight script
 
 **Goal:** Media that is fast, captioned and safe by default, plus a Node script that blocks a merge when media
 breaks the rules.

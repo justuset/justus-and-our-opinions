@@ -19,10 +19,10 @@ edit them in place. Project-specific guidance goes in `/CLAUDE.md` instead.
 
 | Skill | Use in this project |
 |-------|---------------------|
-| `svelte-runes` | **Core.** `$state`, `$derived`, `$effect`, `$props` in every graphic (chunks 05–07) |
+| `svelte-runes` | **Core.** `$state`, `$derived`, `$effect`, `$props` in every graphic (Phase 1 chunk 11, Phase 2 chunks 05–08) |
 | `svelte-template-directives` | **Core.** `{@attach}` for observers and D3, `{@render}` for snippets (scrolly graphic slot) |
 | `svelte-styling` | **Core.** Scoped styles, passing design tokens with `style:--var` and `--prop` on components |
-| `svelte-layerchart` | Optional. Weighed against hand-rolled `d3-scale` charts in chunk 06 |
+| `svelte-layerchart` | Optional. Weighed against hand-rolled `d3-scale` charts in Phase 2 chunk 06 |
 | `svelte-components` | Reference. Web components and form patterns |
 | `svelte-deployment` | **Used.** Vite and plugin versions, `adapter-static` for the graphics app, library builds for embeds |
 | `sveltekit-structure` | **Used.** The graphics app is SvelteKit: preview routes, prerendering, `<svelte:boundary>`, SSR/hydration |

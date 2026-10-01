@@ -29,13 +29,13 @@ or do they span both?"* **This project spans both on purpose**, so we learn wher
 
 ## 2. Five engineering principles (diatour-nyt §III.III)
 
-| Principle | In practice | Where it shows up in our plan |
+| Principle | In practice | Where it shows up in our plan (Phase 2) |
 |-----------|-------------|-------------------------------|
-| Performance first | A byte budget per piece, lazy media, no library for what CSS can do | Chunks 02, 04, 10 |
+| Performance first | A byte budget per piece, lazy media, no library for what CSS can do | Chunks 02, 04, 11 |
 | Accessible by default | Real headings and tables, live text over images, a keyboard path through every control | Every chunk. Enforced in 10 |
-| Restraint | One motion idea per piece, and every animation can switch off | Chunks 04–08 |
+| Restraint | One motion idea per piece, and every animation can switch off | Chunks 04–09 |
 | Trust the reader | Show the data, label it plainly | Chunks 06, 07 |
-| Systems over one-offs | Props and ArchieML fields for everything that changes between uses | Chunks 03, 11 |
+| Systems over one-offs | Props and ArchieML fields for everything that changes between uses | Chunks 03, 12 |
 
 ## 3. Anatomy of a Times story page (from the "Basic Pistol" teardown, §VI.I)
 
@@ -44,12 +44,12 @@ or do they span both?"* **This project spans both on purpose**, so we learn wher
 | Section bar | Sticky nav | Platform | `SiteHeader` (HTML + CSS) |
 | Kicker | "Opinion · Guest Essay" | Platform template | `<p class="kicker">` |
 | Headline and dek | Display serif headline, serif dek at reading size | Platform template | `<h1>` + `<p class="dek">` with `text-wrap: balance` |
-| Listen | Narrated audio player above the fold | Platform audio | `AudioPlayer`, native `<audio>` (chunk 09) |
-| Action row | Gift, share, save, comments | Platform | `ActionRow` with the Web Share API (chunk 04) |
-| Lead art | Photo or illustration with caption and credit | Photo desk | `<figure><picture>` (chunk 09) |
+| Listen | Narrated audio player above the fold | Platform audio | `AudioPlayer`, native `<audio>` (Phase 2 chunk 10) |
+| Action row | Gift, share, save, comments | Platform | `ActionRow` with the Web Share API (Phase 2 chunk 04) |
+| Lead art | Photo or illustration with caption and credit | Photo desk | `<figure><picture>` (Phase 2 chunk 10) |
 | Byline | Headshot, dateline, date | Platform | `<address>`-free byline with `<time datetime>` |
-| Body | Text column with full-bleed breakouts | Platform | CSS grid with named lines `content` and `full` (chunk 02) |
-| Inline media | Tap-to-play video, captions | Video desk | Safe video default (chunk 09) |
+| Body | Text column with full-bleed breakouts | Platform | CSS grid with named lines `content` and `full` (Phase 2 chunk 02) |
+| Inline media | Tap-to-play video, captions | Video desk | Safe video default (Phase 2 chunk 10) |
 | End matter | Comments CTA, recirculation | Platform | `EndMatter`, static |
 
 What the teardown suggested adding, each as a **reusable** block:

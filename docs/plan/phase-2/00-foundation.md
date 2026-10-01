@@ -1,4 +1,4 @@
-# Chunk 00: Monorepo foundation
+# Phase 2 · Chunk 00: Monorepo foundation
 
 **Goal:** One repo with two apps shaped like the Times's two front-end worlds (a React story page and a SvelteKit
 graphics desk) and two shared packages, all linted, type-checked and built in CI.

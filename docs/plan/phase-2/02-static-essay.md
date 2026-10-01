@@ -1,4 +1,4 @@
-# Chunk 02: Server-rendered essay (React SSR, no client behaviors yet)
+# Phase 2 · Chunk 02: Server-rendered essay (React SSR, no client behaviors yet)
 
 **Goal:** The full Opinion article as **React components rendered on the server**, which is how the Times article
 template works. It uses the diatour look and the guide's three-rail layout, and it's fully readable before any

@@ -1,6 +1,6 @@
 # Layout system: fluid type, rails and breakpoint choreography
 
-This is the spec chunks 01 and 02 build. It combines two references:
+This is the spec Phase 2 chunks 01 and 02 build (Phase 1 uses the reference's measured px values on purpose; see `plan/README.md`). It combines two references:
 
 - [`reference/nyt-layout-and-fluid-css-guide.md`](reference/nyt-layout-and-fluid-css-guide.md) (the "guide"):
   the asymmetric three-track grid, the breakpoint choreography, `clamp()` math, rem-based tokens, defensive
@@ -162,7 +162,7 @@ html { overflow-x: clip; } /* stop 100vw from causing horizontal scroll */
 
 - **Why a float for callouts?** Grid rows can't line a rail item up with "the paragraph above" without
   hard-coding rows. The float-into-margin technique (as in Tufte CSS) keeps callouts next to their paragraph
-  and falls back to an inline card at narrower tiers. A stretch goal in chunk 04 tries **CSS anchor positioning** instead.
+  and falls back to an inline card at narrower tiers. A stretch goal in Phase 2 chunk 04 tries **CSS anchor positioning** instead.
 - **Why the sticky element sits inside the meta rail.** A sticky grid item can only stick within its grid area.
   The rail stretches the full height of `.story-body`, so its inner `.sticky` element can travel the length of the essay.
 
@@ -191,7 +191,7 @@ about their slot). The same card looks like a compact list item in a rail and li
 | Unknown content length (headlines, AI or user text) | `minmax()` tracks, `text-wrap: balance`, `line-clamp` only for previews (never for the essay) |
 | Right-to-left or vertical text | Logical properties only (`margin-inline-start`, `padding-block-end`, `inset-inline-end`, `float: inline-end`) |
 
-Lint for it: add [stylelint-use-logical](https://github.com/csstools/stylelint-use-logical) in chunk 10, so
+Lint for it: add [stylelint-use-logical](https://github.com/csstools/stylelint-use-logical) in Phase 2 chunk 11, so
 `margin-left` and its relatives get flagged.
 
 ## 6. Figma → code handoff (guide §5)
@@ -205,4 +205,4 @@ Style Dictionary  ── transform: size/pxToRem ──►  src/styles/tokens.cs
 
 - Figma's `base-root = 16` number variable. Every size variable's description shows its rem value.
 - The same names on both sides: Figma `space/4` ⇄ `--space-4`. No translation table.
-- The pipeline is a **stretch task in chunk 01**. Start with a hand-written `tokens.css`, then automate it once the names have settled.
+- The pipeline is a **stretch task in Phase 2 chunk 01**. Start with a hand-written `tokens.css`, then automate it once the names have settled.

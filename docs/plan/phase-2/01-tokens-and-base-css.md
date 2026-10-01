@@ -1,4 +1,4 @@
-# Chunk 01: Design system package (diatour)
+# Phase 2 · Chunk 01: Design system package (diatour)
 
 **Goal:** Turn the diatour design system into one CSS package both apps import: rem-based and fluid tokens, cascade
 layers, light and dark themes, the signature diatour components, and a styleguide route.

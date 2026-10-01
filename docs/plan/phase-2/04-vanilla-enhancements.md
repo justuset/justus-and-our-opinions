@@ -1,4 +1,4 @@
-# Chunk 04: Hydration and page behaviors
+# Phase 2 · Chunk 04: Hydration and page behaviors
 
 **Goal:** Turn on client hydration (as the Times article does) and add the behaviors every story gets: reading
 progress, a contents drawer, share and footnotes. Each one must leave the server-rendered page fully usable if JS fails.

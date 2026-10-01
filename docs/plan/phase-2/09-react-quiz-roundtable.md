@@ -1,4 +1,4 @@
-# Chunk 08: Product formats: Quiz and Roundtable (React)
+# Phase 2 · Chunk 09: Product formats: Quiz and Roundtable (React)
 
 **Goal:** Two recurring Opinion formats built the way the Times's product front end would build them: React components in the
 story app, server-rendered and hydrated, fed by ArchieML blocks.

@@ -1,4 +1,4 @@
-# Chunk 10: QA, performance and accessibility in CI
+# Phase 2 · Chunk 11: QA, performance and accessibility in CI
 
 **Goal:** Automate the boring checks so your eyes go to the judgment calls: a breakpoint screenshot matrix in two
 browser engines, axe accessibility scans, unit tests and a JavaScript budget, all on every PR.

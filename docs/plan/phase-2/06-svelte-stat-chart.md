@@ -1,4 +1,4 @@
-# Chunk 06: Graphic: Stat-to-chart with a table fallback
+# Phase 2 · Chunk 06: Graphic: Stat-to-chart with a table fallback
 
 **Goal:** A graphics-desk component that turns two to six numbers from the ArchieML doc into an accessible SVG bar or
 slope chart **plus the same numbers as a table**, all from one data object, and embeds it through the chunk 05 pipeline.

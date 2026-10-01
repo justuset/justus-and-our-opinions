@@ -13,19 +13,20 @@ separately and embedded, and story copy in **ArchieML**.
 
 ## Status
 
-📐 **Planning.** The repo is set up and the plan is written. Code starts with [chunk 00](docs/plan/00-foundation.md).
+📐 **Planning done.** Next: **Phase 1, [chunk 1](docs/plan/phase-1/01-skeleton-and-content-model.md)**, which rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, ten chunks with a browser checkpoint each. Then [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack.
 
 ## Start here
 
 | Read | What's in it |
 |------|--------------|
 | [docs/learning-log/](docs/learning-log/) | A running journal. Starts with [01: repo setup, first commit and README](docs/learning-log/01-repo-setup.md) |
+| [docs/reference/scrolly-template-breakdown.md](docs/reference/scrolly-template-breakdown.md) | **How the NYT-style scrolly article is built**, part by part, for designers and developers, with verified measurements and known bugs |
 | [docs/reference/diatour-nyt-analysis.md](docs/reference/diatour-nyt-analysis.md) | What the diatour-nyt artifacts say about the Times stack and Opinion page anatomy |
 | [docs/architecture.md](docs/architecture.md) | The Times-shaped stack: React story app, SvelteKit graphics app, embed contract, monorepo layout |
 | [docs/design-system.md](docs/design-system.md) | The diatour design system: color, type, space, motion, components |
 | [docs/layout-system.md](docs/layout-system.md) | Fluid type math, the three-rail grid and its four breakpoint tiers, defensive layout, Figma handoff |
 | [CLAUDE.md](CLAUDE.md) and [.claude/skills/](.claude/skills/README.md) | Guidance for Claude Code, plus vendored Svelte skills (MIT, svelte-skills-kit) |
-| [docs/plan/](docs/plan/README.md) | The build plan in 12 chunks (+1 optional), with milestones |
+| [docs/plan/](docs/plan/README.md) | **Phase 1:** 10 hand-built chunks in one `index.html` (+ an optional Svelte port). **Phase 2:** the Times-shaped stack in 13 chunks |
 
 ## Planned stack
 

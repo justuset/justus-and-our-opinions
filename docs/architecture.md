@@ -66,6 +66,17 @@ justus-and-our-opinions/
 └─ .github/workflows/ci.yml
 ```
 
+## Two page types
+
+| Page type | Who builds it at the Times | Our app | Example |
+|-----------|----------------------------|---------|---------|
+| **Essay**: the standard Opinion article template | Platform (React) + embedded graphics | `apps/story` | "Three Writers, One Question" |
+| **Visual essay**: a full-page interactive (Birdkit-style) | Graphics desk (SvelteKit), end to end | `apps/graphics` route `/essays/[slug]` | The rebuild of `docs/reference/scrolly-template.html` |
+
+The scroll scenes and graphics are written once and used in both: full-page in a visual essay, and as embeds inside an essay.
+How the visual essay works is explained in `docs/reference/scrolly-template-breakdown.md`. It's prototyped by hand in
+**Phase 1** (`prototype/index.html`, `docs/plan/README.md`) before Phase 2 builds it here.
+
 ## Which layer does a block belong in?
 
 | If the block… | Built in | Why (Times analogy) |
@@ -98,7 +109,7 @@ dist/embeds/tally/embed.css
 ## Trade-offs (said honestly)
 
 - **More moving parts than Astro.** You learn real seams: SSR, hydration, embed bundles and workspaces. That's the point.
-- **The whole article hydrates with React**, as the Times page does. Its JS cost is real, so chunk 10 sets budgets
+- **The whole article hydrates with React**, as the Times page does. Its JS cost is real, so Phase 2 chunk 11 sets budgets
   (React app ≤ 150 KB gzipped, each embed ≤ 40 KB).
 - **Two dev servers** (`story` on :5173, `graphics` on :5174). A root `npm run dev` runs both.
 
@@ -106,4 +117,4 @@ dist/embeds/tally/embed.css
 
 - **v1 (superseded): Astro shell with Svelte and React islands.** It was simpler and lighter, but no Times page works that
   way. Dropped on 2026-10-01 at the user's request to stay close to the Times's front-end practice. The
-  hand-rolled island exercise survives as the embed pipeline in chunk 05.
+  hand-rolled island exercise survives as the embed pipeline in Phase 2 chunk 05.

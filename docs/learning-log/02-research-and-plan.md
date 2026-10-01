@@ -42,4 +42,4 @@ break the build into chunks small enough to learn from one at a time.
 
 ## Next
 
-[Chunk 00: Project foundation](../plan/00-foundation.md).
+[Chunk 00: Project foundation](../plan/phase-2/00-foundation.md).

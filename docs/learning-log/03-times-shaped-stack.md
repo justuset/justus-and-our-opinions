@@ -57,4 +57,4 @@ person approving every draft, from guide §1 and diatour §IX).
 - **License hygiene.** "MIT in a manifest" is enough to vendor, but record exactly what you copied and from where.
 
 ## Next
-[Chunk 00: Monorepo foundation](../plan/00-foundation.md).
+[Chunk 00: Monorepo foundation](../plan/phase-2/00-foundation.md).
