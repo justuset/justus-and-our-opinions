@@ -17,7 +17,11 @@ npm run dev          # http://localhost:5173, media served raw from big_assets/
 npm run build        # hash media → vite build (prerender) → copy media → verify media URLs
 npm run preview      # serve dist/ as a reader would get it
 npm run deploy       # print the upload plan with cache headers (dry run)
+npm run parity       # compare dist/ with ../../prototype at 375/1024/1440 (once: npx playwright install chromium)
 ```
+
+Generated placeholder motion (self-authored, no third-party license): `node scripts/make-hero-lottie.js` and
+`node scripts/make-scrub-lottie.js` rewrite the Lottie files in `big_assets/videos/`.
 
 ## Where things live
 

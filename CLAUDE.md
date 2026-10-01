@@ -13,7 +13,7 @@ decisions as you go, and add a `docs/learning-log/NN-*.md` entry for each meanin
 Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-structure.md`, `docs/reference/scrolly-template-breakdown.md`, `docs/architecture.md`,
 `docs/design-system.md` (diatour wins visual conflicts) and `docs/layout-system.md`.
 
-## Phase 1: the hand-built prototype (current)
+## Phase 1: the hand-built prototype (complete; next is Phase 2)
 
 - Everything lives in **one file**, `prototype/index.html` (inline `<style>` and `<script>`, assets in `prototype/assets/`). Plain HTML, CSS and JS, no frameworks, no build step.
 - **One new idea per chunk**, and the chunk's browser **checkpoint must pass before the next chunk starts**. When helping, stay inside the current chunk's scope.

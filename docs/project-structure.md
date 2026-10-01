@@ -88,6 +88,7 @@ npm run dev            # http://localhost:5173: live reload, media served from b
 npm run build          # writes dist/ (see §7)
 npm run preview        # serves dist/ locally, as a reader would get it
 npm run deploy         # prints the upload plan with cache headers (dry run, see §9)
+npm run parity         # compares dist/ with prototype/index.html at 375/1024/1440 (needs `npx playwright install chromium` once)
 ```
 
 Requirements: Node 22+. Versions are pinned to the spec's ranges: SvelteKit 2, Svelte 5, Vite 6, adapter-static 3,
@@ -114,14 +115,17 @@ projects/the-second-draft/
 │  │  ├─ argument-a, b, c.webp
 │  │  └─ slides/slide-1 … slide-6/slide.jpg
 │  ├─ videos/
-│  │  ├─ hero/hero.json
+│  │  ├─ hero/hero-desktop.json, hero-mobile.json
 │  │  ├─ scrub-desktop.json
 │  │  ├─ scrub-mobile.json
 │  │  └─ images/diagram/frame-1, 2.webp
 │  └─ scripts/                  (empty for now; .gitkeep)
 ├─ scripts/
 │  ├─ hash-assets.js
+│  ├─ lottie-kit.js
+│  ├─ make-hero-lottie.js
 │  ├─ make-scrub-lottie.js
+│  ├─ parity.js
 │  └─ deploy.js
 ├─ static/
 │  └─ favicon.png
@@ -174,7 +178,10 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it does |
 |------|-------------|
 | `hash-assets.js` | **Before the build:** hashes every file in `big_assets/` (paths + bytes) and writes `src/lib/assets.js` with the media URL. **After the build (`--copy`):** copies the folder to `dist/_big_assets.<hash>/`, then checks that every media URL in `index.html` points at a real file |
+| `lottie-kit.js` | Small helpers for writing Lottie JSON by hand: `still()` / `animated()` properties, `rect` / `ellipse` / `hline` shapes, `fill` / `stroke`, `layer()` and `file()`. Its header comment explains the format |
+| `make-hero-lottie.js` | Writes the header intro twins (`big_assets/videos/hero/hero-desktop.json`, `hero-mobile.json`) from the **same coordinates as the SVG posters** in `Header.svelte`, so the last frame is the poster (measured: 11 of 540,000 pixels differ, all anti-aliasing). Run by hand: `node scripts/make-hero-lottie.js` |
 | `make-scrub-lottie.js` | Writes the two scene D placeholder animations (`big_assets/videos/scrub-desktop.json`, `scrub-mobile.json`): 12 bars of "text" on a page, 7 shrink and fade, 5 close up. Self-authored, so no license to record. A readable example of what's inside a Lottie file (canvas, frame range, layers, keyframes). Run it by hand: `node scripts/make-scrub-lottie.js` |
+| `parity.js` | `npm run parity`: measures the prototype and `dist/` side by side at three widths and fails on any difference over 1px (§11). Uses the `playwright` dev dependency |
 | `deploy.js` | Prints the upload plan: every file in `dist/` with its `Cache-Control` header, hashed folders first and `index.html` last. Swap its `upload()` function for your host's CLI to deploy for real (§9) |
 
 ### `static/`
@@ -206,7 +213,7 @@ shows which prototype chunk each one mirrors (see §11).
 
 | Component | Renders | Status |
 |-----------|---------|--------|
-| `Header.svelte` | Kicker, headline, dek and the art stage. A fixed 675px box, height-scaled **twin** art (portrait for phones, landscape for desktop), and the intro fade-up after `document.fonts.ready` (via an `{@attach}`) | ✅ Ported (chunks 4–6) |
+| `Header.svelte` | Kicker, headline, dek and the art stage. A fixed 675px box, height-scaled **twin** art (portrait for phones, landscape for desktop), and the intro fade-up after `document.fonts.ready` (via an `{@attach}`) | ✅ Ported (chunks 4–6). Hero Lottie twins play once over the SVG poster, which stays for no JS and reduced motion (chunk 11) |
 | `Byline.svelte` | "By … · `<time>`" in the text column | ✅ Ported (chunks 1–2) |
 | `Text.svelte` | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
@@ -229,7 +236,7 @@ shows which prototype chunk each one mirrors (see §11).
 {
   "slug": "the-second-draft",
   "header":  { "kicker": "Our Opinions", "kind": "Guest Essay · Demo", "headline": "The Second Draft", "dek": "…",
-               "art": { "lottie": "videos/hero/hero.json" } },
+               "art": { "lottie": { "desktop": "videos/hero/hero-desktop.json", "mobile": "videos/hero/hero-mobile.json" } } },
   "byline":  { "author": "A. Writer", "date": "2026-10-01", "dateText": "Oct. 1, 2026" },
   "blocks": [
     { "type": "text", "value": "Every essay you have read…" },
@@ -270,7 +277,7 @@ At the Times, editors write this in a Google Doc using **ArchieML**. JSON is the
 | Folder | Holds | Rule |
 |--------|-------|------|
 | `images/` | Photos and illustrations as `.webp`, plus scroll section A's slides as `slides/slide-N/*.jpg` | One file per use. Size images close to their display size |
-| `videos/` | **Lottie JSON** (motion as data): `hero/hero.json` (header), `scrub-desktop.json` / `scrub-mobile.json` (section D) | Twins: landscape for desktop, portrait for mobile |
+| `videos/` | **Lottie JSON** (motion as data): `hero/hero-desktop.json` / `hero-mobile.json` (header intro, plays once, ends on the SVG poster), `scrub-desktop.json` / `scrub-mobile.json` (section D) | Twins: landscape for desktop, portrait for mobile |
 | `videos/images/diagram/` | Image frames that a Lottie file references by path | Keep them beside their Lottie |
 | `scripts/` | Small standalone helper scripts loaded by URL | Hashed and copied like any media |
 
@@ -418,8 +425,17 @@ Phase 1 chunk N:  build it in prototype/index.html  →  checkpoint passes in De
 | `<head>` script (`.js`, failsafe) | `src/app.html` |
 | `.js .headline` | `:global(.js) .headline` (the class lives on `<html>`, outside the component) |
 
-Each ⏳ component's top comment says which chunk finishes it. When that chunk's checkpoint passes in the prototype, port the
-rules and behavior, update the comment to ✅, and update the status table in §4.
+Each ⏳ component's top comment said which chunk finishes it. When that chunk's checkpoint passed in the prototype, its rules
+and behavior were ported, and the comment and the §4 table changed to ✅. As of chunk 11, every component is ✅.
+
+**Proving they match: `npm run parity`** (`scripts/parity.js`). It serves `prototype/` and `dist/` with a tiny static server,
+opens both in headless Chromium at 375, 1024 and 1440px, and compares column width, header height, headline size, two-up
+direction and image widths, diagram width, every runway's height, page height, and the scroll offsets where runway A's
+steps change. It exits with code 1 if anything differs by more than 1px. Its first run found a real bug: enhanced runways
+in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`).
+
+Two things exist only in the project: the header's intro Lottie, and `srcset` driven by `story.json`. The prototype stays
+as the hand-built reference.
 
 ---
 
@@ -435,6 +451,19 @@ aspect ratio, or update `width`/`height`. The next build gets a new `_big_assets
 2. Create `src/lib/components/PullQuote.svelte`: markup from props, a scoped `<style>`, tokens only.
 3. Register it in `src/routes/+page.svelte`: `'pull-quote': PullQuote` in `BLOCKS`.
 4. Check it reads correctly **with JavaScript off** (`npm run build && npm run preview`, then disable JS in DevTools).
+
+**Add another scroll section.** Only `story.json` changes. Insert a block with an existing `scene`, and the runway, step list,
+progress markers and scene come from the components. For example, a second "paintings" scene:
+```json
+{ "type": "scrolly", "scene": "paintings", "label": "…",
+  "items": [{ "image": "images/argument-a.webp", "alt": "…" }, { "image": "images/argument-b.webp", "alt": "…" }],
+  "steps": [
+    { "caption": "…", "layout": [{ "top": 20, "left": 10, "width": 35, "rot": -2, "op": 1, "z": 2 }, { "top": 20, "right": 10, "width": 35, "rot": 2, "op": 0.4, "z": 1 }] },
+    { "caption": "…", "layout": [{ "top": 25, "left": 30, "width": 30, "rot": 0, "op": 0.4, "z": 1 }, { "top": 15, "right": 25, "width": 40, "rot": -3, "op": 1, "z": 2 }] }
+  ] }
+```
+Chunk 11 tested exactly this in a scratch copy: a 2-step runway (2430px at 900px tall), 2 markers, captions following the
+scroll, and no component edits (learning log 16).
 
 **Start a second story.** Copy the folder to `projects/<new-slug>/`, change `name` in `package.json`, replace `content/story.json` and
 `big_assets/`, then `npm install && npm run dev`.
@@ -463,8 +492,8 @@ find dist -type f | sort
 | Output: `_big_assets.<content-hash>/{images,videos,scripts}` | ✅ The hash is stable across builds until media changes |
 | Relative paths: works under `<cdn>/projects/<project-id>/` | ✅ Verified from `/projects/the-second-draft/`: all files load, the page hydrates |
 | Dev serves media from `/big_assets` without a build | ✅ Verified |
-| Scroll mechanics from `scrolly-template.html` | ⏳ Arrive with Phase 1 chunks 6–10, one component at a time (§11) |
-| Header Lottie (`hero.json`) | ⏳ The file is in place. The SVG art stays as the poster until chunk 10 |
+| Scroll mechanics from `scrolly-template.html` | ✅ All four scenes ported (chunks 8–10). `npm run parity` matches the prototype within 1px at 375 / 1024 / 1440 |
+| Header Lottie | ✅ Twins (`hero-desktop.json` / `hero-mobile.json`) play once (chunk 11). The SVG art is the poster: no JS, reduced motion, and the animation's last frame |
 
 ---
 

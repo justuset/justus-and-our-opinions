@@ -3,9 +3,44 @@
      The art scales by height, so it crops at the sides and never squashes.
      The art comes as twins (chunk 6): a portrait artboard for phones and a landscape one for desktop. Only one displays
      at a time (the .mobile-only / .desktop-only utilities at the end of app.css).
-     Planned: a twin Lottie (big_assets/videos/hero/hero.json) in chunk 11, with these SVGs kept as the no-JS poster. -->
+     Chunk 11: each twin also gets an intro Lottie that plays once (big_assets/videos/hero/hero-*.json, made by
+     scripts/make-hero-lottie.js). Its LAST frame is this SVG, pixel for pixel, so the SVG is the poster: it's what
+     no-JS and reduced-motion readers see, and what everyone sees once the animation ends.
+     The poster hides only when the animation has drawn its first frame; if the file fails, the poster just stays. -->
 <script>
-  let { kicker, kind, headline, dek } = $props();
+  import { playOnce } from '$lib/lottie.js';
+  import { asset } from '$lib/assets.js';
+  import { prefersReducedMotion } from 'svelte/motion';
+
+  let { kicker, kind, headline, dek, art } = $props();
+
+  // Which twin's animation is on screen (poster hidden). Keys: 'desktop', 'mobile'.
+  let playing = $state({});
+
+  /** Attachment factory: play one twin's intro. A display: none twin never intersects, so it never downloads. */
+  const hero = (twin) => (artEl) => {
+    const path = art?.lottie?.[twin];
+    if (!path || prefersReducedMotion.current) return; // reduced motion: the poster is the art
+    let anim;
+    let cancelled = false;
+    const seen = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      seen.disconnect();
+      playOnce(artEl.querySelector('.hero-anim'), asset(path))
+        .then((a) => {
+          anim = a;
+          if (cancelled) a.destroy();
+          else playing[twin] = true;
+        })
+        .catch(() => {}); // the poster stays
+    });
+    seen.observe(artEl);
+    return () => {
+      cancelled = true;
+      seen.disconnect();
+      anim?.destroy();
+    };
+  };
 
   // Reveal the headline once fonts have loaded, so it never animates in a fallback font (chunk 5).
   // An attachment runs in the browser only, after the element exists: the SSR-safe place for DOM work.
@@ -21,7 +56,8 @@
     <h1 class="headline">{headline}</h1>
     <p class="subtitle">{dek}</p>
   </div>
-  <div class="header-art mobile-only">
+  <div class="header-art mobile-only" class:playing={playing.mobile} {@attach hero('mobile')}>
+    <div class="hero-anim" aria-hidden="true" style:aspect-ratio="800 / 1200"></div>
     <!-- 800×1200 portrait artboard. The copy covers about the top 55% on phones, so the art sits below it. -->
     <svg viewBox="0 0 800 1200" aria-hidden="true" focusable="false">
       <g class="art-page">
@@ -37,7 +73,8 @@
       </g>
     </svg>
   </div>
-  <div class="header-art desktop-only">
+  <div class="header-art desktop-only" class:playing={playing.desktop} {@attach hero('desktop')}>
+    <div class="hero-anim" aria-hidden="true" style:aspect-ratio="1800 / 1200"></div>
     <!-- 1800×1200 landscape artboard. Key content in the middle 40% (x 540–1260). The circles are the squash test. -->
     <svg viewBox="0 0 1800 1200" aria-hidden="true" focusable="false">
       <g class="art-page">
@@ -94,6 +131,11 @@
   }
   .header-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
   .header-art svg { height: 100%; width: auto; max-width: none; flex: none; }   /* height-driven scale */
+  /* The animation sits exactly over the poster: same height, same aspect ratio, centered, so the two line up. */
+  .hero-anim { position: absolute; top: 0; left: 50%; height: 100%; transform: translateX(-50%); }
+  /* Hide the poster once the animation is drawn. Scoped CSS only matches this component's own <svg>, never the one
+     Lottie injects at runtime, so this can't hide the animation. */
+  .playing > svg { visibility: hidden; }
   .art-page  { fill: var(--surface); stroke: var(--line); stroke-width: 3; }
   .art-lines { fill: none; stroke: var(--line); stroke-width: 10; stroke-linecap: round; }
   .art-ring  { fill: none; stroke: var(--line); stroke-width: 14; }

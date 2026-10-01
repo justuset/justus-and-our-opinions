@@ -2,6 +2,9 @@
 
 Two phases. **Phase 1 is the main path.**
 
+> **Status (2026-10-01): Phase 1 is complete.** Chunks 1–10 are built in the prototype and ported, and chunk 11's parity check
+> passes. See the [Phase 1 retro](../learning-log/17-phase-1-retro.md). **Next: [Phase 2](phase-2/README.md), chunk 00.**
+
 | Phase | What | Where | Rules |
 |-------|------|-------|-------|
 | **1: Build it by hand** | Rebuild the NYT-style scrolly article in **one `index.html`** with plain HTML, CSS and JS, one idea per chunk | `prototype/index.html` | This file |

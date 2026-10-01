@@ -7,7 +7,10 @@
     "headline": "The Second Draft",
     "dek": "Most of what a reader sees was decided after the first version failed. That is where the argument lives.",
     "art": {
-      "lottie": "videos/hero/hero.json"
+      "lottie": {
+        "desktop": "videos/hero/hero-desktop.json",
+        "mobile": "videos/hero/hero-mobile.json"
+      }
     }
   },
   "byline": {

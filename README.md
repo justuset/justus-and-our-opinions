@@ -13,9 +13,9 @@ separately and embedded, and story copy in **ArchieML**.
 
 ## Status
 
-🛠 **Phase 1 in progress.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md) are built, so Phase 1's main path is done. Next: [chunk 11](docs/plan/phase-1/11-optional-svelte-port.md), finishing the port and checking parity. After Phase 1, [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack.
+✅ **Phase 1 complete.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md) are built, and [chunk 11](docs/plan/phase-1/11-optional-svelte-port.md)'s parity check passes, so **Phase 1 is complete** ([retro](docs/learning-log/17-phase-1-retro.md)). Next: [Phase 2](docs/plan/phase-2/README.md), which ports it to the Times-shaped stack.
 
-🏗 **Story project in place.** [`projects/the-second-draft/`](projects/the-second-draft/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. Chunks 1–10 are ported.
+🏗 **Story project in place.** [`projects/the-second-draft/`](projects/the-second-draft/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. All chunks are ported, and `npm run parity` confirms the project matches the prototype within 1px at 375, 1024 and 1440px.
 
 ## Repository layout
 

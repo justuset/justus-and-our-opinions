@@ -72,7 +72,7 @@
   .progress { display: none; }
 
   /* Enhanced: the runway / sticky pattern. */
-  .runway[data-enhanced] { height: calc(var(--steps) * var(--runway-step)); }
+  .runway[data-enhanced] { margin: 0; height: calc(var(--steps) * var(--runway-step)); } /* the stack's margins go */
   [data-enhanced] .sticky {
     position: sticky;
     top: 0;

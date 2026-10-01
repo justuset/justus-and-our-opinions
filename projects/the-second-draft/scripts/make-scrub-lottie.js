@@ -14,22 +14,11 @@
 //   - The page shortens to fit what's left.
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { still, animated, INK, WHITE, file } from './lottie-kit.js';
 
 const OUT = fileURLToPath(new URL('../big_assets/videos/', import.meta.url));
 const FRAMES = 60;
-const INK = [0.93, 0.93, 0.92, 1]; // diatour --ink (#ededeb) as 0–1 RGBA
-const PAGE = [1, 1, 1, 1]; // white, drawn at 6% opacity (below) ≈ diatour --surface
-// Note: a fill's color alpha is ignored. Lottie takes fill opacity from the separate `o` value, 0–100.
-const EASE = { i: { x: [0.22], y: [1] }, o: { x: [0.5], y: [0] } }; // close to --ease-settle
-
-/** A keyframed property: [[frame, value], …]. Values are arrays, so this covers position, scale and opacity. */
-function animated(keys) {
-  return {
-    a: 1,
-    k: keys.map(([t, s], n) => (n < keys.length - 1 ? { t, s, ...EASE } : { t, s }))
-  };
-}
-const still = (k) => ({ a: 0, k });
+const PAGE = WHITE; // drawn at 6% opacity (below) ≈ diatour --surface. A fill's color alpha is ignored.
 
 /** One shape layer: a rounded rectangle, drawn from its left-middle point so scaling X shrinks it toward the left. */
 function bar(ind, name, { w, h, r, color, opacity = 100, ks, size = still([w, h]) }) {
@@ -94,7 +83,7 @@ function build(name, W, H) {
   });
   layers.push(page);
 
-  return { v: '5.7.4', fr: 30, ip: 0, op: FRAMES, w: W, h: H, nm: name, ddd: 0, assets: [], layers };
+  return file(name, W, H, FRAMES, layers);
 }
 
 for (const [name, W, H] of [['scrub-desktop', 1800, 1200], ['scrub-mobile', 800, 1200]]) {
