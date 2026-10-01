@@ -6,6 +6,9 @@ placeholder content. Its own header comment says values marked **"measured"** we
 haven't re-checked those against the live page. Everything marked **✔ verified** below was measured by loading the
 template in headless Chromium at 320, 375, 800, 1024, 1280 and 1440px wide (Playwright, 2026-10-01).
 
+> **Shareable version:** a designed page of this breakdown, with live column and runway calculators, is at
+> <https://claude.ai/artifact/EEvaHehYdR7vNAMkXd697j> (private until shared from its Share menu).
+
 > **How to read this doc.** Each part has a **For designers** box (what you see, what to hand off) and a **For
 > developers** box (the exact mechanism). Part 19 lists the problems we found. Part 20 maps every piece onto our build.
 

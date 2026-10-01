@@ -20,7 +20,7 @@ separately and embedded, and story copy in **ArchieML**.
 | Read | What's in it |
 |------|--------------|
 | [docs/learning-log/](docs/learning-log/) | A running journal. Starts with [01: repo setup, first commit and README](docs/learning-log/01-repo-setup.md) |
-| [docs/reference/scrolly-template-breakdown.md](docs/reference/scrolly-template-breakdown.md) | **How the NYT-style scrolly article is built**, part by part, for designers and developers, with verified measurements and known bugs |
+| [docs/reference/scrolly-template-breakdown.md](docs/reference/scrolly-template-breakdown.md) | **How the NYT-style scrolly article is built**, part by part, for designers and developers, with verified measurements and known bugs. [Shareable page](https://claude.ai/artifact/EEvaHehYdR7vNAMkXd697j) |
 | [docs/reference/diatour-nyt-analysis.md](docs/reference/diatour-nyt-analysis.md) | What the diatour-nyt artifacts say about the Times stack and Opinion page anatomy |
 | [docs/architecture.md](docs/architecture.md) | The Times-shaped stack: React story app, SvelteKit graphics app, embed contract, monorepo layout |
 | [docs/design-system.md](docs/design-system.md) | The diatour design system: color, type, space, motion, components |
