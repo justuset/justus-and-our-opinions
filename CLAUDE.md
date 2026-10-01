@@ -10,7 +10,7 @@ Router 7 with Node SSR (the article template and product formats). `apps/graphic
 graphics desk), and its graphics are embedded into the story as server-rendered fragments that hydrate. Explain
 decisions as you go, and add a `docs/learning-log/NN-*.md` entry for each meaningful step.
 
-Read first: `docs/plan/README.md` (current phase and chunk), `docs/reference/scrolly-template-breakdown.md`, `docs/architecture.md`,
+Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-structure.md`, `docs/reference/scrolly-template-breakdown.md`, `docs/architecture.md`,
 `docs/design-system.md` (diatour wins visual conflicts) and `docs/layout-system.md`.
 
 ## Phase 1: the hand-built prototype (current)
@@ -19,7 +19,20 @@ Read first: `docs/plan/README.md` (current phase and chunk), `docs/reference/scr
 - **One new idea per chunk**, and the chunk's browser **checkpoint must pass before the next chunk starts**. When helping, stay inside the current chunk's scope.
 - Use the reference's **measured px values** (600px column, 675px header, 135svh steps) for fidelity. The rem/token conversion is Phase 2's job.
 - Avoid the reference's known bugs (breakdown §19): frames written in HTML (not `innerHTML`), twin utilities that only hide, the `.js` failsafe and `.scrolly-ready` gating.
-- The Phase 2 rules below apply from Phase 1 chunk 11 (Svelte port) onward.
+- After a chunk's checkpoint passes, port it into the story project (next section). The Phase 2 rules below apply from Phase 2 onward.
+
+## Story projects (`projects/<slug>/`): Birdkit-style SvelteKit
+
+`projects/the-second-draft/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.
+
+- **Words** live only in `content/story.json`. **Media** lives only in `big_assets/`, never in `src/` or `static/`, and is referenced with `asset(path)` from `$lib/assets.js`.
+- `src/lib/assets.js` is **generated** by `scripts/hash-assets.js`. Don't edit it by hand. Commit the regenerated file when media changes.
+- One component per block type in `src/lib/components/`. Register new types in `BLOCKS` in `src/routes/+page.svelte`.
+- Every component renders a readable **no-JS state** first. Motion comes from `{@attach}` and is gated behind a class the JS adds.
+- Ported components keep the prototype's measured px values (Phase 1 rule). The top comment says ✅ ported, or ⏳ and which chunk finishes it.
+- Svelte work here follows the Svelte skills and the SSR/`{@attach}`/token rules in the next section.
+- Verify with `npm run build` (it must end with "verified N media URLs"), then the page with JS on and off. Check the output tree with `find dist -type f`.
+- Never hand-edit `dist/` or `.svelte-kit/` (both are generated and gitignored).
 
 ## Phase 2 and Svelte skills
 

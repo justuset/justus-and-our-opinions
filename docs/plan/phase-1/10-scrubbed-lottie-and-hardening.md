@@ -58,3 +58,6 @@ then the **production layer**: reduced motion, no-JS fallbacks, lazy loading and
 - [ ] The full-page accessibility tree still reads in order, and every step's text is reachable.
 
 When all boxes are ticked, Phase 1's main path is done. 🎉 Write `docs/learning-log/` "Phase 1 retro", then go to chunk 11 or [Phase 2](../phase-2/README.md).
+
+## Port (after the checkpoint passes)
+Into `projects/the-second-draft/`: `src/lib/components/ScrubLottie.svelte` with `src/lib/lottie.js` `scrubber()` (twins, loading only the visible one). The hardening rules go into `src/app.css` and the components. Media is already wired: `srcset`/`loading` on every `<img>`, and `big_assets/videos/*.json` for the Lottie files. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

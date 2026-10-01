@@ -1,5 +1,10 @@
 # Phase 2 · Chunk 08: The visual-essay page template (Birdkit-style full page)
 
+> **Update:** a concrete, working visual-essay project now exists at `projects/the-second-draft/` (Birdkit-style, built from
+> [the build spec](../../reference/birdkit-build-spec.md), explained in [`project-structure.md`](../../project-structure.md)). This chunk
+> generalizes it: ArchieML instead of JSON, rem tokens from the shared design-system package, and a template that new
+> `projects/<slug>/` folders can be created from.
+
 **Goal:** A second page type, the **visual essay**: a full-page interactive built entirely in the graphics app, the way
 the Times graphics desk ships immersive pieces. It rebuilds every non-scrolly part of the reference template (header with twin art
 and intro, prose column, two-up, connector diagram, credits) and composes them with the chunk 07 scenes, all driven by one

@@ -35,3 +35,6 @@ ended up and draws arrows between them. A `ResizeObserver` keeps the drawing in 
 - [ ] **≥ 1024:** four boxes in a row with waving arrows between them.
 - [ ] **Resize** 1024 ↔ 1600 and zoom the page (⌘+): **the arrows stay attached** to the box edges.
 - [ ] Elements → Layout → grid overlay on `.diagram-inner` lines up with the boxes.
+
+## Port (after the checkpoint passes)
+Into `projects/the-second-draft/`: `src/lib/components/Diagram.svelte`: the desktop stage CSS, plus `drawConnectors()` inside an `{@attach}` that creates and disconnects the ResizeObserver. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

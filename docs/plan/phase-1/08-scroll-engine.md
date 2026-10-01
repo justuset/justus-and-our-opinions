@@ -67,3 +67,6 @@ step     = floor(progress × steps)
 - An ancestor with `overflow: hidden | auto` breaks `sticky` (that's why chunk 3 used `clip`).
 - The reference divides by `innerHeight` while the panel is `100svh`. On phones with a moving URL bar they differ slightly
   (breakdown §19 #10). Try measuring the `.sticky` element's height instead and note the difference.
+
+## Port (after the checkpoint passes)
+Into `projects/the-second-draft/`: `src/lib/scroll.js` (already holds `progressOf`, `stepOf`, `onScrollFrame`) and `src/lib/components/Scrolly.svelte`: an `{@attach}` registers the runway, sets `step`/`progress`, and adds `data-enhanced`. The tall-runway and sticky rules apply only under `[data-enhanced]`. Add the progress bar and markers. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

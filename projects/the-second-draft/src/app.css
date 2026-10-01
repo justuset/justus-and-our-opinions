@@ -1,0 +1,89 @@
+/* app.css: global tokens and base rules, imported once by src/routes/+layout.svelte.
+   Component-specific styles live in each component's <style> block (scoped by Svelte).
+   Ported from prototype/index.html, chunks 2 to 5. Values are the reference's measured px (Phase 1 rule). */
+
+/* ============ 1. TOKENS ============ */
+:root {
+  /* layout */
+  --gutter: clamp(10px, 12.5vw, 49px);                       /* hits the 49px cap at a 392px screen */
+  --w-body: 600px;
+  --col: min(calc(100% - var(--gutter) * 2), var(--w-body)); /* reaches 600px at a 698px screen */
+  --gap-para: 12.5px;
+  --gap-byline: 24px 32px;
+  --gap-credits: 60px 80px;
+
+  /* motion */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-fade:   cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-intro:  cubic-bezier(0.25, 1, 0.5, 1);
+  --intro-dur: .8s;
+  --intro-stagger: .2s;
+  --intro-rise: 15px;
+  --intro-rise-dek: 10px;
+  --runway-step: 135svh;                                     /* scroll distance per step (chunk 8) */
+
+  /* color: diatour */
+  --paper: #121211;
+  --ink: #ededeb;
+  --soft: rgba(235, 235, 240, 0.66);
+  --faint: rgba(235, 235, 240, 0.56);
+  --line: rgba(255, 255, 255, 0.14);
+  --surface: rgba(255, 255, 255, 0.05);
+
+  /* type */
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+  --font-serif-body: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-text: var(--font-body);                             /* the body-face decision: one token to flip */
+  --text-size: 20px;
+  --text-leading: 30px;
+  --meta-size: 14px;
+
+  /* header */
+  --header-h: 675px;
+  --header-mt: 90px;
+  --header-copy-top: 12%;
+  --header-pad: 20px;
+  --kicker-size: 13px;
+  --kicker-gap: 12px;
+  --headline-size: 58px;
+  --headline-weight: 550;
+  --headline-leading: 1;
+  --headline-tracking: -0.02em;
+  --headline-measure: 6ch;
+  --dek-size: 1.1rem;
+  --dek-measure: 30ch;
+  --gap-byline-desktop: 100px;
+}
+@media (max-width: 739px) {
+  :root { --text-size: 18px; --text-leading: 27px; }
+}
+@media screen and (max-width: 359px) {
+  :root { --header-h: 67vh; --header-copy-top: 13%; --headline-size: 44px; --dek-size: .85rem; }
+}
+@media screen and (min-width: 1024px) {
+  :root {
+    --headline-size: clamp(72px, 7.2vw, 96px);
+    --headline-leading: .92;
+    --headline-measure: 12ch;
+    --dek-size: clamp(16px, 1.4vw, 20px);
+    --dek-measure: 32ch;
+  }
+}
+
+/* ============ 2. BASE ============ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+html, body { overflow-x: clip; }       /* stops 100vw breakouts from causing sideways scroll; clip keeps sticky working */
+body { font-family: var(--font-body); }
+img, svg { display: block; max-width: 100%; }
+
+/* ============ 3. UTILITIES ============ */
+/* Full-bleed breakout: any block escapes the text column by itself (chunk 3). */
+.bleed { position: relative; width: 100vw; left: 50%; transform: translateX(-50%); }
+
+/* Visually hidden but read by screen readers (used for step lists in scroll sections). */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}

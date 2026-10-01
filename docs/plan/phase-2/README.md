@@ -5,10 +5,11 @@ checkpoints). Phase 2 rebuilds what you made as the production-shaped system the
 [`../../architecture.md`](../../architecture.md):
 
 - a **React story page** with server rendering and hydration (`apps/story`)
-- **SvelteKit graphics** embedded into it, plus the full-page **visual essay** (`apps/graphics`)
+- **SvelteKit graphics** embedded into it (`apps/graphics`), alongside the full-page **visual essay** projects (`projects/<slug>/`)
 - **ArchieML** copy, and the **diatour design system** as a shared package
 
-Phase 1's optional chunk 11 (port to Svelte) is the bridge: it's a small version of Phase 2 chunks 07–08.
+The bridge already exists: `projects/the-second-draft/` is the Birdkit-style visual-essay project that Phase 1 ports into, chunk by chunk
+(see [`../../project-structure.md`](../../project-structure.md)). Phase 2 chunks 07–08 generalize it.
 
 | # | Chunk | Main skill | Where | Ships |
 |---|-------|-----------|-------|-------|

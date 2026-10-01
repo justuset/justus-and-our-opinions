@@ -51,3 +51,6 @@ Refactor `update()` so each runway gets a renderer: `renderers = { a: renderA, b
 ## Watch out
 - C animates `top`/`left`/`width`, which costs layout on every frame. That's fine for three items. Phase 2 switches to FLIP transforms for more (breakdown §19 #6).
 - Inactive frames with `visibility: hidden` are hidden from screen readers too. Add a visually hidden `<ol>` with every step's text at the top of each runway (breakdown §19 #4).
+
+## Port (after the checkpoint passes)
+Into `projects/the-second-draft/`: `SlidesScrolly.svelte`, `CaptionScrolly.svelte`, `PaintingsScrolly.svelte`: each scene's rules, plus its reaction to `step` (all three already receive it from `Scrolly`). Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).
