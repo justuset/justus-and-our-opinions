@@ -3,6 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    /* Chunk 5. Runs before anything paints.
+       'js' turns on the hidden start state, so with JavaScript off the headline is never hidden.
+       The timeout is a failsafe: if the main script never runs (an error, or a blocked file), the headline still appears. */
+    document.documentElement.classList.add('js');
+    setTimeout(() => document.documentElement.classList.add('is-ready'), 2500);
+  </script>
   <title>The Second Draft · Our Opinions (demo)</title>
   <meta name="description" content="Demo essay for a hand-built scrollytelling prototype. Invented content.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,6 +68,12 @@
       --dek-size: 1.1rem;
       --dek-measure: 30ch;
       --gap-byline-desktop: 100px;
+
+      /* intro motion (measured) */
+      --intro-dur: .8s;
+      --intro-stagger: .2s;      /* the dek follows the headline */
+      --intro-rise: 15px;        /* headline starts this far down */
+      --intro-rise-dek: 10px;
     }
     @media (max-width: 739px) {
       :root { --text-size: 18px; --text-leading: 27px; }
@@ -168,6 +181,26 @@
     }
     @media screen and (min-width: 1024px) and (orientation: landscape) {
       .byline { margin-bottom: var(--gap-byline-desktop); }
+    }
+
+    /* ============ 6. INTRO MOTION (chunk 5) ============
+       Start state only when JS is running (.js is set in <head>). .is-ready is added once the fonts have loaded,
+       so the headline never animates in a fallback font and then jumps when Newsreader swaps in. */
+    .js .headline {
+      opacity: 0;
+      transform: translateY(var(--intro-rise));
+      transition: opacity var(--intro-dur) var(--ease-intro), transform var(--intro-dur) var(--ease-intro);
+    }
+    .js .subtitle {
+      opacity: 0;
+      transform: translateY(var(--intro-rise-dek));
+      transition: opacity var(--intro-dur) var(--ease-intro) var(--intro-stagger),
+                  transform var(--intro-dur) var(--ease-intro) var(--intro-stagger);
+    }
+    .is-ready .headline, .is-ready .subtitle { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      /* No animation, so nothing to protect from the font swap: show the text immediately instead of waiting for fonts. */
+      .js .headline, .js .subtitle { opacity: 1; transform: none; transition: none; }
     }
 
     /* ============ 4. FULL-BLEED BREAKOUT (chunk 3) ============
@@ -294,6 +327,15 @@
   </footer>
 
 </article>
+
+<script>
+  /* ============ PAGE SCRIPT ============ */
+
+  /* Chunk 5: reveal the header once every font in use has loaded (or failed).
+     document.fonts.ready is a promise; older browsers without the Font Loading API just reveal immediately. */
+  (document.fonts ? document.fonts.ready : Promise.resolve())
+    .then(() => document.documentElement.classList.add('is-ready'));
+</script>
 
 </body>
 </html>
