@@ -15,7 +15,7 @@ separately and embedded, and story copy in **ArchieML**.
 
 ✅ **Phase 1 complete.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md) are built, and [chunk 11](docs/plan/phase-1/11-optional-svelte-port.md)'s parity check passes, so **Phase 1 is complete** ([retro](docs/learning-log/17-phase-1-retro.md)). [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack, and its [chunk 00](docs/plan/phase-2/00-foundation.md) (the monorepo foundation) is done.
 
-🧭 **NYT sandbox alignment in progress.** The story project is being reshaped to match the shipped NYT page's architecture ([plan](docs/plan/nyt-sandbox-alignment.md)): S1 (the `body` content document) and S2 (the platform shell) are done, and next is S3, NYT breakpoints and themes. After S8, Phase 2 resumes at chunk 01.
+🧭 **NYT sandbox alignment in progress.** The story project is being reshaped to match the shipped NYT page's architecture ([plan](docs/plan/nyt-sandbox-alignment.md)): S1 (the `body` content document), S2 (the platform shell) and S3 (NYT breakpoints and themes) are done, and next is S4, StickyScroller on GSAP ScrollTrigger. After S8, Phase 2 resumes at chunk 01.
 
 🔀 **Branches:** `main` is the default branch. The work so far is in [PR #1](https://github.com/justuset/justus-and-our-opinions/pull/1) from `claude/wonderful-knuth-w43l2c`.
 

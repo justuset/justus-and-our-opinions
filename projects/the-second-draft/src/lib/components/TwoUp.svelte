@@ -1,6 +1,6 @@
 <!-- TwoUp: two images and one shared caption, full bleed (prototype chunk 6). ✅ Ported.
-     Mobile-first: the base rules are the phone layout (stacked). At 640px the figure wraps into a row: both images
-     take exactly half (flex: 1 1 0) and the caption's 100% basis forces it onto its own row. At 1250px the padding
+     Mobile-first: the base rules are the phone layout (stacked). At the tablet tier (740px) the figure wraps into a row: both images
+     take exactly half (flex: 1 1 0) and the caption's 100% basis forces it onto its own row. At the desktop tier (1150px) the padding
      grows and the block caps at 1440px. The <figure> itself is the flex container, because <figcaption> must be a
      direct child of <figure>. -->
 <script>
@@ -43,7 +43,7 @@
   }
   .credit { color: var(--faint); }
 
-  @media (min-width: 640px) {
+  @media (min-width: 740px) {
     .two-up { flex-flow: row wrap; }
     img { flex: 1 1 0; min-width: 0; }
     .group-caption { flex: 0 0 100%; margin-top: 4px; padding-top: 0; }

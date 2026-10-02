@@ -1,6 +1,6 @@
 <!-- Diagram: a process drawn as boxes joined by curved arrows (prototype chunk 7). ✅ Ported.
      Two layers: CSS grid positions the boxes; an SVG on top draws arrows between wherever the boxes ended up.
-     Phones: a plain ordered list in the text column (no arrows). ≥1024px: a 4-column stage up to 1200px wide.
+     Phones: a plain ordered list in the text column (no arrows). ≥740px (the tablet tier): a 4-column stage up to 1200px wide.
      The arrows are redrawn by a ResizeObserver, so they stay attached through resizes, zoom and text reflow. -->
 <script>
   import { series } from '$lib/doc.js';
@@ -84,7 +84,7 @@
   }
   .connectors path { fill: none; stroke: currentColor; stroke-width: var(--node-border); }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 740px) {
     .diagram {
       width: 100vw;
       max-width: var(--diagram-stage);

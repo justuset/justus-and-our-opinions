@@ -211,7 +211,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it is | Becomes in `dist/` |
 |------|-----------|--------------------|
 | `app.html` | The document shell around every page. Holds `<html lang>`, the viewport meta, the **chunk 5 `<head>` script** (`.js` class + 2.5s failsafe), the Google Fonts link, and the `%sveltekit.head%` / `%sveltekit.body%` slots SvelteKit fills | The outside of `index.html` |
-| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
+| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Since S3: the NYT tier tokens `--bp-tablet: 740px` / `--bp-desktop: 1150px` (documentation, since custom properties can't be used in `@media`), and the **theme blocks** `.g-theme-diatour` / `.g-theme-opinion`, which only redefine color tokens. Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
 | `routes/+layout.svelte` | **The mock platform shell** (NYT sandbox S2): a skip link, a sticky semi-transparent masthead ("Our Opinions", exactly `--masthead-h` tall), `<main id="site-content">` and a footer where comments, ads and recirculation would go. It owns everything outside the story's `<article>`, and styles only itself | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
@@ -237,11 +237,11 @@ shows which prototype chunk each one mirrors (see §11).
 | `Byline.svelte` | "By … · `<time>`" in the text column | ✅ Ported (chunks 1–2) |
 | `Text.svelte` | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
-| `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
-| `Diagram.svelte` | The process as an `<ol>`. At ≥1024px a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
+| `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at the 740px tablet tier, capped at 1440px with 64px padding from the 1150px desktop tier (S3) | ✅ Ported (chunk 6) |
+| `Diagram.svelte` | The process as an `<ol>`. At ≥740px (the tablet tier, since S3) a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
 | `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins **below the platform masthead** (`top: var(--masthead-h)`, height `100svh − --masthead-h`) since S2 | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
-| `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 768px, 0.4s caption fades, hard-cut images (chunk 9) |
+| `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 740px (S3), 0.4s caption fades, hard-cut images (chunk 9) |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `doc.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
 | `ScrubLottie.svelte` | Section D: two `Scrolly` runways, one per twin (`class="desktop-only"` / `"mobile-only"`, `bar={false}`) | ✅ Scrubbing (chunk 10) |
 | `ScrubStage.svelte` | One twin's stage. An `{@attach}` **loads** the Lottie when the stage is within 200px (a hidden twin never loads); an `$effect` **feeds** it `progress`. Reduced motion holds the end frame. Text fallback stays visible if loading fails | ✅ (chunk 10) |
@@ -269,7 +269,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
         "url1": "images/two-up-draft-1.webp", "alt1": "…", "width1": 800, "height1": 1000,
         "srcset1": "images/two-up-draft-1-400w.webp 400w, images/two-up-draft-1.webp 800w",
         "url2": "…", "alt2": "…", "width2": 800, "height2": 1000, "srcset2": "…",
-        "sizes": "(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw", "groupCaption": "…", "credit": "…" } },
+        "sizes": "(min-width: 1150px) 656px, (min-width: 740px) 50vw, 100vw", "groupCaption": "…", "credit": "…" } },
     { "type": "svelte", "value": { "component": "Diagram", "label": "…", "label1": "Idea", "label2": "Draft", "label3": "Revise", "label4": "Ship" } },
     { "type": "svelte", "value": { "component": "SlidesScrolly", "label": "…",
         "heading1": "Version 1", "card1": "Explains", "image1": "images/slides/slide-1/slide.jpg", "alt1": "…", "heading2": "…" } },
@@ -483,6 +483,11 @@ in the project kept the no-JS stack's 40px margins, which made the page 270px ta
 Since NYT sandbox S2, the project renders inside a mock platform shell the prototype never had. Parity switches the shell
 off before measuring (no masthead or footer, `--masthead-h: 0`), so it still answers the question it was built for: is the
 *story* the Phase 1 page? The shell is checked separately (learning log 21).
+
+Since S3 the project switches layout at the NYT tiers (740 and 1150) while the prototype keeps its original 640 / 768 /
+1024 / 1250 breakpoints. Parity's three widths sit on the same side of both sets (375 is a phone in both, 1024 is landscape
+in both, 1440 is desktop in both), so it still compares like with like. Widths between the two sets (for example 800) now
+differ **on purpose**. The tier switches themselves are checked by the breakpoint matrix in learning log 23.
 
 Three things exist only in the project: the header's intro Lottie, `srcset` driven by `doc.json`, and the platform shell. The prototype stays
 as the hand-built reference.

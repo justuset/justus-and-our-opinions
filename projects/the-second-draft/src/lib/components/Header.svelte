@@ -141,7 +141,7 @@
   .art-lines { fill: none; stroke: var(--line); stroke-width: 10; stroke-linecap: round; }
   .art-ring  { fill: none; stroke: var(--line); stroke-width: 14; }
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 740px) {
     .header-copy { top: 0; bottom: 0; justify-content: center; }
   }
 

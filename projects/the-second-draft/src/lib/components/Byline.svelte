@@ -13,7 +13,7 @@
     font: 600 var(--meta-size) / 1.4 var(--font-body);
     color: var(--soft);
   }
-  @media screen and (min-width: 1024px) and (orientation: landscape) {
+  @media screen and (min-width: 740px) and (orientation: landscape) {
     .byline { margin-bottom: var(--gap-byline-desktop); }
   }
 </style>

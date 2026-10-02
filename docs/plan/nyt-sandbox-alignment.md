@@ -1,7 +1,7 @@
 # Aligning the build with the NYT Opinion sandbox blueprint
 
 **Date:** 2026-10-02  **Source:** [`../reference/nyt-sandbox-blueprint.md`](../reference/nyt-sandbox-blueprint.md) (the
-"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1 and S2 done
+"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1–S3 done
 
 ## Why this plan exists
 
@@ -65,7 +65,7 @@ blueprint describes a single SvelteKit project, so that's the right thing to com
 
 | Blueprint | Current build | |
 |---|---|---|
-| NYT tiers: **smartphone < 740, tablet 740–1149, desktop ≥ 1150** | Body type switches at **740** ✅. But the twins and the diagram stage switch at **1024**, two-up at 640, band at 768, and two-up padding at 1250 (from the recreation) | 🟡 |
+| NYT tiers: **smartphone < 740, tablet 740–1149, desktop ≥ 1150** | Body type switches at **740** ✅. But the twins and the diagram stage switch at **1024**, two-up at 640, band at 768, and two-up padding at 1250 (from the recreation) | 🟡 → ✅ since S3: every switch is at 740 or 1150 |
 | Body 20px (18px under 740), 600px column, line height 1.5 | 20/30 (18/27 under 740), 600px column | ✅ |
 | Free substitutes for NYT fonts | Newsreader (free) and system sans; no Times fonts (CLAUDE.md) | ✅ |
 | White page, `#313036` text | **diatour dark** (`--paper #121211`), because CLAUDE.md says "diatour wins visual conflicts" | ⚠ decision, see §2 |
@@ -193,6 +193,20 @@ checked by a diff, since AI doesn't write or edit the argument.
 - **Checkpoint.**
   - The breakpoint matrix (breakdown §17) is redone at 375, 739, 740, 1149, 1150 and 1440.
   - Both themes pass WCAG AA contrast on every text/background pair.
+
+**✅ Done** ([learning log 23](../learning-log/23-s3-breakpoints-and-themes.md)):
+- **Matrix at 375 / 739 / 740 / 1149 / 1150 / 1440:** every layout switch now falls between 739 and 740 or between 1149 and 1150.
+  - Before, switches sat at 640, 768, 1024 and 1250.
+  - No width scrolls sideways.
+- **Contrast:** every text token passes AA on both the page and the `--surface` panels, in both themes.
+  - Diatour: ink 15.99, soft 7.29, faint 5.55.
+  - Opinion: ink 18.07, soft 7.40, faint 4.84.
+- **Parity:** still within 1px at 375 / 1024 / 1440, which sit on the same side of the old and new breakpoints. JS off still renders all text at every tier.
+- **Deviations:**
+  - **No component keeps its own 640/768/1250 breakpoint.** None needed one, so every component moved to a tier. The one exception is the existing < 360px header safeguard, which is a small-phone fix, not a device tier.
+  - **The light theme's `--faint` is 0.6 alpha, not 0.56.** At 0.56 it failed AA (4.23:1).
+  - **Lottie art is inverted** (`filter: invert(1)`) in the light theme rather than shipped twice. The inverted art's fills are 5% / 14% versus the light tokens' 4% / 12%, so the hero swap is slightly visible. A per-theme Lottie export would fix it if it ever matters.
+  - **The `sizes` hints in `doc.json` moved to the tiers too.** Only the numbers changed, not any words.
 
 ### S4. StickyScroller on ScrollTrigger
 

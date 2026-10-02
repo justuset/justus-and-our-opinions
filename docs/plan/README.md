@@ -4,8 +4,8 @@ Two phases. **Phase 1 is the main path.**
 
 > **Status (2026-10-01): Phase 1 is complete.** Chunks 1–10 are built in the prototype and ported, and chunk 11's parity check
 > passes. See the [Phase 1 retro](../learning-log/17-phase-1-retro.md). **Phase 2 has started:** [chunk 00](phase-2/00-foundation.md) is done.
-> **Proposed next (2026-10-02): [NYT sandbox alignment](nyt-sandbox-alignment.md)**, eight chunks (S1–S8) that reshape the
-> story project to match the shipped page's architecture, then Phase 2 resumes at [chunk 01](phase-2/01-tokens-and-base-css.md).
+> **In progress (2026-10-02): [NYT sandbox alignment](nyt-sandbox-alignment.md)**, eight chunks (S1–S8) that reshape the
+> story project to match the shipped page's architecture. S1–S3 are done and S4 is next. After S8, Phase 2 resumes at [chunk 01](phase-2/01-tokens-and-base-css.md).
 
 | Phase | What | Where | Rules |
 |-------|------|-------|-------|

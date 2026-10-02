@@ -3,7 +3,13 @@
    Ported from prototype/index.html, chunks 2 to 5. Values are the reference's measured px (Phase 1 rule). */
 
 /* ============ 1. TOKENS ============ */
+/* Breakpoints (NYT sandbox S3): the NYT device tiers. smartphone < 740px · tablet 740–1149px · desktop ≥ 1150px.
+   Media queries can't read custom properties, so these two are documentation; the numbers are repeated in each
+   @media rule. The one exception is the < 360px header rule: a safeguard for very small phones, not a device tier. */
 :root {
+  --bp-tablet: 740px;
+  --bp-desktop: 1150px;
+
   /* layout */
   --gutter: clamp(10px, 12.5vw, 49px);                       /* hits the 49px cap at a 392px screen */
   --w-body: 600px;
@@ -59,7 +65,7 @@
   --dek-measure: 30ch;
   --gap-byline-desktop: 100px;
 
-  /* two-up (chunk 6): phone values, overridden at 640px and 1250px */
+  /* two-up (chunk 6): phone values, overridden at the tablet (740) and desktop (1150) tiers */
   --two-up-margin: 40px;
   --two-up-pad: 20px;
   --two-up-gap: 12px;
@@ -81,19 +87,19 @@
   --progress-bottom: 24px;
   --marker: 9px;
 }
-@media (min-width: 640px) {
+@media (min-width: 740px) {
   :root { --two-up-margin: 70px; --caption-leading: 30px; }
 }
-@media (min-width: 1250px) {
+@media (min-width: 1150px) {
   :root { --two-up-margin: 100px; --two-up-pad: 64px; --two-up-max: 1440px; }
 }
-@media (max-width: 739px) {
+@media (max-width: 739.98px) {
   :root { --text-size: 18px; --text-leading: 27px; }
 }
 @media screen and (max-width: 359px) {
   :root { --header-h: 67vh; --header-copy-top: 13%; --headline-size: 44px; --dek-size: .85rem; }
 }
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 740px) {
   :root {
     --headline-size: clamp(72px, 7.2vw, 96px);
     --headline-leading: .92;
@@ -102,6 +108,34 @@
     --dek-measure: 32ch;
   }
 }
+
+/* ============ 1b. THEMES (NYT sandbox S3) ============
+   The doc's `theme` key puts g-theme-<name> on the story root (<article class="birdkit-body g-theme-…">). A theme is
+   nothing but a block of color tokens: every component colors itself through these, so switching the class
+   re-colors the whole story. The story owns its theme; the platform shell (masthead, footer) keeps the :root
+   tokens, as on the real site, where a dark visual essay can sit inside a light platform page. */
+.g-theme-diatour {               /* dark, the default (diatour's source palette) */
+  --paper: #121211;
+  --ink: #ededeb;
+  --soft: rgba(235, 235, 240, 0.66);
+  --faint: rgba(235, 235, 240, 0.56);
+  --line: rgba(255, 255, 255, 0.14);
+  --surface: rgba(255, 255, 255, 0.05);
+}
+.g-theme-opinion {               /* light: diatour's derived light palette (docs/design-system.md) */
+  --paper: #fbfbf8;
+  --ink: #121212;
+  --soft: rgba(18, 18, 18, 0.72);
+  --faint: rgba(18, 18, 18, 0.6);  /* 0.56 failed AA on --paper (4.23:1); 0.6 passes (4.8:1) */
+  --line: rgba(0, 0, 0, 0.12);
+  --surface: rgba(0, 0, 0, 0.04);
+}
+/* The story paints its own ground, so its theme never depends on the page behind it. flow-root keeps its children's
+   margins (the header's 90px top margin) inside it, so no band of the platform's color shows above the header. */
+:where(.birdkit-body) { display: flow-root; background: var(--paper); color: var(--ink); }
+/* Lottie colors are baked into the JSON, not tokens. The placeholder art is white-on-dark, so the light theme inverts
+   it to dark-on-light. (A real light-theme story would export its own Lottie files instead.) */
+.g-theme-opinion :is(.hero-anim, .scrub-anim) { filter: invert(1); }
 
 /* ============ 2. BASE ============ */
 *, *::before, *::after { box-sizing: border-box; }
@@ -137,8 +171,8 @@ body { font-family: var(--font-body); }
 }
 
 /* ============ 99. TWINS (chunk 6): keep LAST in this file ============
-   Two versions of a visual, one per screen shape (like ai2html artboards), switching at 1024px.
+   Two versions of a visual, one per screen shape (like ai2html artboards), switching at the tablet tier, 740px.
    These only ever HIDE, with !important, so a component's own display (e.g. the header art's flex) can never
    un-hide the wrong twin. That's the cascade bug in the reference template. */
-@media (max-width: 1023.98px) { :where(.birdkit-body) .desktop-only { display: none !important; } }
-@media (min-width: 1024px)    { :where(.birdkit-body) .mobile-only  { display: none !important; } }
+@media (max-width: 739.98px) { :where(.birdkit-body) .desktop-only { display: none !important; } }
+@media (min-width: 740px)    { :where(.birdkit-body) .mobile-only  { display: none !important; } }

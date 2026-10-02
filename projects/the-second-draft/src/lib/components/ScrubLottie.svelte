@@ -1,6 +1,6 @@
 <!-- Section D: a scroll-scrubbed Lottie with desktop and mobile twins (prototype chunk 10). ✅ Ported.
      The animation's playhead follows the scroll position: scroll down to play, up to rewind, stop to hold.
-     Two runways, one per twin (.desktop-only / .mobile-only, switching at 1024px). The engine skips the hidden one,
+     Two runways, one per twin (.desktop-only / .mobile-only, switching at the tablet tier, 740px). The engine skips the hidden one,
      and only the visible one ever downloads its JSON (see ScrubStage). -->
 <script>
   import Scrolly from './Scrolly.svelte';

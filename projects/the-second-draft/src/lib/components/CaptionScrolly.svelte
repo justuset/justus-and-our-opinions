@@ -1,6 +1,6 @@
 <!-- Section B: an image band with fading captions (prototype chunk 9). ✅ Ported.
      No JS: each page and its caption, stacked. Enhanced: captions sit on top of each other and fade (0.4s);
-     images hard-cut. Phones get a 30vh caption area on top; ≥768px gets a centered band 65vh tall. -->
+     images hard-cut. Phones get a 30vh caption area on top; ≥740px (the tablet tier) gets a centered band 65vh tall. -->
 <script>
   import Scrolly from './Scrolly.svelte';
   import { asset } from '$lib/assets.js';
@@ -62,7 +62,7 @@
   /* Pinned to the frame: a % height alone has nothing definite to resolve against here. */
   .enhanced img { position: absolute; inset: 0; height: 100%; object-fit: contain; }
 
-  @media (min-width: 768px) {
+  @media (min-width: 740px) {
     .enhanced { padding: 0 40px; }
     .enhanced .b-wrapper { position: absolute; top: 17.5vh; bottom: 17.5vh; left: 40px; right: 40px; height: auto; }
     .enhanced .b-text-overlay { min-height: min(20vh, 80px); }
