@@ -1,12 +1,14 @@
 <!-- Photo: one photograph between text runs. size "large" (default) is 945px wide and full width on phones;
      "medium" sits in the 600px text column. Caption and credit below, measured 9px gap. -->
 <script>
-  import { asset } from '$lib/assets.js';
+  import { photo } from '$lib/media.js';
   let { url, alt, width, height, caption, credit, size = 'large' } = $props();
+  // The slot's width, so the browser picks the smallest sharp-enough file from srcset
+  const sizes = $derived(size === 'medium' ? '(min-width: 640px) 600px, calc(100vw - 40px)' : '(min-width: 945px) 945px, 100vw');
 </script>
 
 <figure class="photo size-{size}">
-  <img src={asset(url)} {alt} {width} {height} loading="lazy" decoding="async" />
+  <img {...photo(url, width)} {sizes} {alt} {width} {height} loading="lazy" decoding="async" />
   {#if caption || credit}
     <figcaption>
       {#if caption}{caption}{/if}

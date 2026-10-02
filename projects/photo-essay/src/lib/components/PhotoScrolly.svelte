@@ -7,7 +7,7 @@
      The attachment adds data-enhanced, and only then do the sticky stage and the overlay apply.
      Flat props: url1, alt1, width1, height1, card1, url2, … (see $lib/doc.js), plus one credit. -->
 <script>
-  import { asset } from '$lib/assets.js';
+  import { photo } from '$lib/media.js';
   import { series } from '$lib/doc.js';
   import { inlineHtml } from '$lib/inline-html.js';
 
@@ -36,7 +36,8 @@
     {#each steps as step, i (i)}
       <img
         class:is-active={i === active}
-        src={asset(step.url)}
+        {...photo(step.url, step.width)}
+        sizes="100vw"
         alt={step.alt}
         width={step.width}
         height={step.height}

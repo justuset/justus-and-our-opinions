@@ -51,7 +51,7 @@ justus-and-our-opinions/
 │  └─ index.html                PHASE 1 SANDBOX: plain HTML/CSS/JS, one idea per chunk, checked in DevTools
 └─ projects/
    ├─ interactive/              THE INTERACTIVE TEMPLATE: Birdkit-style SvelteKit build of the same page (demo story slug: the-second-draft)
-   └─ photo-essay/              THE PHOTO ESSAY TEMPLATE: same pipeline and shell, photo-led blocks (demo story slug: photo-essay-demo)
+   └─ photo-essay/              THE PHOTO ESSAY TEMPLATE: same pipeline and shell, photo-led blocks, `npm run photos` renditions (demo story slug: photo-essay-demo)
 ```
 
 | Folder | Role | You work here when… |
