@@ -2,7 +2,8 @@
      a transparent, absolutely positioned container 6px from the top, so the bar floats over the story's header and
      scrolls away with the page. It is NOT sticky, which is why story panels pin to the top of the screen (--masthead-h: 0).
      The section is 47px tall on phones (padding 8 15 3) and 42px from the tablet tier (padding 4 15 2, nudged up 7px).
-     `inverse` gives a light wordmark for stories with a dark header (diatour). Placeholder wordmark, no logo. -->
+     `inverse` gives a light wordmark for stories with a dark header (diatour). Placeholder wordmark, no logo.
+     Colors and fonts are diatour (shell.css); only the layout is measured. -->
 <script>
   let { name = 'Our Opinions', inverse = false } = $props();
 </script>
@@ -33,7 +34,7 @@
     .masthead-section { top: -7px; height: 42px; padding: 4px 15px 2px; }
   }
   .wordmark {
-    font: 700 22px / 1 var(--shell-font-wordmark);
+    font: 550 22px / 1 var(--shell-font-wordmark); /* diatour's display weight */
     color: var(--shell-wordmark);
     text-decoration: none;
     white-space: nowrap;

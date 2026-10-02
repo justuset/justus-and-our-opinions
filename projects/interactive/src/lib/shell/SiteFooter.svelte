@@ -1,5 +1,5 @@
 <!-- SiteFooter: the platform footer (NYT sandbox S4b). Measured: full width with 45px bottom padding and 11px type on
-     phones; 3% side padding from 1024px; a 1200px max width from the desktop tier; a #ebebeb rule on top.
+     phones; 3% side padding from 1024px; a 1200px max width from the desktop tier; a rule on top (diatour --line).
      The links are placeholders that go back to the story. The copyright line labels the page as a demo. -->
 <script>
   let { name = 'Our Opinions' } = $props();

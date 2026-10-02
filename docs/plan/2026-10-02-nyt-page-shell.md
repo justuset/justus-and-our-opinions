@@ -25,6 +25,7 @@ The plan was written for a generic sandbox. The owner chose (2026-10-02):
 | Share list color `#999`, ad labels `#727272` / `#999` | `#666` (`--shell-muted`): `#999` is 2.66:1 and `#727272` is 4.49:1 on `#f7f7f7`, both under WCAG AA |
 | Masthead wordmark `#000` | `#000` over a light story header, **white over a dark one** (diatour is dark; black would vanish) |
 | Tests use the live network | A fixture blocks Google Fonts: the specs assert sizes, not glyph widths |
+| NYT colors and fonts (white page, `#567b95` button, Libre Franklin / Caslon) | **Diatour dark** since 2026-10-02 (owner's request, [log 27](../learning-log/27-shell-in-diatour-dark.md)): the shell keeps the measured layout but uses diatour's colors, Newsreader and the system sans |
 | Masthead absolute (measured) | Kept. Since it scrolls away, sticky panels now pin at `top: 0` (`--masthead-h: 0px`), as on the shipped page |
 
 ---

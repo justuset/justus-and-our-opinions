@@ -1,6 +1,6 @@
 <!-- ShareTools: the comment button and share row under the story (NYT sandbox S4b). Layout replica only: the buttons
      do nothing. Measured: the comment button is the text column's width (350 on a 390 phone, 600 from the tablet tier),
-     36px tall, #567b95 with a #326891 border, 13px uppercase sans with 0.65px tracking. -->
+     36px tall, 13px uppercase sans with 0.65px tracking. Colors are diatour dark (shell.css), not the shipped blue. -->
 <script>
   let { comments = 0 } = $props();
 </script>
@@ -28,7 +28,7 @@
   .comment-button {
     width: 100%;
     padding: 5px 0;
-    border: 1px solid var(--shell-link);
+    border: 1px solid var(--shell-button-border);
     border-radius: 3px;
     background: var(--shell-button);
     color: var(--shell-button-text);
@@ -39,7 +39,7 @@
     transition: background-color 0.6s ease;
   }
   .comment-button:hover,
-  .comment-button:focus-visible { background: var(--shell-link); }
+  .comment-button:focus-visible { background: var(--shell-button-hover); }
   .share-tools-list {
     display: flex;
     flex-wrap: wrap;
@@ -50,9 +50,9 @@
   }
   .pill {
     padding: 6px 10px;
-    border: 1px solid var(--shell-pill-border);
+    border: 1px solid var(--shell-border);
     border-radius: 30px;
-    background: var(--shell-bg);
+    background: var(--shell-surface);
     color: var(--shell-ink);
     font: 500 12px / 16px var(--shell-font-label);
     text-transform: uppercase;

@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-02  **Chunk:** NYT sandbox alignment · S4b  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** the shell's look is now **diatour dark** ([log 27](27-shell-in-diatour-dark.md)). The measured layout stays; the white page, NYT blue button and Libre fonts are gone.
+
 ## Goal
 
 One new idea: **build to measurements, and let tests hold you to them.**
