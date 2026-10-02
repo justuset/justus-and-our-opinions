@@ -60,7 +60,7 @@ then the **production layer**: reduced motion, no-JS fallbacks, lazy loading and
 ## Result
 Built and verified: see [learning log 15](../../learning-log/15-chunk-10-scrub-and-hardening.md). Where this plan
 changed in practice:
-- **The Lottie files are self-authored** by `projects/the-second-draft/scripts/make-scrub-lottie.js` (12 lines condense to 5), so there's no third-party license to record.
+- **The Lottie files are self-authored** by `projects/interactive/scripts/make-scrub-lottie.js` (12 lines condense to 5), so there's no third-party license to record.
 - **lottie-web isn't a `defer` script.** A deferred script runs *after* the inline page script, so `lottie` wouldn't exist yet. The page script injects the library itself, only when a scene D runway comes within 200px.
 - **No `@media (scripting: none)` block.** The base CSS *is* the no-script stack, and every scroll rule lives under `.scrolly-ready`, so there's nothing to undo.
 - **`.scrolly-ready` goes on just before the first `update()`, not after it.** The first measurement has to happen in the scroll layout. If that `update()` throws, the class comes off again.
@@ -71,4 +71,4 @@ Measured: Lighthouse mobile **97 / 100 / 96** (Performance / Accessibility / Bes
 When all boxes are ticked, Phase 1's main path is done. 🎉 Write `docs/learning-log/` "Phase 1 retro", then go to chunk 11 or [Phase 2](../phase-2/README.md).
 
 ## Port (after the checkpoint passes) ✅
-Into `projects/the-second-draft/`: `src/lib/components/ScrubLottie.svelte` with `src/lib/lottie.js` `scrubber()` (twins, loading only the visible one). The hardening rules go into `src/app.css` and the components. Media is already wired: `srcset`/`loading` on every `<img>`, and `big_assets/videos/*.json` for the Lottie files. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).
+Into `projects/interactive/`: `src/lib/components/ScrubLottie.svelte` with `src/lib/lottie.js` `scrubber()` (twins, loading only the visible one). The hardening rules go into `src/app.css` and the components. Media is already wired: `srcset`/`loading` on every `<img>`, and `big_assets/videos/*.json` for the Lottie files. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

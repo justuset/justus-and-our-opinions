@@ -10,8 +10,8 @@ Two phases. **Phase 1 is the main path.**
 | Phase | What | Where | Rules |
 |-------|------|-------|-------|
 | **1: Build it by hand** | Rebuild the NYT-style scrolly article in **one `index.html`** with plain HTML, CSS and JS, one idea per chunk | `prototype/index.html` | This file |
-| 1, alongside | **Port each chunk that passes** into the Birdkit-style story project: components rendered from `story.json`, built to a hashed output tree | `projects/the-second-draft/` | [Project guide](../project-structure.md) §11 |
-| 1, final | Finish the port and verify the project matches the prototype | `projects/the-second-draft/` | [Chunk 11](phase-1/11-optional-svelte-port.md) |
+| 1, alongside | **Port each chunk that passes** into the Birdkit-style story project: components rendered from `story.json`, built to a hashed output tree | `projects/interactive/` | [Project guide](../project-structure.md) §11 |
+| 1, final | Finish the port and verify the project matches the prototype | `projects/interactive/` | [Chunk 11](phase-1/11-optional-svelte-port.md) |
 | **2: Times-shaped stack** | React SSR story app + SvelteKit graphics desk + ArchieML + the diatour design-system package | `apps/`, `packages/` | [Phase 2 plan](phase-2/README.md) |
 
 The reference for everything in Phase 1 is [`../reference/scrolly-template.html`](../reference/scrolly-template.html),
@@ -37,7 +37,7 @@ Each chunk adds **one new idea** and ends with a **checkpoint you can check in t
 | 8 | [The scroll engine, built once](phase-1/08-scroll-engine.md) | Runway + sticky + `progressOf()` | Console logs progress 0→1 and the step number. Progress bar and markers |
 | 9 | [The three scroll sections](phase-1/09-three-scroll-sections.md) | Engine vs what each step renders | A, B, C work in portrait and landscape and at 768/1024. Each step fires once, no flicker |
 | 10 | [Scrubbed Lottie, then hardening](phase-1/10-scrubbed-lottie-and-hardening.md) | Scrub vs autoplay, plus the production layer | Lighthouse, reduced motion, readable with JS off |
-| 11 | [Finish the port and verify parity](phase-1/11-optional-svelte-port.md) | Components from `story.json`, built to a hashed output tree | `projects/the-second-draft/` matches the prototype and is ready to ship |
+| 11 | [Finish the port and verify parity](phase-1/11-optional-svelte-port.md) | Components from `story.json`, built to a hashed output tree | `projects/interactive/` matches the prototype and is ready to ship |
 
 ### How to work
 
@@ -58,7 +58,7 @@ Each chunk adds **one new idea** and ends with a **checkpoint you can check in t
    | Lighthouse | Lighthouse panel | 10 |
    | Animations panel (slow to 10%) | ⌘⇧P → "Animations" | 5, 9 |
 
-3. **Port.** Once the checkpoint passes, carry the chunk into `projects/the-second-draft/`: tokens to `src/app.css`, rules and markup to the
+3. **Port.** Once the checkpoint passes, carry the chunk into `projects/interactive/`: tokens to `src/app.css`, rules and markup to the
    component named in the chunk's "Port" section, and behavior to an `{@attach}`. Run `npm run build`, then check the page with JS on and off.
    Mark the component ✅ in its top comment and in [`../project-structure.md`](../project-structure.md) §4.
 4. **Checkpoint gate.** Tick every box under "Checkpoint" in the chunk file. If one fails, fix it before moving on.

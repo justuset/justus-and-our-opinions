@@ -217,7 +217,7 @@ git switch -c feat/s3-breakpoints
 
 # 3. Work, then commit in small, meaningful steps
 git status
-git add docs/plan/nyt-sandbox-alignment.md projects/the-second-draft/src/app.css
+git add docs/plan/nyt-sandbox-alignment.md projects/interactive/src/app.css
 git commit -m "feat(story): NYT breakpoints at 740 and 1150"
 
 # 4. Push the branch (first time with -u)
@@ -326,7 +326,7 @@ npm run lint && npm run check && npm test && npm run build    # what CI runs
 **The Birdkit-style story project** has its own install:
 
 ```bash
-cd projects/the-second-draft
+cd projects/interactive
 npm install
 npm run dev                              # http://localhost:5173 (stop the workspace dev server first: same port)
 npm run build                            # ends with "verified 23 media URLs"

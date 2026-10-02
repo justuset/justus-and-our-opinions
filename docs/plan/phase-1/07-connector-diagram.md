@@ -37,4 +37,4 @@ ended up and draws arrows between them. A `ResizeObserver` keeps the drawing in 
 - [x] Elements → Layout → grid overlay on `.diagram-inner` lines up with the boxes.
 
 ## Port (after the checkpoint passes)
-Into `projects/the-second-draft/`: `src/lib/components/Diagram.svelte`: the desktop stage CSS, plus `drawConnectors()` inside an `{@attach}` that creates and disconnects the ResizeObserver. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).
+Into `projects/interactive/`: `src/lib/components/Diagram.svelte`: the desktop stage CSS, plus `drawConnectors()` inside an `{@attach}` that creates and disconnects the ResizeObserver. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

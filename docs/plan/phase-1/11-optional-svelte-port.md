@@ -1,7 +1,7 @@
 # Chunk 11: Finish the port and verify parity
 
 **One new idea:** **components rendered from a content file, built to a deployable output tree.** The Birdkit-style story
-project at `projects/the-second-draft/` already exists, built from the [build spec](../../reference/birdkit-build-spec.md),
+project at `projects/interactive/` already exists, built from the [build spec](../../reference/birdkit-build-spec.md),
 and each chunk has been ported into it as its checkpoint passed. This chunk closes the loop: confirm the Svelte project and the
 hand-built prototype are the same page, and that the build output is ready to ship.
 

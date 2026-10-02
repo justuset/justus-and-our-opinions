@@ -1,8 +1,8 @@
 {
-  "name": "the-second-draft",
+  "name": "interactive",
   "private": true,
   "type": "module",
-  "description": "Birdkit-style story project: one prerendered SvelteKit page, hashed code bundles, separately hashed media. Demo content.",
+  "description": "Birdkit-style template for interactive articles (demo story: the-second-draft): one prerendered SvelteKit page, hashed code bundles, separately hashed media. Demo content.",
   "scripts": {
     "dev": "vite dev",
     "assets": "node scripts/hash-assets.js",

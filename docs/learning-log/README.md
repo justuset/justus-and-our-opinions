@@ -39,6 +39,7 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 23 | [NYT sandbox S3: breakpoints and themes](23-s3-breakpoints-and-themes.md) | 2026-10-02 |
 | 24 | [NYT sandbox S4: `StickyScroller` on ScrollTrigger](24-s4-sticky-scroller-on-scrolltrigger.md) | 2026-10-02 |
 | 25 | [NYT sandbox S4b: the measured page shell](25-s4b-measured-page-shell.md) | 2026-10-02 |
+| 26 | [`projects/the-second-draft` → `projects/interactive`](26-rename-to-interactive.md) | 2026-10-02 |
 
 ## Entry template
 

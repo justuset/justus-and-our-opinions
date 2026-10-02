@@ -110,7 +110,7 @@ The shared design-system package is what keeps the two looking like one publicat
 ## Decisions worth noting
 
 - **One Prettier and one ESLint config at the root.** Prettier uses 2 spaces, single quotes and 120 columns, matching the Phase 1 code. ESLint's blocks are scoped by path: React rules only for `apps/story`, Svelte rules only for `apps/graphics`.
-- **The finished Phase 1 work is left exactly as built.** `prototype/`, `projects/` and `docs/` are excluded from formatting and linting. `projects/the-second-draft/` is not a workspace: it keeps its own lockfile, like every Birdkit-style story, and CI builds it in its own job.
+- **The finished Phase 1 work is left exactly as built.** `prototype/`, `projects/` and `docs/` are excluded from formatting and linting. `projects/interactive/` is not a workspace: it keeps its own lockfile, like every Birdkit-style story, and CI builds it in its own job.
 - **Tokens use Phase 1's diatour values** (`--paper #121211`, `--ink #ededeb`, the `--font-body` stack from `docs/design-system.md`). Chunk 01 replaces this minimal file with the full rem-based system.
 
 ## Next

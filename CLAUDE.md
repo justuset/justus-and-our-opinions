@@ -21,9 +21,9 @@ Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-struc
 - Avoid the reference's known bugs (breakdown §19): frames written in HTML (not `innerHTML`), twin utilities that only hide, the `.js` failsafe and `.scrolly-ready` gating.
 - After a chunk's checkpoint passes, port it into the story project (next section). The Phase 2 rules below apply from Phase 2 onward.
 
-## Story projects (`projects/<slug>/`): Birdkit-style SvelteKit
+## The interactive template (`projects/interactive/`): Birdkit-style SvelteKit
 
-`projects/the-second-draft/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.
+Named after the article type, like the shipped page's URL (`nytimes.com/interactive/<date>/opinion/<slug>.html`): the folder is the template, and the story it currently holds is identified by the `slug` in `content/doc.json` (`the-second-draft`, which becomes `#g-bk-the-second-draft`). `projects/interactive/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.
 
 - **Words** live only in `content/doc.json` (one ordered `body` of `text` and `svelte` blocks with flat props, the shipped NYT payload's shape). **Media** lives only in `big_assets/`, never in `src/` or `static/`, and is referenced with `asset(path)` from `$lib/assets.js`.
 - `src/lib/assets.js` is **generated** by `scripts/hash-assets.js`. Don't edit it by hand. Commit the regenerated file when media changes.

@@ -71,7 +71,7 @@ justus-and-our-opinions/
 | Page type | Who builds it at the Times | Our app | Example |
 |-----------|----------------------------|---------|---------|
 | **Essay**: the standard Opinion article template | Platform (React) + embedded graphics | `apps/story` | "Three Writers, One Question" |
-| **Visual essay**: a full-page interactive (Birdkit-style) | Graphics desk (SvelteKit), end to end, one project per story | **`projects/<slug>/`**, a standalone SvelteKit project per [the build spec](reference/birdkit-build-spec.md) | `projects/the-second-draft/`, the rebuild of `docs/reference/scrolly-template.html` |
+| **Visual essay**: a full-page interactive (Birdkit-style) | Graphics desk (SvelteKit), end to end, one project per story | **`projects/<slug>/`**, a standalone SvelteKit project per [the build spec](reference/birdkit-build-spec.md) | `projects/interactive/`, the rebuild of `docs/reference/scrolly-template.html` |
 
 The scroll scenes and graphics are written once and used in both: full-page in a visual essay, and as embeds inside an essay.
 How the visual essay works is explained in `docs/reference/scrolly-template-breakdown.md`. It's prototyped by hand in

@@ -1,6 +1,6 @@
 # Project structure: how a Birdkit-style story project is organized, built and shipped
 
-This guide explains **every folder and file** in the story project at `projects/the-second-draft/`. That project reproduces the
+This guide explains **every folder and file** in the story project at `projects/interactive/`. That project reproduces the
 build output of a Birdkit-style New York Times interactive, following the build spec in
 [`reference/birdkit-build-spec.md`](reference/birdkit-build-spec.md). It's written for a **web designer/developer**: each part
 says what a thing is, why it exists, and what you'd touch it for.
@@ -50,17 +50,17 @@ justus-and-our-opinions/
 ├─ prototype/
 │  └─ index.html                PHASE 1 SANDBOX: plain HTML/CSS/JS, one idea per chunk, checked in DevTools
 └─ projects/
-   └─ the-second-draft/         THE STORY PROJECT: Birdkit-style SvelteKit build of the same page
+   └─ interactive/              THE INTERACTIVE TEMPLATE: Birdkit-style SvelteKit build of the same page (demo story slug: the-second-draft)
 ```
 
 | Folder | Role | You work here when… |
 |--------|------|---------------------|
 | `prototype/` | Learning sandbox. One file, no build step, so every idea is visible in DevTools | Doing a Phase 1 chunk |
-| `projects/the-second-draft/` | The production-shaped story. Same page, as components, content data and a real build | Porting a chunk that passed, or editing copy and media |
+| `projects/interactive/` | The production-shaped story. Same page, as components, content data and a real build | Porting a chunk that passed, or editing copy and media |
 | `docs/` | The written explanation of all of it | Learning, or deciding what to build next |
 | `apps/`, `packages/` | The Phase 2 Times-shaped stack, one npm workspace (see `docs/architecture.md`) | Doing a Phase 2 chunk |
 
-`projects/the-second-draft/` is **not** part of the workspace: it keeps its own `package.json` and lockfile, as each
+`projects/interactive/` is **not** part of the workspace: it keeps its own `package.json` and lockfile, as each
 Birdkit-style story does (§2). CI builds it as a separate job.
 
 ---
@@ -76,7 +76,7 @@ deployed to its own path on the CDN:
 <cdn>/projects/<project-id>/_big_assets.<content-hash>/…
 ```
 
-That's why our project lives at `projects/the-second-draft/`. A second story would be `projects/<another-slug>/`, a copy of the
+That's why our project lives at `projects/interactive/`. A second story would be `projects/<another-slug>/`, a copy of the
 same skeleton with different `content/` and `big_assets/`. Projects share nothing at runtime, so one story's deploy can never break another.
 
 | Benefit | How the structure gives it |
@@ -91,7 +91,7 @@ same skeleton with different `content/` and `big_assets/`. Projects share nothin
 ## 3. Quick start
 
 ```bash
-cd projects/the-second-draft
+cd projects/interactive
 npm install            # once
 npm run dev            # http://localhost:5173: live reload, media served from big_assets/
 npm run build          # writes dist/ (see §7)
@@ -110,7 +110,7 @@ vite-plugin-svelte 5, lottie-web 5.
 ## 4. The source tree, file by file
 
 ```
-projects/the-second-draft/
+projects/interactive/
 ├─ package.json
 ├─ package-lock.json
 ├─ svelte.config.js
@@ -289,7 +289,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 
 **The rules, as on the real page:**
 
-- **Text blocks** are one paragraph each. They may carry a little inline HTML: `<em>`, `<strong>` and `<a href>` (http, https, `/path` or `#anchor`). Anything else is shown as text, never run ([`$lib/inline-html.js`](../projects/the-second-draft/src/lib/inline-html.js), with tests).
+- **Text blocks** are one paragraph each. They may carry a little inline HTML: `<em>`, `<strong>` and `<a href>` (http, https, `/path` or `#anchor`). Anything else is shown as text, never run ([`$lib/inline-html.js`](../projects/interactive/src/lib/inline-html.js), with tests).
 - **Svelte blocks** name a component, and every setting is a **flat key/value pair**: that's how doc-converted content arrives. A list of things becomes **numbered keys** (`heading1`, `card1`, `heading2`…); components rebuild the list with `series()` from `$lib/doc.js`. Numbered keys survive commas inside a caption, which a comma-separated list wouldn't.
 - **Comma-separated strings** are used only where the value already is one in HTML (`srcset`).
 - **Order is the page.** The renderer walks `body` top to bottom. Header, byline and credits are blocks like any other.
@@ -317,7 +317,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 At the Times, editors write this in a Google Doc using **ArchieML**, and a build step converts it. Chunk S7 adds that step here.
 
 **History:** until chunk S1 the same words lived in `content/story.json`, with typed blocks and nested lists. A one-time
-migration ([`scripts/migrations/2026-10-02-story-to-doc.js`](../projects/the-second-draft/scripts/migrations/2026-10-02-story-to-doc.js))
+migration ([`scripts/migrations/2026-10-02-story-to-doc.js`](../projects/interactive/scripts/migrations/2026-10-02-story-to-doc.js))
 moved them, checking that all 105 strings arrived unchanged. The rendered page was identical before and after.
 
 ---
@@ -450,7 +450,7 @@ Building the spec exactly as written turned up four problems. Each is fixed in t
 | 1 | `buildHash = hash(Date.now())` at the top of `svelte.config.js` | The config is loaded several times per build. The client build went to `_app.eJHU…` and the server build to `_app.dcTc…` | Compute once, keep it in `process.env.BUILD_HASH`, and reuse it in later loads and child processes. Verified: one hash across the client, server and `dist/` |
 | 2 | `build: npm run assets && vite build`, with `hash-assets.js` copying media into `dist/` | adapter-static **empties `dist/`** when it writes, so media copied before the build gets deleted | Split the script: hash + write `assets.js` **before**, copy **after** (`--copy`) |
 | 3 | `prerender: { entries: ['*'] }` | The prerender crawler follows every `<img src>`. The media folder doesn't exist yet at crawl time, so the build fails with 404s | `handleHttpError` skips `/_big_assets.` URLs only, and `--copy` then verifies every media URL in `index.html` exists (the build fails if one doesn't) |
-| 4 | `ASSET_BASE = '<cdn>/_big_assets.<hash>'`, swapped to the hashed folder only for production | An absolute CDN URL breaks local preview and any host move, and a committed production value would break `npm run dev` | The generated `assets.js` contains **both** values, `dev ? '/big_assets' : './_big_assets.<hash>'`, relative so `dist/` works under any path. Verified served from `/projects/the-second-draft/` |
+| 4 | `ASSET_BASE = '<cdn>/_big_assets.<hash>'`, swapped to the hashed folder only for production | An absolute CDN URL breaks local preview and any host move, and a committed production value would break `npm run dev` | The generated `assets.js` contains **both** values, `dev ? '/big_assets' : './_big_assets.<hash>'`, relative so `dist/` works under any path. Verified served from `/projects/interactive/` |
 
 Also found by running the deploy plan: the first `deploy.js` marked every file except `index.html` as immutable, including the
 unhashed `favicon.png`, so a new favicon would never reach readers. Now only `_app.*` and `_big_assets.*` are immutable.
@@ -463,7 +463,7 @@ explicit). `lottie.js` imports the **light** player (`lottie_light.js`), which i
 ## 11. How the prototype and the project stay in sync
 
 ```
-Phase 1 chunk N:  build it in prototype/index.html  →  checkpoint passes in DevTools  →  port it into projects/the-second-draft/
+Phase 1 chunk N:  build it in prototype/index.html  →  checkpoint passes in DevTools  →  port it into projects/interactive/
 ```
 
 | Prototype (plain HTML/CSS/JS) | Story project (SvelteKit) |
@@ -550,7 +550,7 @@ find dist -type f | sort
 | Output: `index.html` prerendered, readable without JS | ✅ Verified (headline, 10 paragraphs, 16 images, diagram list, all frames) |
 | Output: `_app.<build-hash>/version.json` + `immutable/{entry,nodes,chunks,assets}` | ✅ `start`/`app` entries, nodes 0/1/2, 9 chunks, CSS per node |
 | Output: `_big_assets.<content-hash>/{images,videos,scripts}` | ✅ The hash is stable across builds until media changes |
-| Relative paths: works under `<cdn>/projects/<project-id>/` | ✅ Verified from `/projects/the-second-draft/`: all files load, the page hydrates |
+| Relative paths: works under `<cdn>/projects/<project-id>/` | ✅ Verified from `/projects/interactive/`: all files load, the page hydrates |
 | Dev serves media from `/big_assets` without a build | ✅ Verified |
 | Scroll mechanics from `scrolly-template.html` | ✅ All four scenes ported (chunks 8–10). `npm run parity` matches the prototype within 1px at 375 / 1024 / 1440 |
 | Header Lottie | ✅ Twins (`hero-desktop.json` / `hero-mobile.json`) play once (chunk 11). The SVG art is the poster: no JS, reduced motion, and the animation's last frame |

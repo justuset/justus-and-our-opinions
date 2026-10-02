@@ -14,13 +14,15 @@
 // the old page, which still points at the old (still present) folders. Nobody gets a page whose files aren't there yet.
 //
 // This script prints the upload plan (a dry run). To deploy for real, replace `upload()` with your host's CLI or SDK,
-// e.g. `aws s3 cp <file> s3://bucket/projects/<id>/<path> --cache-control "<policy>"`.
+// e.g. `aws s3 cp <file> s3://bucket/interactive/<slug>/<path> --cache-control "<policy>"`.
 
 import { readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
 const DIST = new URL('../dist', import.meta.url).pathname;
-const PROJECT_PATH = process.env.PROJECT_PATH ?? 'projects/the-second-draft';
+// Where the files go on the host. Like the shipped page (nytimes.com/interactive/…/<slug>.html), the path is the article
+// type plus the story's slug, not the repo folder.
+const PROJECT_PATH = process.env.PROJECT_PATH ?? 'interactive/the-second-draft';
 
 function listFiles(dir) {
   return readdirSync(dir).flatMap((name) => {

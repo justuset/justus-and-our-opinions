@@ -1,6 +1,6 @@
 # Phase 2 · Chunk 08: The visual-essay page template (Birdkit-style full page)
 
-> **Update:** a concrete, working visual-essay project now exists at `projects/the-second-draft/` (Birdkit-style, built from
+> **Update:** a concrete, working visual-essay project now exists at `projects/interactive/` (Birdkit-style, built from
 > [the build spec](../../reference/birdkit-build-spec.md), explained in [`project-structure.md`](../../project-structure.md)). This chunk
 > generalizes it: ArchieML instead of JSON, rem tokens from the shared design-system package, and a template that new
 > `projects/<slug>/` folders can be created from.

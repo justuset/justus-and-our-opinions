@@ -19,7 +19,7 @@ separately and embedded, and story copy in **ArchieML**.
 
 🔀 **Branches:** `main` is the default branch. The work so far is in [PR #1](https://github.com/justuset/justus-and-our-opinions/pull/1) from `claude/wonderful-knuth-w43l2c`.
 
-🏗 **Story project in place.** [`projects/the-second-draft/`](projects/the-second-draft/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. All chunks are ported, and `npm run parity` confirms the project matches the prototype within 1px at 375, 1024 and 1440px.
+🏗 **Story project in place.** [`projects/interactive/`](projects/interactive/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. All chunks are ported, and `npm run parity` confirms the project matches the prototype within 1px at 375, 1024 and 1440px.
 
 ## Repository layout
 
@@ -39,7 +39,7 @@ justus-and-our-opinions/
 ├─ docs/                       plans, references, learning log, guides/ (how-tos), and the guides below
 ├─ prototype/index.html        Phase 1 sandbox: plain HTML/CSS/JS, one idea per chunk
 └─ projects/
-   └─ the-second-draft/        Birdkit-style story project (SvelteKit → dist/index.html + _app.<hash>/ + _big_assets.<hash>/)
+   └─ interactive/             the interactive-article template, holding the demo story "the-second-draft" (SvelteKit → dist/index.html + _app.<hash>/ + _big_assets.<hash>/)
       ├─ content/doc.json      the words, as one ordered body of blocks (the NYT payload shape)
       ├─ big_assets/           media, hashed and deployed separately
       ├─ scripts/              hash-assets.js, deploy.js
@@ -82,7 +82,7 @@ npm run format     # prettier --write
 
 | Layer | Tool | Role |
 |-------|------|------|
-| Visual-essay story project | [SvelteKit 2](https://svelte.dev/docs/kit) + Svelte 5 + adapter-static + lottie-web + [GSAP](https://gsap.com) ScrollTrigger 3.12.5, in `projects/<slug>/` | Birdkit-style: prerendered page, hashed code and media folders. **Built** |
+| Visual-essay story project | [SvelteKit 2](https://svelte.dev/docs/kit) + Svelte 5 + adapter-static + lottie-web + [GSAP](https://gsap.com) ScrollTrigger 3.12.5, in `projects/interactive/` | Birdkit-style: prerendered page, hashed code and media folders. **Built** |
 | Story page (product side) | [React 19](https://react.dev) + [React Router 7](https://reactrouter.com) framework mode, Node SSR, Vite 8, in `apps/story` | Article template, quiz, roundtable. **Scaffolded** (Phase 2 chunk 00) |
 | Graphics desk | [SvelteKit 3](https://svelte.dev/docs/kit) + Svelte 5 + adapter-static + d3-scale (ai2html optional), in `apps/graphics` | Tally, stat chart, scrollytelling, built as embeds. **Scaffolded** (Phase 2 chunk 00) |
 | Design system | `packages/design-system`: diatour tokens in rem, fluid `clamp()` type, `@layer` | One visual source for both apps |
@@ -94,4 +94,4 @@ npm run format     # prettier --write
 
 Almost everything is MIT or similar. One exception worth knowing:
 
-- **GSAP 3.12.5** (`projects/the-second-draft`, the scroll engine since S4) uses GreenSock's [Standard "no charge" license](https://gsap.com/standard-license), not MIT. It's free for a project like this one, but it isn't open source in the OSI sense, so read the license before reusing the code somewhere else. Version 3.12.5 is pinned to match the shipped NYT page this project studies.
+- **GSAP 3.12.5** (`projects/interactive`, the scroll engine since S4) uses GreenSock's [Standard "no charge" license](https://gsap.com/standard-license), not MIT. It's free for a project like this one, but it isn't open source in the OSI sense, so read the license before reusing the code somewhere else. Version 3.12.5 is pinned to match the shipped NYT page this project studies.

@@ -1,4 +1,8 @@
-# The Second Draft: a Birdkit-style story project
+# Interactive: a Birdkit-style template for interactive articles
+
+Named after the article type, the way the shipped page lives under `nytimes.com/interactive/…/opinion/<slug>.html`. The folder is the
+template; the story in it is identified by the `slug` in `content/doc.json`. Right now that's the demo essay "The Second Draft"
+(`the-second-draft`).
 
 A SvelteKit project whose **build output has the same shape as a Birdkit-style New York Times interactive**: one prerendered
 `index.html`, a hashed `_app.<build-hash>/` code folder, and a separately hashed `_big_assets.<content-hash>/` media folder.

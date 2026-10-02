@@ -12,7 +12,7 @@ interactive. Then document every part for a web designer/developer.
 
 ## What I did
 
-- **New project:** `projects/the-second-draft/` with every file and folder from the spec's source tree: `content/story.json`,
+- **New project:** `projects/interactive/` with every file and folder from the spec's source tree: `content/story.json`,
   `big_assets/` (images, Lottie files, diagram frames, scripts), `scripts/hash-assets.js` and `deploy.js`, `static/favicon.png`, and `src/`
   (`app.html`, `app.css`, five route files, `lib/assets.js`, `scroll.js`, `lottie.js`, and eleven components).
 - **Versions** pinned to the spec's ranges: SvelteKit 2.70, Svelte 5.57, Vite 6.4, adapter-static 3, vite-plugin-svelte 5, lottie-web 5.13.
@@ -42,7 +42,7 @@ interactive. Then document every part for a web designer/developer.
 - `npm run build`: one `_app.<hash>` across client, server and `dist/`, and "verified 16 media URLs."
 - **Output tree** matches the spec: `entry/{start,app}`, `nodes/{0,1,2}`, **9 chunks** (the spec said "about 9"), CSS per node (`0.css`, `1.css`, `2.css`; the spec listed only `2.css`), and `_big_assets.<hash>/{images,videos}`.
 - **Two builds in a row:** a new `_app` name each time, and the same `_big_assets.d09a166288` (media unchanged).
-- **Served from `/projects/the-second-draft/`** (like a CDN path): every file loads through relative URLs, all 16 images load, the page hydrates and the header intro runs.
+- **Served from `/projects/interactive/`** (like a CDN path): every file loads through relative URLs, all 16 images load, the page hydrates and the header intro runs.
 - **JavaScript off:** the HTML holds the headline, all 10 paragraphs, 16 images, the 4-item diagram list and all 11 scroll frames.
 - **Dev server:** media served raw from `/big_assets/`, with no build needed.
 - `npm run preview` → 200, and `npm run deploy` → 41 files, hashed folders immutable, `index.html` last.

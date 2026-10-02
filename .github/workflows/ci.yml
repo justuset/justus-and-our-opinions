@@ -35,18 +35,18 @@ jobs:
       - run: npm run log:page
 
   story-project:
-    name: Phase 1 story project (projects/the-second-draft)
+    name: Phase 1 story project (projects/interactive)
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: projects/the-second-draft
+        working-directory: projects/interactive
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: projects/the-second-draft/package-lock.json
+          cache-dependency-path: projects/interactive/package-lock.json
       - run: npm ci
       - run: npm test
       # Ends with "verified N media URLs", or fails if a media URL in index.html points at a missing file

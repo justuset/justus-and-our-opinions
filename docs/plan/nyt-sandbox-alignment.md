@@ -24,7 +24,7 @@ exists, not building from scratch.
 
 ## 1. Verification: current build vs. blueprint
 
-✅ matches · 🟡 partly · ❌ missing. "Project" means `projects/the-second-draft/`, the Birdkit-shaped build. The
+✅ matches · 🟡 partly · ❌ missing. "Project" means `projects/interactive/`, the Birdkit-shaped build. The
 blueprint describes a single SvelteKit project, so that's the right thing to compare.
 
 ### Build and stack (blueprint §2–3)
@@ -33,7 +33,7 @@ blueprint describes a single SvelteKit project, so that's the right thing to com
 |---|---|---|
 | SvelteKit 2 + Svelte 5 + `adapter-static`, `prerender = true` | Exactly that (`svelte.config.js`, `src/routes/+layout.js`) | ✅ |
 | JavaScript with JSDoc, no TypeScript | Plain JS | ✅ |
-| `paths.base` from `BASE_PATH` for GitHub Pages | `paths.relative: true`: works under *any* path with no env var (verified from `/projects/the-second-draft/`) | ✅ ours is stronger |
+| `paths.base` from `BASE_PATH` for GitHub Pages | `paths.relative: true`: works under *any* path with no env var (verified from `/projects/interactive/`) | ✅ ours is stronger |
 | `prerender.handleHttpError: 'warn'` | A handler that skips `_big_assets` during prerender, then **verifies every media URL** after the build ("verified 23 media URLs") | ✅ ours is stricter |
 | `gsap` (ScrollTrigger) for scroll | A hand-written rAF engine (`src/lib/scroll.js`). **The real page ships GSAP 3.12.5 + ScrollTrigger** |❌ → ✅ since S4 |
 | `lottie-web` | `lottie-web` **5.13.0**; the real page ships **5.12.2** | 🟡 version |
@@ -123,14 +123,14 @@ default is (b): build `DataScrolly` fresh from the blueprint's `stages.json`.
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
 | D1 | **Visual theme.** The blueprint uses NYT's white page; CLAUDE.md says diatour wins visual conflicts | (a) keep diatour dark only, (b) switch to light, (c) support both via the doc's `theme` key | **(c)**: `theme: "opinion"` is a light theme using diatour's light values (`--paper #fbfbf8`, `--ink #121212`, already in `docs/design-system.md`); `theme: "diatour"` stays the default. That keeps the architecture NYT-shaped without overruling CLAUDE.md |
-| D2 | **Where the work happens** | (a) evolve `projects/the-second-draft/`, (b) start a new `projects/<slug>/` | **(a)**: it already matches about 70% of the blueprint, and the parity script and CI guard it |
+| D2 | **Where the work happens** | (a) evolve `projects/interactive/`, (b) start a new `projects/<slug>/` | **(a)**: it already matches about 70% of the blueprint, and the parity script and CI guard it |
 | D3 | **Adopt GSAP ScrollTrigger** for the scroll engine | (a) yes, pinned to **3.12.5** like the shipped page, (b) keep our rAF engine | **(a)**, kept behind `Scrolly`'s existing `{ step, progress }` contract so no scene changes. Note: GSAP is free but **not MIT** ("Standard no-charge license"), which is fine for a learning project. Record it in the README<br>**Verified by the owner, 2026-10-02,** from the shipped page's scripts and markup:<br>• GSAP 3.12.5 + ScrollTrigger, loaded from cdnjs, with no Scrollama or other scrolly library;<br>• each section is a custom Svelte component (class prefixes `ai-`, `oc-`, `ps-`), sticky by plain CSS inside a tall track (900vh / 960svh / 500svh), with ScrollTrigger only reporting progress;<br>• caveat: this is one studio-built piece (Heavy.dev), not proof of what the whole desk uses. |
 | D4 | **The `DataScrolly` demo.** The blueprint ports "your original `data.json` demo," which isn't in this repo | (a) send me the old `index.html` / `app.js` / `data.json`, (b) build it fresh from the blueprint's `stages.json` | Your call: (a) keeps your history, (b) is fine for learning |
 | D5 | **Masthead and byline text.** The blueprint's sample says "The Sandbox Times" and "By Justus Riley" | CLAUDE.md requires the masthead "Our Opinions" and invented demo content | Use **"Our Opinions"**. Keep the invented byline (A. Writer) unless you want your own name on a demo essay |
 
 ---
 
-## 3. The plan: eight chunks in `projects/the-second-draft/`
+## 3. The plan: eight chunks in `projects/interactive/`
 
 Same rules as Phase 1: one new idea per chunk, a checkpoint that must pass before the next starts, a learning-log entry,
 and CI green. **The essay's words don't change**: every content move is a mechanical conversion done by a script and
