@@ -2,16 +2,16 @@
      No JS: each page and its caption, stacked. Enhanced: captions sit on top of each other and fade (0.4s);
      images hard-cut. Phones get a 30vh caption area on top; ≥740px (the tablet tier) gets a centered band 65vh tall. -->
 <script>
-  import Scrolly from './Scrolly.svelte';
+  import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
   import { srcset } from '$lib/media.js';
   import { series } from '$lib/doc.js';
   // Flat props from content/doc.json: image1, srcset1, alt1, caption1, image2, … (one numbered set per page)
-  let { label, sizes, ...props } = $props();
+  let { label, height, sizes, ...props } = $props();
   const steps = $derived(series(props, ['image', 'srcset', 'alt', 'caption']));
 </script>
 
-<Scrolly {label} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>
+<StickyScroller {label} {height} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>
   {#snippet children({ step, enhanced })}
     <div class="b-panel" class:enhanced aria-hidden="true">
       <div class="b-wrapper">
@@ -30,7 +30,7 @@
       </div>
     </div>
   {/snippet}
-</Scrolly>
+</StickyScroller>
 
 <style>
   /* No JS: caption, then page, for each step. `display: contents` removes the two list wrappers from layout, so

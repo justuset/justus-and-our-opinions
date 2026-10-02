@@ -155,13 +155,13 @@ projects/the-second-draft/
       ├─ blocks.js             the component registry + docProblems() (S1)
       ├─ doc.js                series() and list() for flat props (S1)
       ├─ inline-html.js        the allow-list for inline HTML in text blocks, + .test.js (S1)
-      ├─ scroll.js
+      ├─ scroll.js             loads GSAP ScrollTrigger once; trackBounds(), stepOf(), + .test.js (S4)
       ├─ lottie.js
       ├─ media.js
       └─ components/
          ├─ Header.svelte, Byline.svelte, Text.svelte, Credits.svelte
          ├─ TwoUp.svelte, Diagram.svelte
-         ├─ Scrolly.svelte
+         ├─ StickyScroller.svelte   the shared track + sticky panel (was Scrolly.svelte until S4)
          ├─ SlidesScrolly.svelte, CaptionScrolly.svelte, PaintingsScrolly.svelte
          └─ ScrubLottie.svelte, ScrubStage.svelte
 ```
@@ -218,7 +218,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `routes/+page.js` | Runs at build time: imports `content/doc.json`, stops a production build if a block can't be rendered, and hands the doc to the page as `data.doc` | Inlined into `index.html` |
 | `routes/+page.svelte` | **The story page.** Hands the doc's `body` to `<Blocks>` and sets the title from the Header block | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | `lib/assets.js` | **Generated.** `ASSET_BASE` is `/big_assets` in dev and `./_big_assets.<hash>` in production, plus an `asset(path)` helper. Committed, so `npm run dev` works on a fresh clone | Bundled into a chunk |
-| `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list). Since S2 it measures progress from the panel's CSS `top` (the masthead's height), not from 0 | A chunk, once imported |
+| `lib/scroll.js` | The shared scroll engine. Since S4 it's **GSAP ScrollTrigger 3.12.5**, the shipped page's library:<br>• `loadScrollTrigger()` dynamic-imports `gsap` + `gsap/ScrollTrigger` once for the page, and sets up one `ResizeObserver` that calls `ScrollTrigger.refresh()` when the layout changes;<br>• `trackBounds(sticky)` gives a track's `start` (its top meets the panel's CSS `top`, the masthead) and `end` (its bottom meets the panel's bottom), so progress is the same formula the chunk 8 engine used;<br>• `stepOf()` is unchanged and unit-tested.<br>ScrollTrigger only reads progress; CSS `position: sticky` does the pinning. Chunk 8's hand-written `progressOf()` / `onScrollFrame()` engine was removed | Two chunks (gsap 70 KB, ScrollTrigger 43 KB; 28 + 18 KB gzipped), loaded after hydration |
 | `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header (chunk 11). `scrubber()` resolves to `seek(p)` once the animation is ready, and **rejects** if the JSON fails, so the caller can keep its text fallback. ✅ Used by `ScrubStage` | A lazy chunk, once imported |
 | `lib/media.js` | `srcset(value)` turns a doc srcset (`"images/a-400w.webp 400w, images/a.webp 800w"`) into hashed media URLs (chunk 10, string form since S1) | Bundled into the components |
 | `lib/Blocks.svelte` | **The renderer** (S1): walks the doc's `body`. A text block becomes `Text`, a svelte block becomes its registered component with the flat props spread on. Unknown names show a placeholder in dev | Bundled into the page |
@@ -239,7 +239,7 @@ shows which prototype chunk each one mirrors (see §11).
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at the 740px tablet tier, capped at 1440px with 64px padding from the 1150px desktop tier (S3) | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>`. At ≥740px (the tablet tier, since S3) a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
-| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins **below the platform masthead** (`top: var(--masthead-h)`, height `100svh − --masthead-h`) since S2 | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
+| `StickyScroller.svelte` | The shared track + sticky panel, named like the blueprint's (was `Scrolly.svelte` until S4). Passes `{ step, progress, enhanced }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins **below the platform masthead** (`top: var(--masthead-h)`, height `100svh − --masthead-h`) since S2. Track height is the doc's `height`, or `steps × 135svh`. Props: `label`, `steps`, `height`, `stepTexts`, `class`, `showProgress` | ✅ One ScrollTrigger per track in an `{@attach}`, killed on destroy (S4). The bar is `transform: scaleX(progress)`, with markers at `i / steps`. `data-enhanced` is set only after GSAP loads; if it never loads, the no-JS stack stays |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
 | `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 740px (S3), 0.4s caption fades, hard-cut images (chunk 9) |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `doc.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
@@ -297,10 +297,10 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 | `Byline` | `author`, `date` (ISO), `dateText` | |
 | `TwoUp` | `url1`/`url2`, `alt1`/`alt2`, `width1`… `height1`…, `srcset1`/`srcset2`, `sizes`, `groupCaption`, `credit`, `label` | Images at **4:5**. `width`/`height` reserve space so nothing jumps. `srcset` lists each file with its width, `sizes` describes the slot |
 | `Diagram` | `label` (the section's name), `label1`… (the boxes, in order) | 3–6 short labels |
-| `SlidesScrolly` | `label`, then per slide `headingN`, `cardN`, `imageN`, `altN` | One square image per step. Each step ≈ 1.35 screens of scrolling |
-| `CaptionScrolly` | `label`, `sizes`, then per page `imageN`, `srcsetN`, `altN`, `captionN` | Write captions to fit about 80px. The longest one sets the overlay height |
-| `PaintingsScrolly` | `label`, `imageN`/`altN` (the cards), `captionN` (the steps), `layouts`, `portraitScale` | One layout per step per card: `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z` |
-| `ScrubLottie` | `label`, `steps` (runway length), `desktop`, `mobile`, `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
+| `SlidesScrolly` | `label`, `height` (optional), then per slide `headingN`, `cardN`, `imageN`, `altN` | One square image per step. Each step ≈ 1.35 screens of scrolling, unless `height` sets the whole track (e.g. `"900svh"`, as on the shipped page) |
+| `CaptionScrolly` | `label`, `height` (optional), `sizes`, then per page `imageN`, `srcsetN`, `altN`, `captionN` | Write captions to fit about 80px. The longest one sets the overlay height |
+| `PaintingsScrolly` | `label`, `height` (optional), `imageN`/`altN` (the cards), `captionN` (the steps), `layouts`, `portraitScale` | One layout per step per card: `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z` |
+| `ScrubLottie` | `label`, `steps` (runway length), `height` (optional, overrides `steps × 135svh`), `desktop`, `mobile`, `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
 | `Credits` | `text` | |
 
 **A name the renderer doesn't know** (a typo, or a component that isn't registered) shows a dashed
@@ -478,7 +478,7 @@ and behavior were ported, and the comment and the §4 table changed to ✅. As o
 opens both in headless Chromium at 375, 1024 and 1440px, and compares column width, header height, headline size, two-up
 direction and image widths, diagram width, every runway's height, page height, and the scroll offsets where runway A's
 steps change. It exits with code 1 if anything differs by more than 1px. Its first run found a real bug: enhanced runways
-in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`).
+in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`, now `StickyScroller.svelte`).
 
 Since NYT sandbox S2, the project renders inside a mock platform shell the prototype never had. Parity switches the shell
 off before measuring (no masthead or footer, `--masthead-h: 0`), so it still answers the question it was built for: is the

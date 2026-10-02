@@ -3,12 +3,12 @@
      No JS: every step's caption, then the items in a row. Enhanced: an absolute stage where each step's layout is
      written as inline styles and CSS transitions settle them over 0.95s. Portrait screens get 1.6× wider items. -->
 <script>
-  import Scrolly from './Scrolly.svelte';
+  import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
   import { series } from '$lib/doc.js';
   // Flat props from content/doc.json: image1/alt1… are the cards, caption1… the steps. `layouts` (one array per step,
   // one object per card) has no flat form yet; it moves to the doc's `sheets` data slot in chunk S6.
-  let { label, layouts, portraitScale = 1.6, ...props } = $props();
+  let { label, height, layouts, portraitScale = 1.6, ...props } = $props();
   const items = $derived(series(props, ['image', 'alt']));
   const steps = $derived(series(props, ['caption']).map((s, i) => ({ caption: s.caption, layout: layouts[i] })));
 
@@ -24,13 +24,13 @@
   const pct = (n) => (n == null ? 'auto' : `${n}%`);
 </script>
 
-<Scrolly {label} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>
+<StickyScroller {label} {height} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>
   {#snippet children({ step, enhanced })}
     <div class="c-scene" class:enhanced aria-hidden="true" {@attach orientation}>
       {#if enhanced}
         <p class="c-caption">{steps[step].caption}</p>
       {:else}
-        <!-- The stack has one set of cards, so it lists all three captions (Scrolly's hidden list is for screen readers). -->
+        <!-- The stack has one set of cards, so it lists all three captions (StickyScroller's hidden list is for screen readers). -->
         <ol class="c-steps">
           {#each steps as s, i (i)}<li>{s.caption}</li>{/each}
         </ol>
@@ -55,7 +55,7 @@
       </div>
     </div>
   {/snippet}
-</Scrolly>
+</StickyScroller>
 
 <style>
   /* No JS: every caption as a list, then a row of three cards. */

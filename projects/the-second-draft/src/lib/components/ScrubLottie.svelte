@@ -3,10 +3,10 @@
      Two runways, one per twin (.desktop-only / .mobile-only, switching at the tablet tier, 740px). The engine skips the hidden one,
      and only the visible one ever downloads its JSON (see ScrubStage). -->
 <script>
-  import Scrolly from './Scrolly.svelte';
+  import StickyScroller from './StickyScroller.svelte';
   import ScrubStage from './ScrubStage.svelte';
   import { asset } from '$lib/assets.js';
-  let { label, steps, desktop, mobile, fallback } = $props();
+  let { label, steps, height, desktop, mobile, fallback } = $props();
 
   const twins = [
     { class: 'desktop-only', path: desktop, aspect: '1800 / 1200' },
@@ -15,9 +15,9 @@
 </script>
 
 {#each twins as twin (twin.class)}
-  <Scrolly {label} {steps} class={twin.class} bar={false}>
+  <StickyScroller {label} {steps} {height} class={twin.class} showProgress={false}>
     {#snippet children({ progress, enhanced })}
       <ScrubStage path={asset(twin.path)} aspect={twin.aspect} {fallback} {progress} {enhanced} />
     {/snippet}
-  </Scrolly>
+  </StickyScroller>
 {/each}

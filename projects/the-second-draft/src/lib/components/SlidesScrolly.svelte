@@ -3,15 +3,15 @@
      Enhanced: the frames stack in one spot and the active one cuts in, with no transition. The card is sized to the
      viewport width (min(44.85vw, 250px)), and arrows are positioned through a custom-property API. -->
 <script>
-  import Scrolly from './Scrolly.svelte';
+  import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
   import { series } from '$lib/doc.js';
   // Flat props from content/doc.json: heading1, card1, image1, alt1, heading2, … (one numbered set per slide)
-  let { label, ...props } = $props();
+  let { label, height, ...props } = $props();
   const steps = $derived(series(props, ['heading', 'card', 'image', 'alt']));
 </script>
 
-<Scrolly {label} steps={steps.length} stepTexts={steps.map((s) => `${s.heading}: ${s.card}.`)}>
+<StickyScroller {label} {height} steps={steps.length} stepTexts={steps.map((s) => `${s.heading}: ${s.card}.`)}>
   {#snippet children({ step, enhanced })}
     <div class="frames" class:enhanced aria-hidden="true">
       {#each steps as s, i (i)}
@@ -30,7 +30,7 @@
       {/each}
     </div>
   {/snippet}
-</Scrolly>
+</StickyScroller>
 
 <style>
   /* No JS: a readable stack. */

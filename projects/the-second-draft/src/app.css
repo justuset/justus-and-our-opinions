@@ -165,7 +165,7 @@ body { font-family: var(--font-body); }
    Reduced motion: every transition and animation ends instantly. Steps still change; nothing slides or fades.
    Scene D holds its end frame instead of scrubbing (ScrubStage.svelte).
    There's no @media (scripting: none) block: the components' base CSS IS the no-script layout, and nothing
-   scroll-specific applies until Scrolly's attachment runs (data-enhanced). There is nothing to undo. */
+   scroll-specific applies until StickyScroller's attachment runs (data-enhanced). There is nothing to undo. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
 }

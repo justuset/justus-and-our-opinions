@@ -37,6 +37,7 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 21 | [NYT sandbox S2: the platform shell](21-s2-platform-shell.md) | 2026-10-02 |
 | 22 | [The first pull request, and making `main` the default](22-first-pr-and-default-branch.md) | 2026-10-02 |
 | 23 | [NYT sandbox S3: breakpoints and themes](23-s3-breakpoints-and-themes.md) | 2026-10-02 |
+| 24 | [NYT sandbox S4: `StickyScroller` on ScrollTrigger](24-s4-sticky-scroller-on-scrolltrigger.md) | 2026-10-02 |
 
 ## Entry template
 

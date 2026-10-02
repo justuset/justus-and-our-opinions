@@ -1,7 +1,7 @@
 # Aligning the build with the NYT Opinion sandbox blueprint
 
 **Date:** 2026-10-02  **Source:** [`../reference/nyt-sandbox-blueprint.md`](../reference/nyt-sandbox-blueprint.md) (the
-"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1–S3 done
+"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1–S4 done
 
 ## Why this plan exists
 
@@ -35,7 +35,7 @@ blueprint describes a single SvelteKit project, so that's the right thing to com
 | JavaScript with JSDoc, no TypeScript | Plain JS | ✅ |
 | `paths.base` from `BASE_PATH` for GitHub Pages | `paths.relative: true`: works under *any* path with no env var (verified from `/projects/the-second-draft/`) | ✅ ours is stronger |
 | `prerender.handleHttpError: 'warn'` | A handler that skips `_big_assets` during prerender, then **verifies every media URL** after the build ("verified 23 media URLs") | ✅ ours is stricter |
-| `gsap` (ScrollTrigger) for scroll | A hand-written rAF engine (`src/lib/scroll.js`). **The real page ships GSAP 3.12.5 + ScrollTrigger** | ❌ |
+| `gsap` (ScrollTrigger) for scroll | A hand-written rAF engine (`src/lib/scroll.js`). **The real page ships GSAP 3.12.5 + ScrollTrigger** |❌ → ✅ since S4 |
 | `lottie-web` | `lottie-web` **5.13.0**; the real page ships **5.12.2** | 🟡 version |
 | `archieml` (optional) | Not used. ArchieML is planned in `packages/archie` (Phase 2 chunk 03), currently a stub | ❌ (optional) |
 
@@ -83,7 +83,7 @@ blueprint describes a single SvelteKit project, so that's the right thing to com
 | `PaintingScroll` (500svh, 4 steps) | `PaintingsScrolly` (405svh, 3 steps) | 🟡 Animates `top`/`left`/`width`, but the blueprint rule is **transforms and opacity only** |
 | `LottieScrub` (DESKTOP / TABLET / MOBILE files) | `ScrubLottie` + `ScrubStage` (desktop and mobile twins, lazy, end frame under reduced motion) | 🟡 No tablet tier. Files named `scrub-desktop.json`, not `name_DESKTOP.json` |
 | `Credits` | `Credits` | ✅ (becomes a `body` block) |
-| `StickyScroller` (the shared track) | `Scrolly` (shared runway, `{ step, progress }` via a snippet) | 🟡 Same contract. Our engine, not ScrollTrigger. Height comes from steps, not set in the doc |
+| `StickyScroller` (the shared track) | `Scrolly` (shared runway, `{ step, progress }` via a snippet) | 🟡 Same contract. Our engine, not ScrollTrigger. Height comes from steps, not set in the doc → ✅ since S4: `StickyScroller` on ScrollTrigger, with `height` from the doc |
 | `DataScrolly` (your earlier `data.json` demo) | — | ❌ That demo **isn't in this repo**, see §2 |
 
 ### Scroll conventions (blueprint §9)
@@ -229,6 +229,18 @@ checked by a diff, since AI doesn't write or edit the argument.
   - The chunk 8 checks still pass: a step changes every `(height − 100svh) / steps`, with the bar hidden at 0 and 1.
   - A Performance recording shows **no layout** from the bar while scrolling.
   - `npm run parity` is updated for the new step offsets, and the change is explained in the log.
+
+**✅ Done** ([learning log 24](../learning-log/24-s4-sticky-scroller-on-scrolltrigger.md)):
+- **Engine:** `StickyScroller.svelte` runs one ScrollTrigger per track inside an `{@attach}`, killed on teardown. GSAP is loaded once per page by `loadScrollTrigger()`, and a `ResizeObserver` refreshes every trigger when the layout changes.
+- **Step changes:** every `(height − panel) / steps`, checked at ±3px around each boundary with a doc-set `"height": "900svh"` (track 8100px at 900px tall).
+- **Bar:** hidden at 0 and 1 on every barred track, and markers light exactly as the fill reaches them. Jumping to the bottom reads 1 everywhere; jumping to the top reads 0.
+- **No layout from the bar:** scrolling inside one step adds **0 layouts** (the old engine with a `width` bar added 50 in the same 40 scroll steps), measured with Chrome's performance counters against a plain-text control.
+- **Parity:** unchanged, within 1px, **including runway A's step offsets**. The plan expected new offsets, but the bounds were set to reproduce the old formula exactly, and no section sets `height` yet, so the pacing didn't move.
+- **Failure:** with GSAP blocked, nothing is enhanced and all text renders. JS off renders all text at 375 / 740 / 1150.
+- **Deviations:**
+  - GSAP comes from npm, not cdnjs (see D3).
+  - `start` is not `'top top'`: it's the panel's CSS `top` (the masthead), as in S2.
+  - `end` is not `'bottom bottom'`: it's the panel's bottom edge. On phones with a collapsed toolbar the viewport is taller than the 100svh panel, and `'bottom bottom'` would end the track too late.
 
 ### S5. The real component set
 
