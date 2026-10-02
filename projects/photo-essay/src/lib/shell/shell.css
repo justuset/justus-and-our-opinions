@@ -1,0 +1,36 @@
+/* shell.css: the mock PLATFORM's tokens. Imported once by src/routes/+layout.svelte.
+   LAYOUT is measured from the shipped page ("In Defense of the Detour", 2026-10-02, at 390 / 800 / 1987px wide; S4b):
+   heights, widths, paddings, type sizes. LOOK is the diatour design system's dark theme (docs/design-system.md), because
+   diatour wins visual conflicts: so no NYT white page, blue button or Franklin/Cheltenham substitutes.
+   The shell keeps its own --shell-* names, so the platform and the story stay separately styled. Most are aliases of
+   diatour tokens defined on :root in app.css; inside the story, a theme block may redefine those, but the shell sits
+   outside <article>, so it always gets the dark values. */
+:root {
+  /* type: diatour */
+  --shell-font-label: var(--font-body);        /* system sans, as in the diatour source */
+  --shell-font-wordmark: var(--font-display);  /* Newsreader */
+
+  /* color: diatour dark */
+  --shell-bg: var(--paper);                    /* #121211 */
+  --shell-bg-secondary: #1b1b1a;               /* diatour --surface-2: the ad slot, recirc placeholders */
+  --shell-surface: var(--surface);             /* pills */
+  --shell-ink: var(--ink);                     /* #ededeb */
+  --shell-muted: var(--faint);                 /* footer links, ad labels: 5.55:1 on paper, 5.38:1 on #1b1b1a */
+  --shell-rule: var(--line);
+  --shell-rule-strong: var(--ink);             /* the recirc section rule */
+  --shell-border: var(--line);
+  --shell-button: var(--ink);                  /* the comment button: ink fill, paper text (15.99:1) */
+  --shell-button-text: var(--paper);
+  --shell-button-border: var(--ink);
+  --shell-button-hover: var(--soft);
+  --shell-wordmark: var(--paper);              /* over a light story header (the "opinion" theme) */
+  --shell-wordmark-inverse: var(--ink);        /* over a dark one (diatour, the default) */
+
+  /* layout: measured */
+  --shell-gutter: 20px;            /* phone side margin: a 350px column on a 390px screen */
+  --shell-col: 600px;              /* the text column the share tools line up with */
+  --shell-page-max: 1200px;        /* recirculation and footer */
+}
+
+/* The page behind the story is the platform's. The story paints its own background inside <article> (S3). */
+html, body { background: var(--shell-bg); color: var(--shell-ink); }

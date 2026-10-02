@@ -50,17 +50,19 @@ justus-and-our-opinions/
 ├─ prototype/
 │  └─ index.html                PHASE 1 SANDBOX: plain HTML/CSS/JS, one idea per chunk, checked in DevTools
 └─ projects/
-   └─ interactive/              THE INTERACTIVE TEMPLATE: Birdkit-style SvelteKit build of the same page (demo story slug: the-second-draft)
+   ├─ interactive/              THE INTERACTIVE TEMPLATE: Birdkit-style SvelteKit build of the same page (demo story slug: the-second-draft)
+   └─ photo-essay/              THE PHOTO ESSAY TEMPLATE: same pipeline and shell, photo-led blocks (demo story slug: photo-essay-demo)
 ```
 
 | Folder | Role | You work here when… |
 |--------|------|---------------------|
 | `prototype/` | Learning sandbox. One file, no build step, so every idea is visible in DevTools | Doing a Phase 1 chunk |
 | `projects/interactive/` | The production-shaped story. Same page, as components, content data and a real build | Porting a chunk that passed, or editing copy and media |
+| `projects/photo-essay/` | A second template on the same pipeline, for photo-led guest essays (see its README) | Building a photo essay |
 | `docs/` | The written explanation of all of it | Learning, or deciding what to build next |
 | `apps/`, `packages/` | The Phase 2 Times-shaped stack, one npm workspace (see `docs/architecture.md`) | Doing a Phase 2 chunk |
 
-`projects/interactive/` is **not** part of the workspace: it keeps its own `package.json` and lockfile, as each
+`projects/interactive/` and `projects/photo-essay/` are **not** part of the workspace: each keeps its own `package.json` and lockfile, as each
 Birdkit-style story does (§2). CI builds it as a separate job.
 
 ---

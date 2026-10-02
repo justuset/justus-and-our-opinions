@@ -1,0 +1,80 @@
+{
+  "_comment": "Demo content for a front-end study project. Placeholder copy and placeholder photos, nothing real. Edit copy here; the page re-renders from this file.",
+  "slug": "photo-essay-demo",
+  "theme": "diatour",
+  "body": [
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Header",
+        "seoTitle": "Placeholder SEO Headline for Search and Social",
+        "dek": "A template for a photo-led Opinion guest essay. Demo content.",
+        "kicker": "Guest Essay · Demo",
+        "headline": "The Display Headline Sits Here, Centered and Tight",
+        "date": "2026-09-05",
+        "dateText": "Sept. 5, 2026",
+        "url": "images/lead.svg",
+        "alt": "Describe the lead photograph here.",
+        "width": 1800,
+        "height": 1200,
+        "credit": "Photographer Name"
+      }
+    },
+    { "type": "text", "value": "Open with the scene. Each text block is one paragraph in the 600px companion column, and editors can use <a href=\"#\">inline links</a> and <em>emphasis</em>." },
+    { "type": "text", "value": "A second paragraph keeps the reader moving toward the first photo." },
+    { "type": "text", "value": "Set up the pair of photos that follows." },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Diptych",
+        "url1": "images/pair-a.svg", "alt1": "Left photo of the pair.", "width1": 1200, "height1": 1500,
+        "url2": "images/pair-b.svg", "alt2": "Right photo of the pair.", "width2": 1200, "height2": 1500,
+        "credit": "Photographer Name"
+      }
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "PhotoScrolly",
+        "url1": "images/scrolly-1-1.svg", "alt1": "First frame of the sequence.", "width1": 2400, "height1": 1600,
+        "card1": "A short caption-like line that rides over the first photo.",
+        "url2": "images/scrolly-1-2.svg", "alt2": "Second frame of the sequence.", "width2": 2400, "height2": 1600,
+        "card2": "The second card swaps the photo underneath it.",
+        "url3": "images/scrolly-1-3.svg", "alt3": "Third frame of the sequence.", "width3": 2400, "height3": 1600,
+        "card3": "The third card lands, then the essay picks back up.",
+        "credit": "Photographs by Photographer Name"
+      }
+    },
+    {
+      "type": "svelte",
+      "value": { "component": "Photo", "url": "images/large-1.svg", "alt": "A single large photograph.", "width": 1800, "height": 1200, "credit": "Photographer Name" }
+    },
+    { "type": "text", "value": "The argument builds between photo moments. Keep text runs short enough that images keep the rhythm." },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "PhotoScrolly",
+        "url1": "images/scrolly-2-1.svg", "alt1": "First frame of the second sequence.", "width1": 2400, "height1": 1600,
+        "card1": "Second sequence, card one.",
+        "url2": "images/scrolly-2-2.svg", "alt2": "Second frame of the second sequence.", "width2": 2400, "height2": 1600,
+        "card2": "Card two.",
+        "url3": "images/scrolly-2-3.svg", "alt3": "Third frame of the second sequence.", "width3": 2400, "height3": 1600,
+        "card3": "Card three.",
+        "credit": "Photographs by Photographer Name"
+      }
+    },
+    { "type": "text", "value": "Close the argument." },
+    {
+      "type": "svelte",
+      "value": { "component": "Photo", "url": "images/large-2.svg", "alt": "Closing photograph.", "width": 1800, "height": 1200 }
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Bio",
+        "text": "Photographer Name is a photographer based in Somewhere. (Demo bio.)",
+        "note": "Our Opinions is committed to publishing a diversity of letters to the editor."
+      }
+    }
+  ]
+}

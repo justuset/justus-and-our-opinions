@@ -41,6 +41,7 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 25 | [NYT sandbox S4b: the measured page shell](25-s4b-measured-page-shell.md) | 2026-10-02 |
 | 26 | [`projects/the-second-draft` → `projects/interactive`](26-rename-to-interactive.md) | 2026-10-02 |
 | 27 | [The page shell in diatour dark](27-shell-in-diatour-dark.md) | 2026-10-02 |
+| 28 | [A photo essay template](28-photo-essay-template.md) | 2026-10-02 |
 
 ## Entry template
 
