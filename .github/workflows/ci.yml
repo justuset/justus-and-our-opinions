@@ -31,6 +31,8 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+      # The learning log as one page; fails if a link between log entries has no target
+      - run: npm run log:page
 
   story-project:
     name: Phase 1 story project (projects/the-second-draft)

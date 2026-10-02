@@ -33,6 +33,7 @@ justus-and-our-opinions/
 ├─ packages/
 │  ├─ design-system/           @opinion/design-system: diatour tokens.css, shared by both apps
 │  └─ archie/                  @opinion/archie: ArchieML → typed blocks (stub until Phase 2 chunk 03)
+├─ tools/learning-log-page/    npm run log:page: the learning log as one reading page
 ├─ .github/workflows/ci.yml    lint → check → test → build on every push and PR
 ├─ .claude/skills/             Svelte skills for Claude Code (vendored, MIT)
 ├─ docs/                       plans, references, learning log, guides/ (how-tos), and the guides below

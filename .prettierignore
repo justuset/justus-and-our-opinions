@@ -17,3 +17,6 @@ docs/
 # Static files are copied as-is
 apps/graphics/static/
 apps/story/public/
+
+# Vendored from the diatour-nyt-frontend artifact, kept byte-for-byte
+tools/learning-log-page/template.css

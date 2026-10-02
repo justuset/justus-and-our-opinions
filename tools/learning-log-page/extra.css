@@ -1,0 +1,125 @@
+/* ---- Additions for the learning log (everything above is the diatour-nyt-frontend template) ----
+   Layout: the template's single 720px reading column; parts → cards → body, with one new element, the change note. */
+:root {
+  --note-edge: rgba(235, 235, 240, 0.32);
+}
+
+/* The fixed running head clears a phone's status bar */
+.runhead {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Text lockup in place of the template's image marks */
+.lockup .word-soft {
+  color: var(--soft);
+  font-style: italic;
+}
+
+/* "Later changes" notes: the one boxed element on a card, so it reads as an amendment to the record */
+.card aside.note {
+  max-width: 600px;
+  margin: 30px auto 0;
+  padding: 16px 20px;
+  border-inline-start: 2px solid var(--note-edge);
+  background: var(--surface);
+  border-radius: 0 12px 12px 0;
+  color: var(--soft);
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+.card aside.note > * {
+  margin: 0;
+}
+.card aside.note > * + * {
+  margin-top: 10px;
+}
+.card aside.note strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.card aside.note a {
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+/* Body elements the template's chapters didn't use */
+.card .body h5 {
+  margin-top: 26px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.card .body ol {
+  padding-inline-start: 1.4em;
+}
+.card .body ol li + li {
+  margin-top: 8px;
+}
+.card .body ol li::marker {
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.card .body li > ul,
+.card .body li > ol {
+  margin-top: 8px;
+}
+.card .body blockquote {
+  margin-inline: 0;
+  padding: 2px 0 2px 18px;
+  border-inline-start: 2px solid var(--line);
+  color: var(--soft);
+}
+.card .body blockquote > * {
+  margin: 0;
+}
+.card .body blockquote > * + * {
+  margin-top: 10px;
+}
+.card .body .cw {
+  overflow-x: auto;
+}
+.card .body pre.code {
+  margin: 0;
+}
+.card .body td code,
+.card .body th code {
+  overflow-wrap: anywhere;
+}
+.card .body .tw table {
+  min-width: 520px;
+}
+.card .body hr {
+  border: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+/* The guide's opening card has no title of its own */
+.guide-lead {
+  margin-top: -40px;
+}
+
+.colophon {
+  max-width: 600px;
+  margin: 40px auto 0;
+  padding-top: 22px;
+  border-top: 0.5pt solid var(--line);
+  color: var(--faint);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.colophon a {
+  color: var(--soft);
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .card .body .tw table {
+    min-width: 440px;
+  }
+  .card aside.note {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+}

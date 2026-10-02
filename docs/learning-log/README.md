@@ -8,6 +8,10 @@ something an entry describes, the entry gets a **"Later changes"** note at the t
 than being rewritten. For how things work *now*, see [`docs/project-structure.md`](../project-structure.md). To set up a
 GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-scratch.md`](../guides/github-repo-from-scratch.md).
 
+**Read it as one page:** `npm run log:page` (from the repo root) builds every entry plus the setup guide into
+`tools/learning-log-page/dist/learning-log.html`, in the diatour-nyt-frontend layout. The published copy is the
+[Our Opinions Learning Log](https://claude.ai/artifact/Tr7wUETfCzxzzhmcgtJVD7) artifact. See [`tools/learning-log-page/`](../../tools/learning-log-page/README.md).
+
 | # | Entry | Date |
 |---|-------|------|
 | 01 | [Repo setup, first commit and README](01-repo-setup.md) | 2026-10-01 |

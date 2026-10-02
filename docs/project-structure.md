@@ -39,6 +39,7 @@ justus-and-our-opinions/
 ├─ package.json                 PHASE 2 WORKSPACE root: "workspaces": ["apps/*", "packages/*"], shared lint/format
 ├─ apps/story/, apps/graphics/  Phase 2 apps (React story page, SvelteKit graphics desk)
 ├─ packages/                    Phase 2 shared code: design-system (tokens.css), archie (ArchieML → blocks)
+├─ tools/learning-log-page/     `npm run log:page`: builds the learning log as one reading page
 ├─ .claude/skills/              vendored Svelte skills for Claude Code (MIT, see its README)
 ├─ docs/                        everything you read: plans, references, learning log, this guide
 │  ├─ plan/                     Phase 1 (hand-built, 10 chunks) and Phase 2 (Times-shaped stack)
