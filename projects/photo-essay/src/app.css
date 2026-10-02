@@ -1,0 +1,100 @@
+/* app.css: global tokens and base rules for the photo essay template, imported once by src/routes/+layout.svelte.
+   Layout values are measured from a shipped NYT Opinion photo essay (Sept. 2026 piece, measured Oct. 2026; see
+   ~/Downloads/opinion-photo-essay/README.md). Colors and fonts are diatour (docs/design-system.md), which wins visual
+   conflicts. Measured px, like the interactive template (Phase 1 rule for ported values). */
+
+/* ============ 1. TOKENS ============ */
+/* Breakpoints: smartphone < 740px · tablet 740–1149px · desktop ≥ 1150px. Repeated as numbers in each @media rule. */
+:root {
+  /* layout: measured */
+  --gutter: 20px;                                            /* a 350px column on a 390px phone */
+  --w-body: 600px;                                           /* the companion column */
+  --col: min(calc(100% - var(--gutter) * 2), var(--w-body));
+  --col-large: min(945px, 100%);                             /* lead and large photos; full width on phones */
+  --diptych-gap: 15px;                                       /* 2 × 465 inside 945 */
+  --gap-para: 15px;
+  --gap-photo: 40px;
+  --gap-scrolly: 60px;
+  --masthead-h: 0px;                                         /* the masthead floats and scrolls away (shell) */
+  --header-top: 80px;                                        /* clears the floating masthead */
+
+  /* type: measured sizes */
+  --headline-size: 57px;
+  --headline-leading: 60px;
+  --kicker-size: 16px;
+  --kicker-tracking: 1.12px;
+  --text-size: 20px;
+  --text-leading: 30px;
+  --card-size: 28px;
+  --card-leading: 32px;
+  --caption-size: 15px;
+  --credit-size: 13px;
+  --meta-size: 14px;
+  --bio-size: 16px;
+  --bio-leading: 22px;
+
+  /* motion: measured */
+  --fade: 0.35s ease-in-out;
+
+  /* color: diatour dark (redefined per theme below) */
+  --paper: #121211;
+  --ink: #ededeb;
+  --soft: rgba(235, 235, 240, 0.66);
+  --faint: rgba(235, 235, 240, 0.56);
+  --line: rgba(255, 255, 255, 0.14);
+  --surface: rgba(255, 255, 255, 0.05);
+  /* text over a photo, in both themes: the measured near-white with a soft shadow */
+  --on-photo: #f8f8f8;
+  --photo-shadow: rgba(18, 18, 18, 0.5) 0 2px 4px;
+
+  /* type: diatour faces */
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+  --font-text: var(--font-body);                             /* the body-face decision: one token to flip */
+}
+@media (max-width: 739.98px) {
+  :root {
+    --headline-size: 40px; --headline-leading: 44px;
+    --text-size: 18px; --text-leading: 25px;
+    --card-size: 24px; --card-leading: 30px;
+  }
+}
+
+/* ============ 1b. THEMES ============ (same as projects/interactive) */
+.g-theme-diatour {
+  --paper: #121211;
+  --ink: #ededeb;
+  --soft: rgba(235, 235, 240, 0.66);
+  --faint: rgba(235, 235, 240, 0.56);
+  --line: rgba(255, 255, 255, 0.14);
+  --surface: rgba(255, 255, 255, 0.05);
+}
+.g-theme-opinion {
+  --paper: #fbfbf8;
+  --ink: #121212;
+  --soft: rgba(18, 18, 18, 0.72);
+  --faint: rgba(18, 18, 18, 0.6);
+  --line: rgba(0, 0, 0, 0.12);
+  --surface: rgba(0, 0, 0, 0.04);
+}
+:where(.birdkit-body) { display: flow-root; background: var(--paper); color: var(--ink); }
+
+/* ============ 2. BASE ============ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+html, body { overflow-x: clip; }       /* clip, not hidden, so position: sticky keeps working */
+html { scroll-padding-top: var(--masthead-h); }
+body { font-family: var(--font-body); }
+
+/* ============ 3. STORY SCOPE ============ */
+:where(.birdkit-body) img { display: block; max-width: 100%; height: auto; }
+:where(.birdkit-body) a { color: inherit; text-underline-offset: 2px; }
+:where(.birdkit-body) .visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Reduced motion: every transition ends instantly. Photos still swap; nothing fades. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
