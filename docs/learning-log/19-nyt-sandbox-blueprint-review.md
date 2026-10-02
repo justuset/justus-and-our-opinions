@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-02  **Step:** review and plan (no code)  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** the owner checked the shipped page directly. It confirms GSAP 3.12.5 + ScrollTrigger from cdnjs, with no other scrolly library. Each section is a custom Svelte component with CSS-sticky panels, and ScrollTrigger only reads progress. It's one studio-built piece, so this isn't proof of the whole desk's tooling. Recorded under D3 and S4 in the [plan](../plan/nyt-sandbox-alignment.md).
+
 ## What happened
 
 The project owner supplied an architecture blueprint for NYT Opinion's scroll-driven essays, built around "In Defense of

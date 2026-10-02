@@ -124,7 +124,7 @@ default is (b): build `DataScrolly` fresh from the blueprint's `stages.json`.
 |---|---|---|---|
 | D1 | **Visual theme.** The blueprint uses NYT's white page; CLAUDE.md says diatour wins visual conflicts | (a) keep diatour dark only, (b) switch to light, (c) support both via the doc's `theme` key | **(c)**: `theme: "opinion"` is a light theme using diatour's light values (`--paper #fbfbf8`, `--ink #121212`, already in `docs/design-system.md`); `theme: "diatour"` stays the default. That keeps the architecture NYT-shaped without overruling CLAUDE.md |
 | D2 | **Where the work happens** | (a) evolve `projects/the-second-draft/`, (b) start a new `projects/<slug>/` | **(a)**: it already matches about 70% of the blueprint, and the parity script and CI guard it |
-| D3 | **Adopt GSAP ScrollTrigger** for the scroll engine | (a) yes, pinned to **3.12.5** like the shipped page, (b) keep our rAF engine | **(a)**, kept behind `Scrolly`'s existing `{ step, progress }` contract so no scene changes. Note: GSAP is free but **not MIT** ("Standard no-charge license"), which is fine for a learning project. Record it in the README |
+| D3 | **Adopt GSAP ScrollTrigger** for the scroll engine | (a) yes, pinned to **3.12.5** like the shipped page, (b) keep our rAF engine | **(a)**, kept behind `Scrolly`'s existing `{ step, progress }` contract so no scene changes. Note: GSAP is free but **not MIT** ("Standard no-charge license"), which is fine for a learning project. Record it in the README<br>**Verified by the owner, 2026-10-02,** from the shipped page's scripts and markup:<br>• GSAP 3.12.5 + ScrollTrigger, loaded from cdnjs, with no Scrollama or other scrolly library;<br>• each section is a custom Svelte component (class prefixes `ai-`, `oc-`, `ps-`), sticky by plain CSS inside a tall track (900vh / 960svh / 500svh), with ScrollTrigger only reporting progress;<br>• caveat: this is one studio-built piece (Heavy.dev), not proof of what the whole desk uses. |
 | D4 | **The `DataScrolly` demo.** The blueprint ports "your original `data.json` demo," which isn't in this repo | (a) send me the old `index.html` / `app.js` / `data.json`, (b) build it fresh from the blueprint's `stages.json` | Your call: (a) keeps your history, (b) is fine for learning |
 | D5 | **Masthead and byline text.** The blueprint's sample says "The Sandbox Times" and "By Justus Riley" | CLAUDE.md requires the masthead "Our Opinions" and invented demo content | Use **"Our Opinions"**. Keep the invented byline (A. Writer) unless you want your own name on a demo essay |
 
@@ -210,8 +210,17 @@ checked by a diff, since AI doesn't write or edit the argument.
 
 ### S4. StickyScroller on ScrollTrigger
 
+- **What the shipped page does** (verified, D3):
+  - `position: sticky` panels inside tall tracks;
+  - ScrollTrigger **only reads progress**. GSAP's `pin` is not used;
+  - progress switches frames (`.ai-frame-active`), fills the bar with `transform: scaleX(…)` and moves elements;
+  - Lottie playheads follow progress (`LottieScrub`, `OrganicChart`).
 - **Swap the engine, keep the contract.**
-  - Add `gsap@3.12.5` (D3).
+  - Add `gsap@3.12.5` (D3), from npm, through a dynamic `import()` the way `lottie.js` loads Lottie.
+    - The shipped page loads it from cdnjs as a global `<script>`.
+    - Bundling instead keeps the version in the lockfile and adds no third-party host the page depends on.
+    - It also keeps the existing failure behavior: if the chunk doesn't load, the no-JS stack stays.
+    - This is the one deliberate deviation. Record it in the log.
   - `Scrolly.svelte` becomes `StickyScroller.svelte`. One ScrollTrigger per track (`start: 'top top'`, `end: 'bottom bottom'`) inside an `{@attach}`, killed on teardown.
   - `onUpdate` feeds the same `{ step, progress }`. `data-enhanced` gating and the no-JS stack stay.
 - **Doc-set track height:** `"height": "900svh"` per section, falling back to steps × 135svh.
