@@ -45,4 +45,4 @@ reflowing one.
 - [x] Elements → Layout → flex overlay shows the wrapping caption row.
 
 ## Port (after the checkpoint passes)
-Into `projects/the-second-draft/`: `src/lib/components/TwoUp.svelte` (640px row, 1250px cap) and the twin utilities in `src/app.css`, declared last. Give `Header.svelte` its mobile and desktop art twins. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).
+Into `projects/interactive/`: `src/lib/components/TwoUp.svelte` (640px row, 1250px cap) and the twin utilities in `src/app.css`, declared last. Give `Header.svelte` its mobile and desktop art twins. Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

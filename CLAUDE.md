@@ -21,13 +21,13 @@ Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-struc
 - Avoid the reference's known bugs (breakdown §19): frames written in HTML (not `innerHTML`), twin utilities that only hide, the `.js` failsafe and `.scrolly-ready` gating.
 - After a chunk's checkpoint passes, port it into the story project (next section). The Phase 2 rules below apply from Phase 2 onward.
 
-## Story projects (`projects/<slug>/`): Birdkit-style SvelteKit
+## The interactive template (`projects/interactive/`): Birdkit-style SvelteKit
 
-`projects/the-second-draft/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.
+Named after the article type, like the shipped page's URL (`nytimes.com/interactive/<date>/opinion/<slug>.html`): the folder is the template, and the story it currently holds is identified by the `slug` in `content/doc.json` (`the-second-draft`, which becomes `#g-bk-the-second-draft`). `projects/interactive/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.
 
 - **Words** live only in `content/doc.json` (one ordered `body` of `text` and `svelte` blocks with flat props, the shipped NYT payload's shape). **Media** lives only in `big_assets/`, never in `src/` or `static/`, and is referenced with `asset(path)` from `$lib/assets.js`.
 - `src/lib/assets.js` is **generated** by `scripts/hash-assets.js`. Don't edit it by hand. Commit the regenerated file when media changes.
-- The page is split like the real one: `src/routes/+layout.svelte` is the mock **platform shell** (masthead, footer) and owns everything outside `<article class="birdkit-body">`; story-wide CSS is scoped with `:where(.birdkit-body)`. Sticky things pin below the masthead (`--masthead-h`).
+- The page is split like the real one: `src/routes/+layout.svelte` is the mock **platform shell** (components in `src/lib/shell/`: layout measured from the shipped page, look in diatour dark; `--shell-*` tokens in `shell.css` alias the diatour tokens) and owns everything outside `<article class="birdkit-body">`; story-wide CSS is scoped with `:where(.birdkit-body)`. The masthead floats and scrolls away, so `--masthead-h` is 0; sticky things still pin at `top: var(--masthead-h)`. Shell layout is tested with `npm run test:e2e` (Playwright, 390 / 800 / 1440).
 - One component per block type in `src/lib/components/`. Register new components in `registry` in `src/lib/blocks.js`; an unregistered name fails the production build.
 - Every component renders a readable **no-JS state** first. Motion comes from `{@attach}` and is gated behind a class the JS adds.
 - Ported components keep the prototype's measured px values (Phase 1 rule). The top comment says ✅ ported, or ⏳ and which chunk finishes it.

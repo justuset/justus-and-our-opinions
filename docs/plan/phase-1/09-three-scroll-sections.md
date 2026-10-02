@@ -61,4 +61,4 @@ Changes from this plan: the frames are `aria-hidden`, and a visually hidden `<h2
 screen readers. Step 0 is written into the HTML (active frame, visible caption, C's first layout inline).
 
 ## Port (after the checkpoint passes) ✅
-Into `projects/the-second-draft/`: `SlidesScrolly.svelte`, `CaptionScrolly.svelte`, `PaintingsScrolly.svelte`: each scene's rules, plus its reaction to `step` (all three already receive it from `Scrolly`). Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).
+Into `projects/interactive/`: `SlidesScrolly.svelte`, `CaptionScrolly.svelte`, `PaintingsScrolly.svelte`: each scene's rules, plus its reaction to `step` (all three already receive it from `Scrolly`). Rebuild with `npm run build`, check JS on and off, and mark the component ✅ (see [`docs/project-structure.md`](../../project-structure.md) §11).

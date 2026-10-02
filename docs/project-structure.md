@@ -1,6 +1,6 @@
 # Project structure: how a Birdkit-style story project is organized, built and shipped
 
-This guide explains **every folder and file** in the story project at `projects/the-second-draft/`. That project reproduces the
+This guide explains **every folder and file** in the story project at `projects/interactive/`. That project reproduces the
 build output of a Birdkit-style New York Times interactive, following the build spec in
 [`reference/birdkit-build-spec.md`](reference/birdkit-build-spec.md). It's written for a **web designer/developer**: each part
 says what a thing is, why it exists, and what you'd touch it for.
@@ -50,17 +50,17 @@ justus-and-our-opinions/
 ├─ prototype/
 │  └─ index.html                PHASE 1 SANDBOX: plain HTML/CSS/JS, one idea per chunk, checked in DevTools
 └─ projects/
-   └─ the-second-draft/         THE STORY PROJECT: Birdkit-style SvelteKit build of the same page
+   └─ interactive/              THE INTERACTIVE TEMPLATE: Birdkit-style SvelteKit build of the same page (demo story slug: the-second-draft)
 ```
 
 | Folder | Role | You work here when… |
 |--------|------|---------------------|
 | `prototype/` | Learning sandbox. One file, no build step, so every idea is visible in DevTools | Doing a Phase 1 chunk |
-| `projects/the-second-draft/` | The production-shaped story. Same page, as components, content data and a real build | Porting a chunk that passed, or editing copy and media |
+| `projects/interactive/` | The production-shaped story. Same page, as components, content data and a real build | Porting a chunk that passed, or editing copy and media |
 | `docs/` | The written explanation of all of it | Learning, or deciding what to build next |
 | `apps/`, `packages/` | The Phase 2 Times-shaped stack, one npm workspace (see `docs/architecture.md`) | Doing a Phase 2 chunk |
 
-`projects/the-second-draft/` is **not** part of the workspace: it keeps its own `package.json` and lockfile, as each
+`projects/interactive/` is **not** part of the workspace: it keeps its own `package.json` and lockfile, as each
 Birdkit-style story does (§2). CI builds it as a separate job.
 
 ---
@@ -76,7 +76,7 @@ deployed to its own path on the CDN:
 <cdn>/projects/<project-id>/_big_assets.<content-hash>/…
 ```
 
-That's why our project lives at `projects/the-second-draft/`. A second story would be `projects/<another-slug>/`, a copy of the
+That's why our project lives at `projects/interactive/`. A second story would be `projects/<another-slug>/`, a copy of the
 same skeleton with different `content/` and `big_assets/`. Projects share nothing at runtime, so one story's deploy can never break another.
 
 | Benefit | How the structure gives it |
@@ -91,13 +91,14 @@ same skeleton with different `content/` and `big_assets/`. Projects share nothin
 ## 3. Quick start
 
 ```bash
-cd projects/the-second-draft
+cd projects/interactive
 npm install            # once
 npm run dev            # http://localhost:5173: live reload, media served from big_assets/
 npm run build          # writes dist/ (see §7)
 npm run preview        # serves dist/ locally, as a reader would get it
 npm run deploy         # prints the upload plan with cache headers (dry run, see §9)
 npm test               # unit tests (node --test, built into Node)
+npm run test:e2e       # Playwright: the platform shell's measured layout at 390 / 800 / 1440 (S4b); builds and serves dist/ itself
 npm run parity         # compares dist/ with prototype/index.html at 375/1024/1440 (needs `npx playwright install chromium` once)
 ```
 
@@ -109,7 +110,7 @@ vite-plugin-svelte 5, lottie-web 5.
 ## 4. The source tree, file by file
 
 ```
-projects/the-second-draft/
+projects/interactive/
 ├─ package.json
 ├─ package-lock.json
 ├─ svelte.config.js
@@ -138,6 +139,8 @@ projects/the-second-draft/
 │  ├─ parity.js
 │  ├─ migrations/2026-10-02-story-to-doc.js   one-time: story.json → doc.json (S1)
 │  └─ deploy.js
+├─ playwright.config.js        three projects: mobile 390, tablet 800, desktop 1440 (S4b)
+├─ tests/                       e2e specs: masthead, footer (share tools, recirc, ad, footer), responsive + helpers.js (S4b)
 ├─ static/
 │  └─ favicon.png
 └─ src/
@@ -155,13 +158,14 @@ projects/the-second-draft/
       ├─ blocks.js             the component registry + docProblems() (S1)
       ├─ doc.js                series() and list() for flat props (S1)
       ├─ inline-html.js        the allow-list for inline HTML in text blocks, + .test.js (S1)
-      ├─ scroll.js
+      ├─ scroll.js             loads GSAP ScrollTrigger once; trackBounds(), stepOf(), + .test.js (S4)
       ├─ lottie.js
+      ├─ shell/                the mock platform shell (S4b): shell.css (--shell-* tokens), Masthead, ShareTools, Recirc, AdSlot, SiteFooter
       ├─ media.js
       └─ components/
          ├─ Header.svelte, Byline.svelte, Text.svelte, Credits.svelte
          ├─ TwoUp.svelte, Diagram.svelte
-         ├─ Scrolly.svelte
+         ├─ StickyScroller.svelte   the shared track + sticky panel (was Scrolly.svelte until S4)
          ├─ SlidesScrolly.svelte, CaptionScrolly.svelte, PaintingsScrolly.svelte
          └─ ScrubLottie.svelte, ScrubStage.svelte
 ```
@@ -211,14 +215,14 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it is | Becomes in `dist/` |
 |------|-----------|--------------------|
 | `app.html` | The document shell around every page. Holds `<html lang>`, the viewport meta, the **chunk 5 `<head>` script** (`.js` class + 2.5s failsafe), the Google Fonts link, and the `%sveltekit.head%` / `%sveltekit.body%` slots SvelteKit fills | The outside of `index.html` |
-| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
+| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2; `0px` since S4b, because the measured masthead isn't sticky): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Since S3: the NYT tier tokens `--bp-tablet: 740px` / `--bp-desktop: 1150px` (documentation, since custom properties can't be used in `@media`), and the **theme blocks** `.g-theme-diatour` / `.g-theme-opinion`, which only redefine color tokens. Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
-| `routes/+layout.svelte` | **The mock platform shell** (NYT sandbox S2): a skip link, a sticky semi-transparent masthead ("Our Opinions", exactly `--masthead-h` tall), `<main id="site-content">` and a footer where comments, ads and recirculation would go. It owns everything outside the story's `<article>`, and styles only itself | `nodes/0.<hash>.js` |
+| `routes/+layout.svelte` | **The mock platform shell.** S2 made it a sticky bar and a footer note. Since S4b it's a replica measured from the shipped page, composed from `src/lib/shell/`:<br>• `Masthead`: transparent, `position: absolute`, 6px from the top; it floats over the story's header and scrolls away. 47px tall on phones, 42px from 740px. It holds the skip link, and the wordmark is light over a dark (diatour) header;<br>• `<main id="site-content">`, then `#standalone-footer`: `ShareTools` (comment button + share pills), `Recirc` (placeholder related-content grid), `AdSlot` (`#bottom-wrapper`, "Advertisement") and `SiteFooter`.<br>The platform's tokens live in `shell.css` as `--shell-*`, apart from the story's: **widths, heights and type sizes are measured**, while **colors and fonts are diatour dark** (aliases of `--paper`, `--ink`, `--faint`, `--line`, `--surface`, plus `--surface-2` `#1b1b1a`; Newsreader and the system sans). The shell owns the page background (`--paper`) and everything outside the story's `<article>` | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
 | `routes/+page.js` | Runs at build time: imports `content/doc.json`, stops a production build if a block can't be rendered, and hands the doc to the page as `data.doc` | Inlined into `index.html` |
 | `routes/+page.svelte` | **The story page.** Hands the doc's `body` to `<Blocks>` and sets the title from the Header block | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | `lib/assets.js` | **Generated.** `ASSET_BASE` is `/big_assets` in dev and `./_big_assets.<hash>` in production, plus an `asset(path)` helper. Committed, so `npm run dev` works on a fresh clone | Bundled into a chunk |
-| `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list). Since S2 it measures progress from the panel's CSS `top` (the masthead's height), not from 0 | A chunk, once imported |
+| `lib/scroll.js` | The shared scroll engine. Since S4 it's **GSAP ScrollTrigger 3.12.5**, the shipped page's library:<br>• `loadScrollTrigger()` dynamic-imports `gsap` + `gsap/ScrollTrigger` once for the page, and sets up one `ResizeObserver` that calls `ScrollTrigger.refresh()` when the layout changes;<br>• `trackBounds(sticky)` gives a track's `start` (its top meets the panel's CSS `top`, the masthead) and `end` (its bottom meets the panel's bottom), so progress is the same formula the chunk 8 engine used;<br>• `stepOf()` is unchanged and unit-tested.<br>ScrollTrigger only reads progress; CSS `position: sticky` does the pinning. Chunk 8's hand-written `progressOf()` / `onScrollFrame()` engine was removed | Two chunks (gsap 70 KB, ScrollTrigger 43 KB; 28 + 18 KB gzipped), loaded after hydration |
 | `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header (chunk 11). `scrubber()` resolves to `seek(p)` once the animation is ready, and **rejects** if the JSON fails, so the caller can keep its text fallback. ✅ Used by `ScrubStage` | A lazy chunk, once imported |
 | `lib/media.js` | `srcset(value)` turns a doc srcset (`"images/a-400w.webp 400w, images/a.webp 800w"`) into hashed media URLs (chunk 10, string form since S1) | Bundled into the components |
 | `lib/Blocks.svelte` | **The renderer** (S1): walks the doc's `body`. A text block becomes `Text`, a svelte block becomes its registered component with the flat props spread on. Unknown names show a placeholder in dev | Bundled into the page |
@@ -237,11 +241,11 @@ shows which prototype chunk each one mirrors (see §11).
 | `Byline.svelte` | "By … · `<time>`" in the text column | ✅ Ported (chunks 1–2) |
 | `Text.svelte` | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
-| `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
-| `Diagram.svelte` | The process as an `<ol>`. At ≥1024px a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
-| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins **below the platform masthead** (`top: var(--masthead-h)`, height `100svh − --masthead-h`) since S2 | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
+| `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at the 740px tablet tier, capped at 1440px with 64px padding from the 1150px desktop tier (S3) | ✅ Ported (chunk 6) |
+| `Diagram.svelte` | The process as an `<ol>`. At ≥740px (the tablet tier, since S3) a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
+| `StickyScroller.svelte` | The shared track + sticky panel, named like the blueprint's (was `Scrolly.svelte` until S4). Passes `{ step, progress, enhanced }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins at `top: var(--masthead-h)` (S2), which is 0 since S4b: the measured masthead scrolls away, so panels pin to the top of the screen as on the shipped page. Track height is the doc's `height`, or `steps × 135svh`. Props: `label`, `steps`, `height`, `stepTexts`, `class`, `showProgress` | ✅ One ScrollTrigger per track in an `{@attach}`, killed on destroy (S4). The bar is `transform: scaleX(progress)`, with markers at `i / steps`. `data-enhanced` is set only after GSAP loads; if it never loads, the no-JS stack stays |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
-| `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 768px, 0.4s caption fades, hard-cut images (chunk 9) |
+| `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 740px (S3), 0.4s caption fades, hard-cut images (chunk 9) |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `doc.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
 | `ScrubLottie.svelte` | Section D: two `Scrolly` runways, one per twin (`class="desktop-only"` / `"mobile-only"`, `bar={false}`) | ✅ Scrubbing (chunk 10) |
 | `ScrubStage.svelte` | One twin's stage. An `{@attach}` **loads** the Lottie when the stage is within 200px (a hidden twin never loads); an `$effect` **feeds** it `progress`. Reduced motion holds the end frame. Text fallback stays visible if loading fails | ✅ (chunk 10) |
@@ -269,7 +273,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
         "url1": "images/two-up-draft-1.webp", "alt1": "…", "width1": 800, "height1": 1000,
         "srcset1": "images/two-up-draft-1-400w.webp 400w, images/two-up-draft-1.webp 800w",
         "url2": "…", "alt2": "…", "width2": 800, "height2": 1000, "srcset2": "…",
-        "sizes": "(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw", "groupCaption": "…", "credit": "…" } },
+        "sizes": "(min-width: 1150px) 656px, (min-width: 740px) 50vw, 100vw", "groupCaption": "…", "credit": "…" } },
     { "type": "svelte", "value": { "component": "Diagram", "label": "…", "label1": "Idea", "label2": "Draft", "label3": "Revise", "label4": "Ship" } },
     { "type": "svelte", "value": { "component": "SlidesScrolly", "label": "…",
         "heading1": "Version 1", "card1": "Explains", "image1": "images/slides/slide-1/slide.jpg", "alt1": "…", "heading2": "…" } },
@@ -285,7 +289,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 
 **The rules, as on the real page:**
 
-- **Text blocks** are one paragraph each. They may carry a little inline HTML: `<em>`, `<strong>` and `<a href>` (http, https, `/path` or `#anchor`). Anything else is shown as text, never run ([`$lib/inline-html.js`](../projects/the-second-draft/src/lib/inline-html.js), with tests).
+- **Text blocks** are one paragraph each. They may carry a little inline HTML: `<em>`, `<strong>` and `<a href>` (http, https, `/path` or `#anchor`). Anything else is shown as text, never run ([`$lib/inline-html.js`](../projects/interactive/src/lib/inline-html.js), with tests).
 - **Svelte blocks** name a component, and every setting is a **flat key/value pair**: that's how doc-converted content arrives. A list of things becomes **numbered keys** (`heading1`, `card1`, `heading2`…); components rebuild the list with `series()` from `$lib/doc.js`. Numbered keys survive commas inside a caption, which a comma-separated list wouldn't.
 - **Comma-separated strings** are used only where the value already is one in HTML (`srcset`).
 - **Order is the page.** The renderer walks `body` top to bottom. Header, byline and credits are blocks like any other.
@@ -297,10 +301,10 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 | `Byline` | `author`, `date` (ISO), `dateText` | |
 | `TwoUp` | `url1`/`url2`, `alt1`/`alt2`, `width1`… `height1`…, `srcset1`/`srcset2`, `sizes`, `groupCaption`, `credit`, `label` | Images at **4:5**. `width`/`height` reserve space so nothing jumps. `srcset` lists each file with its width, `sizes` describes the slot |
 | `Diagram` | `label` (the section's name), `label1`… (the boxes, in order) | 3–6 short labels |
-| `SlidesScrolly` | `label`, then per slide `headingN`, `cardN`, `imageN`, `altN` | One square image per step. Each step ≈ 1.35 screens of scrolling |
-| `CaptionScrolly` | `label`, `sizes`, then per page `imageN`, `srcsetN`, `altN`, `captionN` | Write captions to fit about 80px. The longest one sets the overlay height |
-| `PaintingsScrolly` | `label`, `imageN`/`altN` (the cards), `captionN` (the steps), `layouts`, `portraitScale` | One layout per step per card: `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z` |
-| `ScrubLottie` | `label`, `steps` (runway length), `desktop`, `mobile`, `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
+| `SlidesScrolly` | `label`, `height` (optional), then per slide `headingN`, `cardN`, `imageN`, `altN` | One square image per step. Each step ≈ 1.35 screens of scrolling, unless `height` sets the whole track (e.g. `"900svh"`, as on the shipped page) |
+| `CaptionScrolly` | `label`, `height` (optional), `sizes`, then per page `imageN`, `srcsetN`, `altN`, `captionN` | Write captions to fit about 80px. The longest one sets the overlay height |
+| `PaintingsScrolly` | `label`, `height` (optional), `imageN`/`altN` (the cards), `captionN` (the steps), `layouts`, `portraitScale` | One layout per step per card: `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z` |
+| `ScrubLottie` | `label`, `steps` (runway length), `height` (optional, overrides `steps × 135svh`), `desktop`, `mobile`, `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
 | `Credits` | `text` | |
 
 **A name the renderer doesn't know** (a typo, or a component that isn't registered) shows a dashed
@@ -313,7 +317,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 At the Times, editors write this in a Google Doc using **ArchieML**, and a build step converts it. Chunk S7 adds that step here.
 
 **History:** until chunk S1 the same words lived in `content/story.json`, with typed blocks and nested lists. A one-time
-migration ([`scripts/migrations/2026-10-02-story-to-doc.js`](../projects/the-second-draft/scripts/migrations/2026-10-02-story-to-doc.js))
+migration ([`scripts/migrations/2026-10-02-story-to-doc.js`](../projects/interactive/scripts/migrations/2026-10-02-story-to-doc.js))
 moved them, checking that all 105 strings arrived unchanged. The rendered page was identical before and after.
 
 ---
@@ -446,7 +450,7 @@ Building the spec exactly as written turned up four problems. Each is fixed in t
 | 1 | `buildHash = hash(Date.now())` at the top of `svelte.config.js` | The config is loaded several times per build. The client build went to `_app.eJHU…` and the server build to `_app.dcTc…` | Compute once, keep it in `process.env.BUILD_HASH`, and reuse it in later loads and child processes. Verified: one hash across the client, server and `dist/` |
 | 2 | `build: npm run assets && vite build`, with `hash-assets.js` copying media into `dist/` | adapter-static **empties `dist/`** when it writes, so media copied before the build gets deleted | Split the script: hash + write `assets.js` **before**, copy **after** (`--copy`) |
 | 3 | `prerender: { entries: ['*'] }` | The prerender crawler follows every `<img src>`. The media folder doesn't exist yet at crawl time, so the build fails with 404s | `handleHttpError` skips `/_big_assets.` URLs only, and `--copy` then verifies every media URL in `index.html` exists (the build fails if one doesn't) |
-| 4 | `ASSET_BASE = '<cdn>/_big_assets.<hash>'`, swapped to the hashed folder only for production | An absolute CDN URL breaks local preview and any host move, and a committed production value would break `npm run dev` | The generated `assets.js` contains **both** values, `dev ? '/big_assets' : './_big_assets.<hash>'`, relative so `dist/` works under any path. Verified served from `/projects/the-second-draft/` |
+| 4 | `ASSET_BASE = '<cdn>/_big_assets.<hash>'`, swapped to the hashed folder only for production | An absolute CDN URL breaks local preview and any host move, and a committed production value would break `npm run dev` | The generated `assets.js` contains **both** values, `dev ? '/big_assets' : './_big_assets.<hash>'`, relative so `dist/` works under any path. Verified served from `/projects/interactive/` |
 
 Also found by running the deploy plan: the first `deploy.js` marked every file except `index.html` as immutable, including the
 unhashed `favicon.png`, so a new favicon would never reach readers. Now only `_app.*` and `_big_assets.*` are immutable.
@@ -459,7 +463,7 @@ explicit). `lottie.js` imports the **light** player (`lottie_light.js`), which i
 ## 11. How the prototype and the project stay in sync
 
 ```
-Phase 1 chunk N:  build it in prototype/index.html  →  checkpoint passes in DevTools  →  port it into projects/the-second-draft/
+Phase 1 chunk N:  build it in prototype/index.html  →  checkpoint passes in DevTools  →  port it into projects/interactive/
 ```
 
 | Prototype (plain HTML/CSS/JS) | Story project (SvelteKit) |
@@ -478,11 +482,16 @@ and behavior were ported, and the comment and the §4 table changed to ✅. As o
 opens both in headless Chromium at 375, 1024 and 1440px, and compares column width, header height, headline size, two-up
 direction and image widths, diagram width, every runway's height, page height, and the scroll offsets where runway A's
 steps change. It exits with code 1 if anything differs by more than 1px. Its first run found a real bug: enhanced runways
-in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`).
+in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`, now `StickyScroller.svelte`).
 
 Since NYT sandbox S2, the project renders inside a mock platform shell the prototype never had. Parity switches the shell
-off before measuring (no masthead or footer, `--masthead-h: 0`), so it still answers the question it was built for: is the
+off before measuring (no `.masthead-container` or `#standalone-footer`, `--masthead-h: 0`), so it still answers the question it was built for: is the
 *story* the Phase 1 page? The shell is checked separately (learning log 21).
+
+Since S3 the project switches layout at the NYT tiers (740 and 1150) while the prototype keeps its original 640 / 768 /
+1024 / 1250 breakpoints. Parity's three widths sit on the same side of both sets (375 is a phone in both, 1024 is landscape
+in both, 1440 is desktop in both), so it still compares like with like. Widths between the two sets (for example 800) now
+differ **on purpose**. The tier switches themselves are checked by the breakpoint matrix in learning log 23.
 
 Three things exist only in the project: the header's intro Lottie, `srcset` driven by `doc.json`, and the platform shell. The prototype stays
 as the hand-built reference.
@@ -541,7 +550,7 @@ find dist -type f | sort
 | Output: `index.html` prerendered, readable without JS | ✅ Verified (headline, 10 paragraphs, 16 images, diagram list, all frames) |
 | Output: `_app.<build-hash>/version.json` + `immutable/{entry,nodes,chunks,assets}` | ✅ `start`/`app` entries, nodes 0/1/2, 9 chunks, CSS per node |
 | Output: `_big_assets.<content-hash>/{images,videos,scripts}` | ✅ The hash is stable across builds until media changes |
-| Relative paths: works under `<cdn>/projects/<project-id>/` | ✅ Verified from `/projects/the-second-draft/`: all files load, the page hydrates |
+| Relative paths: works under `<cdn>/projects/<project-id>/` | ✅ Verified from `/projects/interactive/`: all files load, the page hydrates |
 | Dev serves media from `/big_assets` without a build | ✅ Verified |
 | Scroll mechanics from `scrolly-template.html` | ✅ All four scenes ported (chunks 8–10). `npm run parity` matches the prototype within 1px at 375 / 1024 / 1440 |
 | Header Lottie | ✅ Twins (`hero-desktop.json` / `hero-mobile.json`) play once (chunk 11). The SVG art is the poster: no JS, reduced motion, and the animation's last frame |

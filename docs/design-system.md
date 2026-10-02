@@ -14,7 +14,7 @@ breakpoints. The fluid `--step-*` tokens in `layout-system.md` §2 are derived f
 | `--paper` | `#121211` | `#fbfbf8` | Page background |
 | `--ink` | `#ededeb` | `#121212` | Headlines, strong text, icons |
 | `--soft` | `rgba(235,235,240,.66)` | `rgba(18,18,18,.72)` | Body text, deks |
-| `--faint` | `rgba(235,235,240,.56)` | `rgba(18,18,18,.56)` | Meta, numbers, captions, credits |
+| `--faint` | `rgba(235,235,240,.56)` | `rgba(18,18,18,.6)` | Meta, numbers, captions, credits. (The light value was `.56` until NYT sandbox S3, when the contrast check measured 4.23:1, under AA. `.6` gives 4.8:1) |
 | `--line` | `rgba(255,255,255,.14)` | `rgba(0,0,0,.12)` | Rules, table borders |
 | `--surface` | `rgba(255,255,255,.05)` | `rgba(0,0,0,.04)` | Pills, cards, step markers |
 | `--surface-2` | `#1b1b1a` | `#f0efea` | Disclosure headers |

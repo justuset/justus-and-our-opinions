@@ -13,7 +13,7 @@
   - A two-up figure and a connector diagram.
   - One scroll engine driving four scenes: cut, fade, settle and scrub.
   - A hardened base that reads top to bottom with JS off, broken or blocked.
-- **`projects/the-second-draft/`:** the same page as a Birdkit-style SvelteKit project.
+- **`projects/interactive/`:** the same page as a Birdkit-style SvelteKit project.
   - `story.json` → one component per block type → a prerendered `index.html` with hashed `_app.<build>/` and `_big_assets.<hash>/` folders.
   - A deploy plan with the right cache headers.
 - **Proof they match:** `npm run parity` agrees within 1px at 375, 1024 and 1440 on 9 measures, including every runway height and runway A's step offsets. The accessibility trees are identical.

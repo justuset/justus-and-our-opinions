@@ -1,0 +1,29 @@
+{
+  "name": "interactive",
+  "private": true,
+  "type": "module",
+  "description": "Birdkit-style template for interactive articles (demo story: the-second-draft): one prerendered SvelteKit page, hashed code bundles, separately hashed media. Demo content.",
+  "scripts": {
+    "dev": "vite dev",
+    "assets": "node scripts/hash-assets.js",
+    "build": "npm run assets && vite build && node scripts/hash-assets.js --copy",
+    "preview": "vite preview",
+    "deploy": "node scripts/deploy.js",
+    "parity": "node scripts/parity.js",
+    "test": "node --test \"src/lib/**/*.test.js\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@sveltejs/adapter-static": "^3",
+    "@sveltejs/kit": "^2",
+    "@sveltejs/vite-plugin-svelte": "^5",
+    "playwright": "^1.56.1",
+    "svelte": "^5",
+    "vite": "^6"
+  },
+  "dependencies": {
+    "gsap": "3.12.5",
+    "lottie-web": "^5"
+  }
+}

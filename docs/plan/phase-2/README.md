@@ -8,7 +8,7 @@ checkpoints). Phase 2 rebuilds what you made as the production-shaped system the
 - **SvelteKit graphics** embedded into it (`apps/graphics`), alongside the full-page **visual essay** projects (`projects/<slug>/`)
 - **ArchieML** copy, and the **diatour design system** as a shared package
 
-The bridge already exists: `projects/the-second-draft/` is the Birdkit-style visual-essay project that Phase 1 ports into, chunk by chunk
+The bridge already exists: `projects/interactive/` is the Birdkit-style visual-essay project that Phase 1 ports into, chunk by chunk
 (see [`../../project-structure.md`](../../project-structure.md)). Phase 2 chunks 07–08 generalize it.
 
 | # | Chunk | Main skill | Where | Ships |
