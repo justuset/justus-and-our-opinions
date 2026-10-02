@@ -1,5 +1,5 @@
 {
-  "_comment": "Demo content for a front-end study project. Placeholder copy and placeholder photos, nothing real. Edit copy here; the page re-renders from this file.",
+  "_comment": "Demo content for a front-end study project. Placeholder copy. Photos: originals in photos/ (the .svg files are template placeholders, swap them for real photos), renditions made by `npm run photos`. Alt text is a draft for a person to approve; credits are TK until the photographers are known.",
   "slug": "photo-essay-demo",
   "theme": "diatour",
   "body": [
@@ -13,60 +13,112 @@
         "headline": "The Display Headline Sits Here, Centered and Tight",
         "date": "2026-09-05",
         "dateText": "Sept. 5, 2026",
-        "url": "images/lead.svg",
-        "alt": "Describe the lead photograph here.",
-        "width": 1800,
-        "height": 1200,
-        "credit": "Photographer Name"
+        "url": "images/lead-bronc",
+        "alt": "A rider leans back on a bucking gray horse as a judge and a pickup rider watch.",
+        "width": 2000,
+        "height": 1333,
+        "credit": "Photo credit TK"
       }
     },
-    { "type": "text", "value": "Open with the scene. Each text block is one paragraph in the 600px companion column, and editors can use <a href=\"#\">inline links</a> and <em>emphasis</em>." },
-    { "type": "text", "value": "A second paragraph keeps the reader moving toward the first photo." },
-    { "type": "text", "value": "Set up the pair of photos that follows." },
+    {
+      "type": "text",
+      "value": "Open with the scene. Each text block is one paragraph in the 600px companion column, and editors can use <a href=\"#\">inline links</a> and <em>emphasis</em>."
+    },
+    {
+      "type": "text",
+      "value": "A second paragraph keeps the reader moving toward the first photo."
+    },
+    {
+      "type": "text",
+      "value": "Set up the pair of photos that follows."
+    },
     {
       "type": "svelte",
       "value": {
         "component": "Diptych",
-        "url1": "images/pair-a.svg", "alt1": "Left photo of the pair.", "width1": 1200, "height1": 1500,
-        "url2": "images/pair-b.svg", "alt2": "Right photo of the pair.", "width2": 1200, "height2": 1500,
-        "credit": "Photographer Name"
+        "url1": "images/walk-off",
+        "alt1": "A rider in fringed chaps walks across the arena, backlit by low sun.",
+        "width1": 1335,
+        "height1": 2000,
+        "url2": "images/hats",
+        "alt2": "A stack of worn straw cowboy hats on a hook.",
+        "width2": 1442,
+        "height2": 2000,
+        "credit": "Photo credit TK"
       }
     },
     {
       "type": "svelte",
       "value": {
         "component": "PhotoScrolly",
-        "url1": "images/scrolly-1-1.svg", "alt1": "First frame of the sequence.", "width1": 2400, "height1": 1600,
+        "url1": "images/neon-cowboy",
+        "alt1": "A vintage neon sign of a cowboy waving from a rearing horse.",
+        "width1": 2000,
+        "height1": 1333,
         "card1": "A short caption-like line that rides over the first photo.",
-        "url2": "images/scrolly-1-2.svg", "alt2": "Second frame of the sequence.", "width2": 2400, "height2": 1600,
+        "url2": "images/calf",
+        "alt2": "A shaggy calf with ear tag 48 looks through a metal fence.",
+        "width2": 2000,
+        "height2": 1250,
         "card2": "The second card swaps the photo underneath it.",
-        "url3": "images/scrolly-1-3.svg", "alt3": "Third frame of the sequence.", "width3": 2400, "height3": 1600,
+        "url3": "images/scrolly-1-3",
+        "alt3": "Third frame of the sequence.",
+        "width3": 2400,
+        "height3": 1600,
         "card3": "The third card lands, then the essay picks back up.",
-        "credit": "Photographs by Photographer Name"
+        "credit": "Photographs: credit TK"
       }
     },
     {
       "type": "svelte",
-      "value": { "component": "Photo", "url": "images/large-1.svg", "alt": "A single large photograph.", "width": 1800, "height": 1200, "credit": "Photographer Name" }
+      "value": {
+        "component": "Photo",
+        "url": "images/thrown",
+        "alt": "A rider hits the dirt beneath a bucking horse at sunset.",
+        "width": 1600,
+        "height": 2000,
+        "credit": "Photo credit TK"
+      }
     },
-    { "type": "text", "value": "The argument builds between photo moments. Keep text runs short enough that images keep the rhythm." },
+    {
+      "type": "text",
+      "value": "The argument builds between photo moments. Keep text runs short enough that images keep the rhythm."
+    },
     {
       "type": "svelte",
       "value": {
         "component": "PhotoScrolly",
-        "url1": "images/scrolly-2-1.svg", "alt1": "First frame of the second sequence.", "width1": 2400, "height1": 1600,
+        "url1": "images/scrolly-2-1",
+        "alt1": "First frame of the second sequence.",
+        "width1": 2400,
+        "height1": 1600,
         "card1": "Second sequence, card one.",
-        "url2": "images/scrolly-2-2.svg", "alt2": "Second frame of the second sequence.", "width2": 2400, "height2": 1600,
+        "url2": "images/scrolly-2-2",
+        "alt2": "Second frame of the second sequence.",
+        "width2": 2400,
+        "height2": 1600,
         "card2": "Card two.",
-        "url3": "images/scrolly-2-3.svg", "alt3": "Third frame of the second sequence.", "width3": 2400, "height3": 1600,
+        "url3": "images/scrolly-2-3",
+        "alt3": "Third frame of the second sequence.",
+        "width3": 2400,
+        "height3": 1600,
         "card3": "Card three.",
         "credit": "Photographs by Photographer Name"
       }
     },
-    { "type": "text", "value": "Close the argument." },
+    {
+      "type": "text",
+      "value": "Close the argument."
+    },
     {
       "type": "svelte",
-      "value": { "component": "Photo", "url": "images/large-2.svg", "alt": "Closing photograph.", "width": 1800, "height": 1200 }
+      "value": {
+        "component": "Photo",
+        "url": "images/large-2",
+        "alt": "Closing photograph.",
+        "width": 1800,
+        "height": 1200
+      }
     },
     {
       "type": "svelte",

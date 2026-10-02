@@ -2,7 +2,7 @@
      on phones; 16px caps kicker; lead photo 945px wide, full width on phones). No intro motion, like the reference.
      `seoTitle` and `dek` aren't drawn: +page.svelte uses them for <title> and the meta description. -->
 <script>
-  import { asset } from '$lib/assets.js';
+  import { photo } from '$lib/media.js';
   let { kicker, headline, date, dateText, url, alt, width, height, caption, credit } = $props();
 </script>
 
@@ -12,7 +12,7 @@
   <time class="date" datetime={date}>{dateText}</time>
   {#if url}
     <figure class="lead">
-      <img src={asset(url)} {alt} {width} {height} fetchpriority="high" />
+      <img {...photo(url, width)} sizes="(min-width: 945px) 945px, 100vw" {alt} {width} {height} fetchpriority="high" />
       {#if caption || credit}
         <figcaption>
           {#if caption}{caption}{/if}

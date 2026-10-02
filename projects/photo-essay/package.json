@@ -5,6 +5,7 @@
   "description": "Birdkit-style template for photo-led Opinion guest essays (demo story: photo-essay-demo): one prerendered SvelteKit page, hashed code bundles, separately hashed media. Demo content.",
   "scripts": {
     "dev": "vite dev",
+    "photos": "node scripts/make-renditions.js",
     "assets": "node scripts/hash-assets.js",
     "build": "npm run assets && vite build && node scripts/hash-assets.js --copy",
     "preview": "vite preview",
@@ -17,6 +18,7 @@
     "@sveltejs/kit": "^2",
     "@sveltejs/vite-plugin-svelte": "^5",
     "playwright": "~1.62.0",
+    "sharp": "^0.35.5",
     "svelte": "^5",
     "vite": "^6"
   }

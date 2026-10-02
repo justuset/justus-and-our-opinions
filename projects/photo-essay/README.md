@@ -4,12 +4,14 @@ The second template in `projects/`, next to [`interactive/`](../interactive/). S
 shell, same `doc.json` contract; different blocks. The layout is measured from a shipped NYT Opinion photo essay
 (Sept. 2026 piece, measured Oct. 2026, in the `opinion-photo-essay` reference folder). Colors and fonts are diatour.
 
-> Demo content. Placeholder copy and placeholder photos (SVG gradients). No Times branding, assets or fonts.
+> Demo content. Placeholder copy; the photos are rodeo photographs whose credits are TK. Alt text is a draft for a person
+> to approve. No Times branding, assets or fonts.
 
 ## Commands
 
 ```bash
 npm install          # once
+npm run photos       # make WebP renditions of photos/ into big_assets/images/ (see Photos below)
 npm run dev          # http://localhost:5173, media served raw from big_assets/
 npm run build        # hash media → vite build (prerender) → copy media → verify media URLs
 npm run preview      # serve dist/ as a reader would get it
@@ -38,7 +40,7 @@ sticky overlay apply. Reduced motion drops the fade (global rule in `app.css`).
 | You want to… | Edit |
 |---|---|
 | Change words | `content/doc.json` |
-| Swap a photo | `big_assets/images/` (paths in `doc.json` are relative to `big_assets/`) |
+| Add or swap a photo | drop the original in `photos/`, run `npm run photos`, name it in `doc.json` (see Photos) |
 | Change a token | `src/app.css` |
 | Change a block | `src/lib/components/<Block>.svelte` |
 | Add a block | a new component + one line in `registry` in `src/lib/blocks.js` |
@@ -46,6 +48,28 @@ sticky overlay apply. Reduced motion drops the fade (global rule in `app.css`).
 Copied unchanged from `interactive/`: `scripts/hash-assets.js`, `svelte.config.js`, `src/lib/shell/`,
 `src/lib/Blocks.svelte`, `src/lib/inline-html.js`, `src/lib/doc.js`, `src/lib/components/Text.svelte`, the routes and
 `tests/helpers.js`, `footer.spec.js`, `responsive.spec.js`. A fix in one template's copy should go to the other's.
+
+## Photos
+
+Like a newsroom CMS that makes renditions when a photo is uploaded, `npm run photos` is a **prep step**, not part of the
+build. The build and `big_assets/` rule stay as they are: `big_assets/` holds exactly what ships.
+
+1. Put the full-size original in `photos/` (JPEG, PNG, WebP or TIFF), named in lowercase with hyphens: `photos/calf.jpg`.
+2. Run `npm run photos`. `scripts/make-renditions.js` (sharp) writes `big_assets/images/calf-600w.webp`, `-1200w`,
+   `-2000w` at quality 75, never upscaling (a 1335px original tops out at `-1335w`). It prints the original's size:
+   `photos: images/calf  "width": 2000, "height": 1250`. Unchanged originals are skipped.
+3. In `content/doc.json`, name the photo **without an extension** and paste that size: `"url": "images/calf",
+   "width": 2000, "height": 1250`. The component builds `srcset` with `photo()` from `$lib/media.js`, and each slot sets its
+   own `sizes`, so a phone loads the 600w file and a desktop the 1200w one.
+4. `npm run build` (ends with "verified N media URLs", 3 per photo), then commit `photos/`, `big_assets/images/` and
+   the regenerated `src/lib/assets.js`.
+
+Slots the story hasn't filled keep a placeholder: the template's SVGs live in `photos/` too (`large-2.svg`,
+`scrolly-2-1.svg`…) and go through the same step, since sharp reads SVG. To fill a slot, add your photo and point the
+slot's `url` at it; don't delete slots to match the number of photos you have.
+
+Removing a photo: delete its original and its renditions by hand (the script never deletes).
+The widths live in one place, `src/lib/renditions.js`, which both the script and the components import.
 
 ## Left out of the reference
 

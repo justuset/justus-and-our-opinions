@@ -20,6 +20,13 @@ test('lead photo is 945px, full width on phones', async ({ page }) => {
   expect(Math.round(lead.width)).toBe(Math.min(945, lead.vw));
 });
 
+test('the browser picks the smallest sharp-enough rendition', async ({ page }) => {
+  await page.goto('/');
+  // Default device scale 1: 390px phone → 390px slot → the 600w file; 800 / 1440 → 800 / 945px slot → 1200w
+  const src = await page.locator('.lead img').evaluate((img) => /** @type {HTMLImageElement} */ (img).currentSrc);
+  expect(src).toMatch(viewport() === 'mobile' ? /lead-bronc-600w\.webp$/ : /lead-bronc-1200w\.webp$/);
+});
+
 test('diptych is side by side from 740, stacked below', async ({ page }) => {
   await page.goto('/');
   const pair = await css(page, '.diptych .pair', ['flex-direction']);
@@ -37,7 +44,8 @@ test('PhotoScrolly: stage pins and photos swap as cards cross the middle', async
   const toMiddle = (step) =>
     s.locator(`.card[data-step="${step}"]`).evaluate((el) => scrollBy(0, el.getBoundingClientRect().top - innerHeight / 2 + 10));
 
-  for (const step of [1, 2]) {
+  const steps = await s.locator('.card').count();
+  for (let step = 1; step < steps; step++) {
     await toMiddle(step);
     await expect(s).toHaveAttribute('data-active', String(step));
     await expect(imgs.nth(step)).toHaveCSS('opacity', '1');
