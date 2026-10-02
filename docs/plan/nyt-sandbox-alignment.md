@@ -1,7 +1,7 @@
 # Aligning the build with the NYT Opinion sandbox blueprint
 
 **Date:** 2026-10-02  **Source:** [`../reference/nyt-sandbox-blueprint.md`](../reference/nyt-sandbox-blueprint.md) (the
-"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1 done
+"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1 and S2 done
 
 ## Why this plan exists
 
@@ -179,6 +179,11 @@ checked by a diff, since AI doesn't write or edit the argument.
 - **Checkpoint.**
   - Every sticky panel and the header are usable under the masthead: no step text or progress bar hidden behind it, at 375, 768 and 1280.
   - Fixing this needs a `--masthead-h` token used as the sticky `top` offset, which is the real page's constraint.
+
+**✅ Done** ([learning log 21](../learning-log/21-s2-platform-shell.md)):
+- **Panels:** at 375, 768 and 1280, every pinned panel sits exactly under the 44px masthead (0px covered). No step text sits above a panel's top, and every step lands where the offset-aware formula predicts.
+- **Skip link:** the first Tab stop, and it lands the story at the masthead's bottom edge.
+- **Parity:** with the shell switched off, the story still matches the prototype within 1px.
 
 ### S3. NYT breakpoints and themes
 

@@ -73,11 +73,12 @@
 
   /* Enhanced: the runway / sticky pattern. */
   .runway[data-enhanced] { margin: 0; height: calc(var(--steps) * var(--runway-step)); } /* the stack's margins go */
+  /* The panel pins just below the platform masthead and fills the rest of the screen (NYT sandbox S2). */
   [data-enhanced] .sticky {
     position: sticky;
-    top: 0;
-    height: 100vh; /* fallback for browsers without svh */
-    height: 100svh;
+    top: var(--masthead-h);
+    height: calc(100vh - var(--masthead-h)); /* fallback for browsers without svh */
+    height: calc(100svh - var(--masthead-h));
     overflow: hidden;
   }
   [data-enhanced] .progress {

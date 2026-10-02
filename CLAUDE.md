@@ -27,6 +27,7 @@ Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-struc
 
 - **Words** live only in `content/doc.json` (one ordered `body` of `text` and `svelte` blocks with flat props, the shipped NYT payload's shape). **Media** lives only in `big_assets/`, never in `src/` or `static/`, and is referenced with `asset(path)` from `$lib/assets.js`.
 - `src/lib/assets.js` is **generated** by `scripts/hash-assets.js`. Don't edit it by hand. Commit the regenerated file when media changes.
+- The page is split like the real one: `src/routes/+layout.svelte` is the mock **platform shell** (masthead, footer) and owns everything outside `<article class="birdkit-body">`; story-wide CSS is scoped with `:where(.birdkit-body)`. Sticky things pin below the masthead (`--masthead-h`).
 - One component per block type in `src/lib/components/`. Register new components in `registry` in `src/lib/blocks.js`; an unregistered name fails the production build.
 - Every component renders a readable **no-JS state** first. Motion comes from `{@attach}` and is gated behind a class the JS adds.
 - Ported components keep the prototype's measured px values (Phase 1 rule). The top comment says ✅ ported, or ⏳ and which chunk finishes it.

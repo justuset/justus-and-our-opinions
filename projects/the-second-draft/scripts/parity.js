@@ -9,6 +9,10 @@
 // Needs Playwright's Chromium once: `npx playwright install chromium`.
 // Google Fonts requests are blocked on both pages, so both measure with the same fallback font; font loading
 // timing can't make the two differ.
+//
+// Since NYT sandbox S2 the project renders inside a mock platform shell (a sticky masthead and a footer) that the
+// prototype never had. Parity is about the STORY, so the shell is switched off before measuring (SHELL_OFF below):
+// with the shell removed, the story must still be the Phase 1 page. The shell has its own check (learning log 21).
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
@@ -20,6 +24,8 @@ const SITES = { prototype: join(ROOT, '../../prototype'), project: join(ROOT, 'd
 const WIDTHS = [375, 1024, 1440];
 const HEIGHT = 900;
 const TOLERANCE = 1; // px
+// Removes the platform shell: no masthead, no footer, and panels pin at the very top again.
+const SHELL_OFF = ':root { --masthead-h: 0px } .platform-masthead, .platform-footer { display: none }';
 const TYPES = {
   '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json',
   '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml'
@@ -95,6 +101,7 @@ for (const width of WIDTHS) {
     await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
     await page.route(/cdnjs\.cloudflare\.com/, (r) => r.abort()); // not needed for layout; keeps the run offline
     await page.goto(url);
+    await page.addStyleTag({ content: SHELL_OFF }); // no-op on the prototype, which has no shell
     await page.waitForTimeout(300);
     results[name] = { ...(await page.evaluate(measure)), 'step offsets (runway A)': await stepOffsets(page) };
     await page.close();

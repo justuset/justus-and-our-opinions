@@ -194,7 +194,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `lottie-kit.js` | Small helpers for writing Lottie JSON by hand: `still()` / `animated()` properties, `rect` / `ellipse` / `hline` shapes, `fill` / `stroke`, `layer()` and `file()`. Its header comment explains the format |
 | `make-hero-lottie.js` | Writes the header intro twins (`big_assets/videos/hero/hero-desktop.json`, `hero-mobile.json`) from the **same coordinates as the SVG posters** in `Header.svelte`, so the last frame is the poster (measured: 11 of 540,000 pixels differ, all anti-aliasing). Run by hand: `node scripts/make-hero-lottie.js` |
 | `make-scrub-lottie.js` | Writes the two scene D placeholder animations (`big_assets/videos/scrub-desktop.json`, `scrub-mobile.json`): 12 bars of "text" on a page, 7 shrink and fade, 5 close up. Self-authored, so no license to record. A readable example of what's inside a Lottie file (canvas, frame range, layers, keyframes). Run it by hand: `node scripts/make-scrub-lottie.js` |
-| `parity.js` | `npm run parity`: measures the prototype and `dist/` side by side at three widths and fails on any difference over 1px (§11). Uses the `playwright` dev dependency |
+| `parity.js` | `npm run parity`: measures the prototype and `dist/` side by side at three widths and fails on any difference over 1px (§11). Switches the platform shell off first, since parity is about the story. Uses the `playwright` dev dependency |
 | `migrations/2026-10-02-story-to-doc.js` | **One-time** (S1): converted `content/story.json` into `content/doc.json`, refusing to write if any of the 105 strings would change. Kept as a record; `story.json` was removed in the same commit |
 | `deploy.js` | Prints the upload plan: every file in `dist/` with its `Cache-Control` header, hashed folders first and `index.html` last. Swap its `upload()` function for your host's CLI to deploy for real (§9) |
 
@@ -209,14 +209,14 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it is | Becomes in `dist/` |
 |------|-----------|--------------------|
 | `app.html` | The document shell around every page. Holds `<html lang>`, the viewport meta, the **chunk 5 `<head>` script** (`.js` class + 2.5s failsafe), the Google Fonts link, and the `%sveltekit.head%` / `%sveltekit.body%` slots SvelteKit fills | The outside of `index.html` |
-| `app.css` | **Global** tokens and base rules: gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Ported from the prototype's chunks 2–6 | `assets/0.<hash>.css` |
+| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
-| `routes/+layout.svelte` | The root layout: imports `app.css` once and renders the page inside it | `nodes/0.<hash>.js` |
+| `routes/+layout.svelte` | **The mock platform shell** (NYT sandbox S2): a skip link, a sticky semi-transparent masthead ("Our Opinions", exactly `--masthead-h` tall), `<main id="site-content">` and a footer where comments, ads and recirculation would go. It owns everything outside the story's `<article>`, and styles only itself | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
 | `routes/+page.js` | Runs at build time: imports `content/doc.json`, stops a production build if a block can't be rendered, and hands the doc to the page as `data.doc` | Inlined into `index.html` |
 | `routes/+page.svelte` | **The story page.** Hands the doc's `body` to `<Blocks>` and sets the title from the Header block | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | `lib/assets.js` | **Generated.** `ASSET_BASE` is `/big_assets` in dev and `./_big_assets.<hash>` in production, plus an `asset(path)` helper. Committed, so `npm run dev` works on a fresh clone | Bundled into a chunk |
-| `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list) | A chunk, once imported |
+| `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list). Since S2 it measures progress from the panel's CSS `top` (the masthead's height), not from 0 | A chunk, once imported |
 | `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header (chunk 11). `scrubber()` resolves to `seek(p)` once the animation is ready, and **rejects** if the JSON fails, so the caller can keep its text fallback. ✅ Used by `ScrubStage` | A lazy chunk, once imported |
 | `lib/media.js` | `srcset(value)` turns a doc srcset (`"images/a-400w.webp 400w, images/a.webp 800w"`) into hashed media URLs (chunk 10, string form since S1) | Bundled into the components |
 | `lib/Blocks.svelte` | **The renderer** (S1): walks the doc's `body`. A text block becomes `Text`, a svelte block becomes its registered component with the flat props spread on. Unknown names show a placeholder in dev | Bundled into the page |
@@ -237,7 +237,7 @@ shows which prototype chunk each one mirrors (see §11).
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at 640px, capped at 1440px from 1250px | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>`. At ≥1024px a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
-| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
+| `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins **below the platform masthead** (`top: var(--masthead-h)`, height `100svh − --masthead-h`) since S2 | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
 | `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 768px, 0.4s caption fades, hard-cut images (chunk 9) |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `doc.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
@@ -478,7 +478,11 @@ direction and image widths, diagram width, every runway's height, page height, a
 steps change. It exits with code 1 if anything differs by more than 1px. Its first run found a real bug: enhanced runways
 in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`).
 
-Two things exist only in the project: the header's intro Lottie, and `srcset` driven by `doc.json`. The prototype stays
+Since NYT sandbox S2, the project renders inside a mock platform shell the prototype never had. Parity switches the shell
+off before measuring (no masthead or footer, `--masthead-h: 0`), so it still answers the question it was built for: is the
+*story* the Phase 1 page? The shell is checked separately (learning log 21).
+
+Three things exist only in the project: the header's intro Lottie, `srcset` driven by `doc.json`, and the platform shell. The prototype stays
 as the hand-built reference.
 
 ---
