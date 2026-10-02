@@ -1,0 +1,30 @@
+/* shell.css: the mock PLATFORM's tokens (NYT sandbox S4b). Imported once by src/routes/+layout.svelte.
+   Values measured from the shipped page ("In Defense of the Detour", 2026-10-02) at 390 / 800 / 1987px wide, and kept
+   apart from the story's tokens (app.css) on purpose: the platform and the story are styled by different teams.
+   Everything is prefixed --shell- so nothing collides with the story's names. Fonts are free substitutes:
+   Libre Franklin for the platform's sans, Libre Caslon Text for the wordmark (no Times fonts or logo). */
+:root {
+  --shell-font-label: 'Libre Franklin', Helvetica, Arial, sans-serif;
+  --shell-font-wordmark: 'Libre Caslon Text', Georgia, serif;
+
+  --shell-bg: #ffffff;
+  --shell-bg-secondary: #f7f7f7;
+  --shell-ink: #121212;
+  --shell-link: #326891;
+  --shell-button: #567b95;
+  --shell-button-text: #ffffff;
+  --shell-muted: #666666;          /* footer links; also the ad labels (measured #727272 is 4.49:1 on #f7f7f7, just under AA) */
+  --shell-rule: #ebebeb;
+  --shell-rule-strong: #121212;
+  --shell-border: #e2e2e2;
+  --shell-pill-border: #dfdfdf;
+  --shell-wordmark: #000000;
+  --shell-wordmark-inverse: #ffffff; /* over a story whose header is dark */
+
+  --shell-gutter: 20px;            /* phone side margin: a 350px column on a 390px screen */
+  --shell-col: 600px;              /* the text column the share tools line up with */
+  --shell-page-max: 1200px;        /* recirculation and footer */
+}
+
+/* The page behind the story is the platform's. The story paints its own background inside <article> (S3). */
+html, body { background: var(--shell-bg); color: var(--shell-ink); }

@@ -1,7 +1,7 @@
 # Aligning the build with the NYT Opinion sandbox blueprint
 
 **Date:** 2026-10-02  **Source:** [`../reference/nyt-sandbox-blueprint.md`](../reference/nyt-sandbox-blueprint.md) (the
-"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1–S4 done
+"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1–S4 and S4b done
 
 ## Why this plan exists
 
@@ -142,6 +142,7 @@ checked by a diff, since AI doesn't write or edit the argument.
 | S2 | **The platform shell** | The page lives inside a shell it doesn't own | §1, §6 |
 | S3 | **NYT breakpoints and themes** | Three device tiers (740 / 1150) and a `theme` switch | §6 |
 | S4 | **StickyScroller on ScrollTrigger** | The industry-standard scroll library behind our own contract | §7.3, §9 |
+| S4b | **The measured page shell** | The platform around the story, rebuilt from measurements and tested at three widths | [shell plan](2026-10-02-nyt-page-shell.md) |
 | S5 | **The real component set** | Components named and shaped like the shipped page | §0, §7.5–7.8 |
 | S6 | **Data and the `sheets` slot** | Data-driven components read data files, and still render without JS | §2, §7.4 |
 | S7 | **Authoring in ArchieML** | Editors write a doc; a build step turns it into `body` | §5b |
@@ -242,6 +243,30 @@ checked by a diff, since AI doesn't write or edit the argument.
   - `start` is not `'top top'`: it's the panel's CSS `top` (the masthead), as in S2.
   - `end` is not `'bottom bottom'`: it's the panel's bottom edge. On phones with a collapsed toolbar the viewport is taller than the 100svh panel, and `'bottom bottom'` would end the track too late.
 
+### S4b. The measured page shell
+
+Added 2026-10-02 from the owner's [shell plan](2026-10-02-nyt-page-shell.md), adapted to this repo (the table at its top
+records every change). **Shell only:** the story keeps diatour.
+
+- **Masthead:** transparent, `position: absolute`, 6px from the top. It scrolls away, so `--masthead-h` becomes 0.
+- **Below the story:** share tools (comment button + pills), recirculation, the ad slot and the footer, from the measured values.
+- **Platform tokens** `--shell-*` in `src/lib/shell/shell.css`, apart from the story's.
+- **Playwright** at 390 / 800 / 1440 (`npm run test:e2e`), also run in CI.
+- **Checkpoint:**
+  - the e2e suite passes at all three widths;
+  - parity is still within 1px with the shell switched off;
+  - no horizontal scroll;
+  - JS off still renders all story text.
+
+**✅ Done** ([learning log 25](../learning-log/25-s4b-measured-page-shell.md)):
+- **e2e:** 21 tests pass in about 18s (7 per width): masthead position, color and height (47 / 42 / 42), skip link, masthead scrolling away, panels pinning at `top: 0`, the comment button (350 / 600 / 600 × 36, `#567b95`, 13px, 0.65px tracking), region order, the ad label, footer padding, size and width, and no horizontal scroll.
+- **Story checks:** parity within 1px, unit tests pass, JS off renders all text at 375 / 740 / 1150.
+- **Deviations:**
+  - wordmark "Our Opinions", light over a dark story header;
+  - `#666` instead of the measured `#999` / `#727272` for small grey labels (AA);
+  - Google Fonts blocked inside tests;
+  - the story-side tasks moved to S5.
+
 ### S5. The real component set
 
 Rename and reshape to the shipped names and props (the doc uses these names):
@@ -257,6 +282,16 @@ Rename and reshape to the shipped names and props (the doc uses these names):
   - `PaintingScroll` moves to **transforms and opacity only** (FLIP from our % layouts).
   - Step counts can follow the doc.
 - **`LottieScrub`:** a third **tablet** tier. Files renamed `name_DESKTOP.json` / `_TABLET` / `_MOBILE` (the generators updated). `lottie-web` pinned to **5.12.2**.
+
+- **From the shell plan (Tasks 2, 4, 5, 6, 7):** give the components the shipped page's class names and measured values while keeping their features (twin art, poster, no-JS states):
+  - `.header-container`, `.headline`, `.subtitle`;
+  - `.g-extended-byline-wrapper`, `.g-byline`, `.g-extended-bio`, `.g-interactive-timestamp`;
+  - `.g-body-text` with link styling;
+  - `.image-two-up-container` with `.group-caption`;
+  - `.credits` / `.credits-text`.
+
+  Add the plan's `body`, `header` and `media` specs.
+  - **Open decision:** the measured values are the NYT look (white page, `rgb(49,48,54)` text, 20px phone gutters, uppercase condensed headline). The likely home is the `opinion` theme, so diatour and parity are untouched. Confirm before S5 starts.
 
 **Checkpoint:**
 - Every chunk 9–11 test still passes under the new names.

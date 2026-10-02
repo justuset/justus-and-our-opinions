@@ -25,7 +25,7 @@ const WIDTHS = [375, 1024, 1440];
 const HEIGHT = 900;
 const TOLERANCE = 1; // px
 // Removes the platform shell: no masthead, no footer, and panels pin at the very top again.
-const SHELL_OFF = ':root { --masthead-h: 0px } .platform-masthead, .platform-footer { display: none }';
+const SHELL_OFF = ':root { --masthead-h: 0px } .masthead-container, #standalone-footer { display: none }';
 const TYPES = {
   '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json',
   '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml'

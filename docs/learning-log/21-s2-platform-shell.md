@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-02  **Chunk:** NYT sandbox alignment · S2  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** S4b ([log 25](25-s4b-measured-page-shell.md)) replaced this mock shell with one measured from the shipped page. The masthead now floats over the story and scrolls away instead of sticking, so `--masthead-h` is `0px` and panels pin to the top of the screen. The token and the offset-aware scroll math stay.
+
 ## Goal
 
 One new idea: **the story lives inside a page it doesn't own.** On the real site, a graphics-desk story is dropped into

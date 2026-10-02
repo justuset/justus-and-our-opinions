@@ -18,9 +18,11 @@
   --gap-byline: 24px 32px;
   --gap-credits: 60px 80px;
 
-  /* platform shell (NYT sandbox S2): the mock masthead's height. Sticky panels pin BELOW it, and in-page links scroll
-     to just below it. One number, so the masthead, the panels and the scroll math always agree. */
-  --masthead-h: 44px;
+  /* platform shell: the height of a STICKY platform bar. Sticky panels pin below it, and in-page links scroll to just
+     below it. S2's mock bar was sticky (44px). The measured shell (S4b) has a masthead that floats over the story and
+     scrolls away, like the shipped page, so nothing stays on screen and panels pin to the very top: 0. The token stays
+     so a sticky bar can come back without touching the scroll code. */
+  --masthead-h: 0px;
 
   /* motion */
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
@@ -139,9 +141,9 @@
 
 /* ============ 2. BASE ============ */
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; background: var(--paper); color: var(--ink); }
+html, body { margin: 0; }   /* the page's background and text color belong to the platform shell (src/lib/shell/shell.css) */
 html, body { overflow-x: clip; }       /* stops 100vw breakouts from causing sideways scroll; clip keeps sticky working */
-html { scroll-padding-top: var(--masthead-h); }   /* #anchor jumps land below the sticky masthead, not under it */
+html { scroll-padding-top: var(--masthead-h); }   /* #anchor jumps land below a sticky masthead, if there is one */
 body { font-family: var(--font-body); }
 
 /* ============ 3. STORY SCOPE (NYT sandbox S2) ============

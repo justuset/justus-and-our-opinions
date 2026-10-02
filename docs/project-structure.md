@@ -98,6 +98,7 @@ npm run build          # writes dist/ (see §7)
 npm run preview        # serves dist/ locally, as a reader would get it
 npm run deploy         # prints the upload plan with cache headers (dry run, see §9)
 npm test               # unit tests (node --test, built into Node)
+npm run test:e2e       # Playwright: the platform shell's measured layout at 390 / 800 / 1440 (S4b); builds and serves dist/ itself
 npm run parity         # compares dist/ with prototype/index.html at 375/1024/1440 (needs `npx playwright install chromium` once)
 ```
 
@@ -138,6 +139,8 @@ projects/the-second-draft/
 │  ├─ parity.js
 │  ├─ migrations/2026-10-02-story-to-doc.js   one-time: story.json → doc.json (S1)
 │  └─ deploy.js
+├─ playwright.config.js        three projects: mobile 390, tablet 800, desktop 1440 (S4b)
+├─ tests/                       e2e specs: masthead, footer (share tools, recirc, ad, footer), responsive + helpers.js (S4b)
 ├─ static/
 │  └─ favicon.png
 └─ src/
@@ -157,6 +160,7 @@ projects/the-second-draft/
       ├─ inline-html.js        the allow-list for inline HTML in text blocks, + .test.js (S1)
       ├─ scroll.js             loads GSAP ScrollTrigger once; trackBounds(), stepOf(), + .test.js (S4)
       ├─ lottie.js
+      ├─ shell/                the mock platform shell (S4b): shell.css (--shell-* tokens), Masthead, ShareTools, Recirc, AdSlot, SiteFooter
       ├─ media.js
       └─ components/
          ├─ Header.svelte, Byline.svelte, Text.svelte, Credits.svelte
@@ -211,9 +215,9 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | File | What it is | Becomes in `dist/` |
 |------|-----------|--------------------|
 | `app.html` | The document shell around every page. Holds `<html lang>`, the viewport meta, the **chunk 5 `<head>` script** (`.js` class + 2.5s failsafe), the Google Fonts link, and the `%sveltekit.head%` / `%sveltekit.body%` slots SvelteKit fills | The outside of `index.html` |
-| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Since S3: the NYT tier tokens `--bp-tablet: 740px` / `--bp-desktop: 1150px` (documentation, since custom properties can't be used in `@media`), and the **theme blocks** `.g-theme-diatour` / `.g-theme-opinion`, which only redefine color tokens. Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
+| `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2; `0px` since S4b, because the measured masthead isn't sticky): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Since S3: the NYT tier tokens `--bp-tablet: 740px` / `--bp-desktop: 1150px` (documentation, since custom properties can't be used in `@media`), and the **theme blocks** `.g-theme-diatour` / `.g-theme-opinion`, which only redefine color tokens. Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
-| `routes/+layout.svelte` | **The mock platform shell** (NYT sandbox S2): a skip link, a sticky semi-transparent masthead ("Our Opinions", exactly `--masthead-h` tall), `<main id="site-content">` and a footer where comments, ads and recirculation would go. It owns everything outside the story's `<article>`, and styles only itself | `nodes/0.<hash>.js` |
+| `routes/+layout.svelte` | **The mock platform shell.** S2 made it a sticky bar and a footer note. Since S4b it's a replica measured from the shipped page, composed from `src/lib/shell/`:<br>• `Masthead`: transparent, `position: absolute`, 6px from the top; it floats over the story's header and scrolls away. 47px tall on phones, 42px from 740px. It holds the skip link, and the wordmark is light over a dark (diatour) header;<br>• `<main id="site-content">`, then `#standalone-footer`: `ShareTools` (comment button + share pills), `Recirc` (placeholder related-content grid), `AdSlot` (`#bottom-wrapper`, "Advertisement") and `SiteFooter`.<br>The platform's colors, fonts and widths live in `shell.css` as `--shell-*` tokens, apart from the story's. The shell owns the page background (white) and everything outside the story's `<article>` | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
 | `routes/+page.js` | Runs at build time: imports `content/doc.json`, stops a production build if a block can't be rendered, and hands the doc to the page as `data.doc` | Inlined into `index.html` |
 | `routes/+page.svelte` | **The story page.** Hands the doc's `body` to `<Blocks>` and sets the title from the Header block | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
@@ -239,7 +243,7 @@ shows which prototype chunk each one mirrors (see §11).
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at the 740px tablet tier, capped at 1440px with 64px padding from the 1150px desktop tier (S3) | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>`. At ≥740px (the tablet tier, since S3) a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
-| `StickyScroller.svelte` | The shared track + sticky panel, named like the blueprint's (was `Scrolly.svelte` until S4). Passes `{ step, progress, enhanced }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins **below the platform masthead** (`top: var(--masthead-h)`, height `100svh − --masthead-h`) since S2. Track height is the doc's `height`, or `steps × 135svh`. Props: `label`, `steps`, `height`, `stepTexts`, `class`, `showProgress` | ✅ One ScrollTrigger per track in an `{@attach}`, killed on destroy (S4). The bar is `transform: scaleX(progress)`, with markers at `i / steps`. `data-enhanced` is set only after GSAP loads; if it never loads, the no-JS stack stays |
+| `StickyScroller.svelte` | The shared track + sticky panel, named like the blueprint's (was `Scrolly.svelte` until S4). Passes `{ step, progress, enhanced }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers. The panel pins at `top: var(--masthead-h)` (S2), which is 0 since S4b: the measured masthead scrolls away, so panels pin to the top of the screen as on the shipped page. Track height is the doc's `height`, or `steps × 135svh`. Props: `label`, `steps`, `height`, `stepTexts`, `class`, `showProgress` | ✅ One ScrollTrigger per track in an `{@attach}`, killed on destroy (S4). The bar is `transform: scaleX(progress)`, with markers at `i / steps`. `data-enhanced` is set only after GSAP loads; if it never loads, the no-JS stack stays |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
 | `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 740px (S3), 0.4s caption fades, hard-cut images (chunk 9) |
 | `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `doc.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
@@ -481,7 +485,7 @@ steps change. It exits with code 1 if anything differs by more than 1px. Its fir
 in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`, now `StickyScroller.svelte`).
 
 Since NYT sandbox S2, the project renders inside a mock platform shell the prototype never had. Parity switches the shell
-off before measuring (no masthead or footer, `--masthead-h: 0`), so it still answers the question it was built for: is the
+off before measuring (no `.masthead-container` or `#standalone-footer`, `--masthead-h: 0`), so it still answers the question it was built for: is the
 *story* the Phase 1 page? The shell is checked separately (learning log 21).
 
 Since S3 the project switches layout at the NYT tiers (740 and 1150) while the prototype keeps its original 640 / 768 /
