@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-01  **Chunk:** Phase 1 · 8  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** In the story project, panels now pin **below the platform masthead** (`top: var(--masthead-h)`), and `progressOf()` measures from the panel's CSS `top` instead of 0 (S2, [log 21](21-s2-platform-shell.md)). Chunk S4 of the [alignment plan](../plan/nyt-sandbox-alignment.md) will move the engine onto GSAP ScrollTrigger behind the same `{ step, progress }` contract. The prototype is unchanged.
+
 ## Goal
 
 One new idea: the **runway / sticky** pattern. A tall section (the runway) scrolls past while its first panel stays pinned to the screen. How far you are through the runway becomes a number from 0 to 1 (progress), and that number becomes a step.

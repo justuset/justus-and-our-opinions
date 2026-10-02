@@ -1,7 +1,15 @@
 # Learning log 01: Setting up the repo, the first commit and the README
 
-**Date:** 2026-10-01
+**Date:** 2026-10-01 (updated 2026-10-02)
 **Goal:** Get an empty GitHub repository ready to hold the project, with one committed file (`README.md`).
+
+> **Want to do this yourself?** The full manual walkthrough, from installing Git to protected `main` with CI, is
+> [`docs/guides/github-repo-from-scratch.md`](../guides/github-repo-from-scratch.md). This entry is the record of what
+> happened in *this* repo.
+>
+> **Update 2026-10-02:** `main` now exists. It was created at this entry's first commit (`b0fa9f1`) so the work could
+> be opened as [PR #1](https://github.com/justuset/justus-and-our-opinions/pull/1), and it's now the repo's default
+> branch. See §4 and [learning log 22](22-first-pr-and-default-branch.md).
 
 This entry records what was planned, what actually ran, and why the two differ. Read it alongside
 [Git's own glossary](https://git-scm.com/docs/gitglossary) if any term is new.
@@ -91,9 +99,11 @@ git ls-remote --heads origin       # b0fa9f1…  refs/heads/claude/wonderful-knu
 ```
 
 - `git status -sb` printing `branch...origin/branch` with no `[ahead 1]` means the local and remote branches match.
-- `git ls-remote` asks GitHub directly. It lists **only** the feature branch, so **there is no `main` branch on
-  GitHub yet.** It will appear once a pull request from the feature branch is merged, or if someone pushes
-  `main` on purpose.
+- `git ls-remote` asks GitHub directly. On 2026-10-01 it listed **only** the feature branch: **there was no `main`
+  branch on GitHub.** And because that branch was the only one, GitHub made it the repo's **default** branch.
+- **What happened next (2026-10-02):** to open a pull request, `main` was pushed on purpose at this first commit
+  (`git push origin b0fa9f1:refs/heads/main`), and the default branch was switched to `main` in Settings.
+  [Learning log 22](22-first-pr-and-default-branch.md) has the details.
 
 ## 5. Anatomy of the first commit
 
@@ -131,3 +141,5 @@ git log --oneline --graph --all            # see every branch and commit as a gr
 - `-u` on the first push saves typing for the rest of the project.
 - A `fatal:` line in the middle of the output doesn't always mean failure. Look at the end of the output.
 - Feature branches plus pull requests are how work reaches `main`. The plan in `docs/plan/` follows that pattern.
+- **Push `main` first.** If the first push goes to a feature branch, that branch becomes the default and there's no
+  `main` to open a PR against. This repo had to fix exactly that later (log 22).

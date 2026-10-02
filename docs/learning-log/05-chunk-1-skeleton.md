@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-01  **Chunk:** Phase 1 · 1  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** In the story project, `<article class="story">` became `<article id="g-bk-the-second-draft" class="birdkit-body …">` inside a mock platform shell (NYT sandbox S2, [log 21](21-s2-platform-shell.md)). The prototype is unchanged.
+
 ## Goal
 
 Semantic markup only, with no CSS and no JavaScript. Prove the page is a **flat list of sibling blocks** that reads

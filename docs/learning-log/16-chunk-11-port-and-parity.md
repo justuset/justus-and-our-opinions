@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-01  **Chunk:** Phase 1 · 11  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** `story.json` is now `content/doc.json` (S1, [log 20](20-s1-body-document.md)); the "add a fifth section" JSON in its new form is in [`project-structure.md`](../project-structure.md) §12. Since S2, `npm run parity` switches the platform shell off before measuring ([log 21](21-s2-platform-shell.md)).
+
 ## Goal
 
 One new idea: **components rendered from a content file, built to a deployable output tree, proven equal to the hand-built page.** Every chunk was ported as it passed, so this chunk closes the loop: finish what was left (the header animation), show that a new section needs only content, and *measure* that the two builds are the same page.

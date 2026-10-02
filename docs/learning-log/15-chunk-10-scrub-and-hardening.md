@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-01  **Chunk:** Phase 1 · 10  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** The project's `srcset` sources moved from `{ "400w": path }` objects in `story.json` to plain srcset strings in `doc.json` (`"images/a-400w.webp 400w, images/a.webp 800w"`) (S1, [log 20](20-s1-body-document.md)).
+
 ## Goal
 
 Two parts:

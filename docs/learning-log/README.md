@@ -3,6 +3,11 @@
 One entry per meaningful step. Each entry covers what was planned, what actually happened, what broke, and the
 concepts it taught.
 
+**Entries are a record, not a manual.** Each one describes the project as it was that day. When a later step replaces
+something an entry describes, the entry gets a **"Later changes"** note at the top pointing to what replaced it, rather
+than being rewritten. For how things work *now*, see [`docs/project-structure.md`](../project-structure.md). To set up a
+GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-scratch.md`](../guides/github-repo-from-scratch.md).
+
 | # | Entry | Date |
 |---|-------|------|
 | 01 | [Repo setup, first commit and README](01-repo-setup.md) | 2026-10-01 |
@@ -26,6 +31,7 @@ concepts it taught.
 | 19 | [Checking the build against the NYT sandbox blueprint](19-nyt-sandbox-blueprint-review.md) | 2026-10-02 |
 | 20 | [NYT sandbox S1: the `body` document](20-s1-body-document.md) | 2026-10-02 |
 | 21 | [NYT sandbox S2: the platform shell](21-s2-platform-shell.md) | 2026-10-02 |
+| 22 | [The first pull request, and making `main` the default](22-first-pr-and-default-branch.md) | 2026-10-02 |
 
 ## Entry template
 

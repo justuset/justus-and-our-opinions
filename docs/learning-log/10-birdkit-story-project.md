@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-01  **Chunk:** between Phase 1 chunks 5 and 6  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** `content/story.json` was replaced by `content/doc.json`, one ordered `body` of blocks in the shipped NYT payload's shape, and the `BLOCKS` map in `+page.svelte` became a registry in `src/lib/blocks.js` (S1, [log 20](20-s1-body-document.md)). The root layout became a mock platform shell (S2, [log 21](21-s2-platform-shell.md)). The header's single `hero.json` became desktop and mobile twins ([log 16](16-chunk-11-port-and-parity.md)). The current file-by-file picture is [`docs/project-structure.md`](../project-structure.md).
+
 ## Goal
 
 Restructure the repo to replicate the folder structure in the **Birdkit-Style Story Project build spec**

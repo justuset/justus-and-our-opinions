@@ -44,6 +44,7 @@ justus-and-our-opinions/
 │  ├─ plan/                     Phase 1 (hand-built, 10 chunks) and Phase 2 (Times-shaped stack)
 │  ├─ reference/                source material: the scrolly template, its breakdown, the build spec, diatour analysis
 │  ├─ learning-log/             one entry per step: what was built, what broke, what it taught
+│  ├─ guides/                   how-tos you can follow yourself (e.g. setting up a GitHub repo from scratch)
 │  └─ project-structure.md      ← you are here
 ├─ prototype/
 │  └─ index.html                PHASE 1 SANDBOX: plain HTML/CSS/JS, one idea per chunk, checked in DevTools

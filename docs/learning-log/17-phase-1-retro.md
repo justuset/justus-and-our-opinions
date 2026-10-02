@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-01  **Covers:** Phase 1, chunks 1–11 (logs 05–16)  **Branch:** `claude/wonderful-knuth-w43l2c`
 
+> **Later changes (as of 2026-10-02):** `story.json` is now `content/doc.json` (S1, [log 20](20-s1-body-document.md)). The order after Phase 1 changed too: Phase 2 chunk 00 came first ([log 18](18-phase-2-chunk-00-foundation.md)), then the [NYT sandbox alignment](../plan/nyt-sandbox-alignment.md) (S1–S8, [log 19](19-nyt-sandbox-blueprint-review.md)) before the rest of Phase 2.
+
 ## What Phase 1 produced
 
 - **`prototype/index.html`:** the NYT-style scrolly article rebuilt by hand in one file, with no framework or build step.
