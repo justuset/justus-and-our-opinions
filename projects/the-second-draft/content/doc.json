@@ -1,0 +1,273 @@
+{
+  "_comment": "Demo content for a front-end study project. The essay, author and drafts are invented. Edit copy here; the page re-renders from this file.",
+  "slug": "the-second-draft",
+  "theme": "diatour",
+  "body": [
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Header",
+        "kicker": "Our Opinions",
+        "kind": "Guest Essay · Demo",
+        "headline": "The Second Draft",
+        "dek": "Most of what a reader sees was decided after the first version failed. That is where the argument lives.",
+        "url": "videos/hero/hero-desktop.json",
+        "urlMobile": "videos/hero/hero-mobile.json"
+      }
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Byline",
+        "author": "A. Writer",
+        "date": "2026-10-01",
+        "dateText": "Oct. 1, 2026"
+      }
+    },
+    {
+      "type": "text",
+      "value": "Every essay you have read in a newspaper arrived looking finished. The sentences sit in order, the argument advances, and the conclusion feels as if it had been waiting at the end of the road all along. That calm is a performance. Behind it are versions that went nowhere, paragraphs that argued the opposite and an opening that was rewritten until it stopped apologizing."
+    },
+    {
+      "type": "text",
+      "value": "We hide the drafts because we think they make the writer look unsure. I think they do the opposite. A draft shows the moment an idea met resistance and changed shape, and that moment is usually the most persuasive part of the whole process."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "TwoUp",
+        "label": "Two drafts of the same opening, side by side",
+        "url1": "images/two-up-draft-1.webp",
+        "alt1": "The first draft of the opening paragraph, crowded with qualifications.",
+        "width1": 800,
+        "height1": 1000,
+        "srcset1": "images/two-up-draft-1-400w.webp 400w, images/two-up-draft-1.webp 800w",
+        "url2": "images/two-up-draft-4.webp",
+        "alt2": "The fourth draft of the same paragraph, about half as long.",
+        "width2": 800,
+        "height2": 1000,
+        "srcset2": "images/two-up-draft-4-400w.webp 400w, images/two-up-draft-4.webp 800w",
+        "sizes": "(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw",
+        "groupCaption": "The first and fourth drafts of the same opening paragraph.",
+        "credit": "Placeholder images"
+      }
+    },
+    {
+      "type": "text",
+      "value": "Look at the first and the fourth version of the same opening. The first one explains. The fourth one asks the reader to notice something. Nothing about the facts changed between them. What changed was the writer's sense of who was on the other side of the page."
+    },
+    {
+      "type": "text",
+      "value": "Editors know this rhythm well. It rarely runs in a straight line, but it does have stages, and each stage asks a different question of the work."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Diagram",
+        "label": "The four stages of an essay",
+        "label1": "Idea",
+        "label2": "Draft",
+        "label3": "Revise",
+        "label4": "Ship"
+      }
+    },
+    {
+      "type": "text",
+      "value": "The stages look tidy in a diagram. In practice the arrow from revising back to drafting gets used far more than the one that points to publishing. Here is one paragraph moving through all four."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "SlidesScrolly",
+        "label": "One paragraph through six versions",
+        "heading1": "Version 1",
+        "card1": "Explains",
+        "image1": "images/slides/slide-1/slide.jpg",
+        "alt1": "Placeholder artwork for version 1.",
+        "heading2": "Version 2",
+        "card2": "Hedges",
+        "image2": "images/slides/slide-2/slide.jpg",
+        "alt2": "Placeholder artwork for version 2.",
+        "heading3": "Version 3",
+        "card3": "Cuts",
+        "image3": "images/slides/slide-3/slide.jpg",
+        "alt3": "Placeholder artwork for version 3.",
+        "heading4": "Version 4",
+        "card4": "Asks",
+        "image4": "images/slides/slide-4/slide.jpg",
+        "alt4": "Placeholder artwork for version 4.",
+        "heading5": "Version 5",
+        "card5": "Trims",
+        "image5": "images/slides/slide-5/slide.jpg",
+        "alt5": "Placeholder artwork for version 5.",
+        "heading6": "Version 6",
+        "card6": "Lands",
+        "image6": "images/slides/slide-6/slide.jpg",
+        "alt6": "Placeholder artwork for version 6."
+      }
+    },
+    {
+      "type": "text",
+      "value": "By the sixth version the paragraph is shorter, plainer and much harder to disagree with. Most of the cuts were not about style. They removed claims the writer could not yet support."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "CaptionScrolly",
+        "label": "Five marked-up pages from the editing process",
+        "image1": "images/marked-up-1.webp",
+        "srcset1": "images/marked-up-1-600w.webp 600w, images/marked-up-1.webp 1200w",
+        "alt1": "Placeholder for marked-up page 1.",
+        "caption1": "Page one: a question in the margin.",
+        "image2": "images/marked-up-2.webp",
+        "srcset2": "images/marked-up-2-600w.webp 600w, images/marked-up-2.webp 1200w",
+        "alt2": "Placeholder for marked-up page 2.",
+        "caption2": "Page two: an arrow moves a sentence up.",
+        "image3": "images/marked-up-3.webp",
+        "srcset3": "images/marked-up-3-600w.webp 600w, images/marked-up-3.webp 1200w",
+        "alt3": "Placeholder for marked-up page 3.",
+        "caption3": "Page three: one word circled.",
+        "image4": "images/marked-up-4.webp",
+        "srcset4": "images/marked-up-4-600w.webp 600w, images/marked-up-4.webp 1200w",
+        "alt4": "Placeholder for marked-up page 4.",
+        "caption4": "Page four: a paragraph struck through.",
+        "image5": "images/marked-up-5.webp",
+        "srcset5": "images/marked-up-5-600w.webp 600w, images/marked-up-5.webp 1200w",
+        "alt5": "Placeholder for marked-up page 5.",
+        "caption5": "Page five: almost clean.",
+        "sizes": "(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)"
+      }
+    },
+    {
+      "type": "text",
+      "value": "Marked-up pages tell the same story from the editor's side: questions in the margin, arrows that move a sentence to where it belongs, a single word circled because it promises more than the evidence delivers."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "PaintingsScrolly",
+        "label": "Three arguments competing for the lead",
+        "image1": "images/argument-a.webp",
+        "alt1": "Placeholder card for the first argument.",
+        "image2": "images/argument-b.webp",
+        "alt2": "Placeholder card for the second argument.",
+        "image3": "images/argument-c.webp",
+        "alt3": "Placeholder card for the third argument.",
+        "caption1": "Three arguments, none leading yet.",
+        "caption2": "The first argument takes the lead.",
+        "caption3": "The skeptic's argument moves to the front.",
+        "portraitScale": 1.6,
+        "layouts": [
+          [
+            {
+              "top": 25,
+              "left": 6,
+              "width": 37.5,
+              "rot": 0,
+              "op": 0.15,
+              "z": 2
+            },
+            {
+              "top": 10,
+              "left": 35,
+              "width": 34,
+              "rot": 0,
+              "op": 0.15,
+              "z": 1
+            },
+            {
+              "top": 25,
+              "right": 9,
+              "width": 30,
+              "rot": 1,
+              "op": 0.15,
+              "z": 2
+            }
+          ],
+          [
+            {
+              "top": 15,
+              "left": 4,
+              "width": 40,
+              "rot": -3,
+              "op": 1,
+              "z": 3
+            },
+            {
+              "top": 12,
+              "left": 38,
+              "width": 30,
+              "rot": 2,
+              "op": 0.4,
+              "z": 1
+            },
+            {
+              "top": 30,
+              "right": 4,
+              "width": 28,
+              "rot": 4,
+              "op": 0.4,
+              "z": 2
+            }
+          ],
+          [
+            {
+              "top": 20,
+              "left": 20,
+              "width": 30,
+              "rot": 0,
+              "op": 0.4,
+              "z": 1
+            },
+            {
+              "top": 15,
+              "left": 35,
+              "width": 36,
+              "rot": -2,
+              "op": 1,
+              "z": 3
+            },
+            {
+              "top": 22,
+              "right": 12,
+              "width": 26,
+              "rot": 3,
+              "op": 1,
+              "z": 2
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "Choosing which argument leads is the hardest call in the whole process. Each of the three had a claim on the top of the page, and each made the other two read differently depending on where it sat."
+    },
+    {
+      "type": "text",
+      "value": "What finally decided it was not which point was strongest, but which one a skeptical reader would need to accept before the others could land."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "ScrubLottie",
+        "label": "A draft condensing into its final form",
+        "steps": 2.5,
+        "desktop": "videos/scrub-desktop.json",
+        "mobile": "videos/scrub-mobile.json",
+        "fallback": "A long draft condenses, step by step, into a short final paragraph."
+      }
+    },
+    {
+      "type": "text",
+      "value": "Readers will never see most of this, and that is fine. But a little more of it on the page would make the argument more honest about how it was made, and, I suspect, more convincing."
+    },
+    {
+      "type": "svelte",
+      "value": {
+        "component": "Credits",
+        "text": "Demo content. The essay, author and drafts are invented for a front-end study project. Illustrations and animations are placeholders."
+      }
+    }
+  ]
+}

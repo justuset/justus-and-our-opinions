@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output (every app and project)
+build/
+dist/
+.svelte-kit/
+.react-router/
+
+# Test and coverage reports
+test-results/
+playwright-report/
+coverage/
+
+# Local
+.env
+.env.*
+!.env.example
+.DS_Store

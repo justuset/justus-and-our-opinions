@@ -1,0 +1,13 @@
+{
+  "name": "@opinion/design-system",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The diatour design system as CSS: tokens (and, from chunk 01, base styles and themes) shared by every app.",
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./tokens.css"
+  },
+  "files": [
+    "tokens.css"
+  ]
+}

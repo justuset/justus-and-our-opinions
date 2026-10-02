@@ -1,0 +1,23 @@
+<!-- Section D: a scroll-scrubbed Lottie with desktop and mobile twins (prototype chunk 10). ✅ Ported.
+     The animation's playhead follows the scroll position: scroll down to play, up to rewind, stop to hold.
+     Two runways, one per twin (.desktop-only / .mobile-only, switching at 1024px). The engine skips the hidden one,
+     and only the visible one ever downloads its JSON (see ScrubStage). -->
+<script>
+  import Scrolly from './Scrolly.svelte';
+  import ScrubStage from './ScrubStage.svelte';
+  import { asset } from '$lib/assets.js';
+  let { label, steps, desktop, mobile, fallback } = $props();
+
+  const twins = [
+    { class: 'desktop-only', path: desktop, aspect: '1800 / 1200' },
+    { class: 'mobile-only', path: mobile, aspect: '800 / 1200' }
+  ];
+</script>
+
+{#each twins as twin (twin.class)}
+  <Scrolly {label} {steps} class={twin.class} bar={false}>
+    {#snippet children({ progress, enhanced })}
+      <ScrubStage path={asset(twin.path)} aspect={twin.aspect} {fallback} {progress} {enhanced} />
+    {/snippet}
+  </Scrolly>
+{/each}

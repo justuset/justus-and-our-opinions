@@ -1,0 +1,31 @@
+{
+  "name": "@opinion/story",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The React story page: React 19 + React Router 7 (framework mode) with Node server rendering.",
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "start": "react-router-serve ./build/server/index.js",
+    "check": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@opinion/archie": "*",
+    "@opinion/design-system": "*",
+    "@react-router/node": "^7.18.4",
+    "@react-router/serve": "^7.18.4",
+    "isbot": "^5.1.36",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^7.18.4"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.18.4",
+    "@types/node": "^22",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.2"
+  }
+}

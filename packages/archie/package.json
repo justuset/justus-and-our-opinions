@@ -1,0 +1,19 @@
+{
+  "name": "@opinion/archie",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Story copy in ArchieML → typed blocks. A stub in chunk 00; the parser lands in chunk 03.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vite": "^8.3.2",
+    "vitest": "^4.1.8"
+  }
+}

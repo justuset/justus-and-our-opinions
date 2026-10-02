@@ -1,0 +1,53 @@
+# CI (Phase 2, chunk 00): every push and pull request installs from the lockfile, then lints, type-checks, tests and
+# builds. A red step stops the run, so a broken change never looks green.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch cancels the older run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  workspace:
+    name: Workspace (apps + packages)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # Node 22 ships npm 10, which crashes resolving vitest 4.1's peers. package.json pins npm 11 ("packageManager").
+      - run: npm install --global npm@11.21.0
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      # The learning log as one page; fails if a link between log entries has no target
+      - run: npm run log:page
+
+  story-project:
+    name: Phase 1 story project (projects/the-second-draft)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/the-second-draft
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: projects/the-second-draft/package-lock.json
+      - run: npm ci
+      - run: npm test
+      # Ends with "verified N media URLs", or fails if a media URL in index.html points at a missing file
+      - run: npm run build

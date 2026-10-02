@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    /* Chunk 5. Runs before anything paints.
+       'js' turns on the hidden start state, so with JavaScript off the headline is never hidden.
+       The timeout is a failsafe: if the main script never runs (an error, or a blocked file), the headline still appears. */
+    document.documentElement.classList.add('js');
+    setTimeout(() => document.documentElement.classList.add('is-ready'), 2500);
+  </script>
+  <title>The Second Draft · Our Opinions (demo)</title>
+  <meta name="description" content="Demo essay for a hand-built scrollytelling prototype. Invented content.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,550;1,6..72,400&display=swap">
+  <style>
+    /* ============ 1. TOKENS (chunk 2) ============
+       Every value the page uses lives here. If a rule needs a color or a size, it gets a token first. */
+    :root {
+      /* layout: measured from the reference */
+      --gutter: clamp(10px, 12.5vw, 49px);                   /* 12.5vw hits the 49px cap at a 392px screen */
+      --w-body: 600px;                                       /* longest line of body text */
+      --col: min(calc(100% - var(--gutter) * 2), var(--w-body)); /* reaches 600px at a 698px screen */
+      --gap-para: 12.5px;                                    /* measured paragraph spacing */
+      --gap-byline: 24px 32px;                               /* measured: above / below the byline */
+      --gap-credits: 60px 80px;                              /* measured: above / below the credits */
+
+      /* motion: measured from the reference (used from chunk 5) */
+      --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-fade:   cubic-bezier(0.215, 0.61, 0.355, 1);
+      --ease-intro:  cubic-bezier(0.25, 1, 0.5, 1);
+
+      /* color: diatour (dark paper is the house look) */
+      --paper: #121211;
+      --ink: #ededeb;
+      --soft: rgba(235, 235, 240, 0.66);
+      --faint: rgba(235, 235, 240, 0.56);
+      --line: rgba(255, 255, 255, 0.14);
+      --surface: rgba(255, 255, 255, 0.05);
+
+      /* type: diatour faces */
+      --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+      --font-serif-body: 'Newsreader', Georgia, 'Times New Roman', serif;
+
+      /* the body-face decision: one token to flip (see learning log 06) */
+      --font-text: var(--font-body);
+
+      /* reading text: measured 20/30, stepping to 18/27 on phones */
+      --text-size: 20px;
+      --text-leading: 30px;
+      --meta-size: 14px;
+
+      /* header (measured from the reference; type in the diatour display style) */
+      --header-h: 675px;
+      --header-mt: 90px;
+      --header-copy-top: 12%;
+      --header-pad: 20px;
+      --kicker-size: 13px;
+      --kicker-gap: 12px;
+      --headline-size: 58px;
+      --headline-weight: 550;
+      --headline-leading: 1;
+      --headline-tracking: -0.02em;
+      --headline-measure: 6ch;
+      --dek-size: 1.1rem;
+      --dek-measure: 30ch;
+      --gap-byline-desktop: 100px;
+
+      /* intro motion (measured) */
+      --intro-dur: .8s;
+      --intro-stagger: .2s;      /* the dek follows the headline */
+      --intro-rise: 15px;        /* headline starts this far down */
+      --intro-rise-dek: 10px;
+
+      /* two-up (measured): phone values here, overridden at 640px and 1250px below */
+      --two-up-margin: 40px;
+      --two-up-pad: 20px;
+      --two-up-gap: 12px;
+      --two-up-max: none;
+      --caption-size: 15px;
+      --caption-leading: 1.2;
+      --twin-switch: 1024px;   /* documentation only: media queries can't read custom properties, so 1024px is repeated below */
+
+      /* connector diagram (measured) */
+      --diagram-margin: 2.3125rem;
+      --diagram-gap: 18px;
+      --diagram-stage: 1200px;                         /* desktop stage cap */
+      --diagram-pad: 6rem clamp(10px, 6vw, 72px) 9.25rem;
+      --node-border: 1.5px;
+      --connector-lift: 40;                            /* px the curve's control point rises or dips (read by JS) */
+
+      /* scroll engine (chunk 8, measured) */
+      --runway-step: 135svh;                           /* scroll distance each step gets */
+      --progress-w: min(240px, 60vw);
+      --progress-bottom: 24px;
+      --marker: 9px;
+    }
+    @media (min-width: 640px) {
+      :root { --two-up-margin: 70px; --caption-leading: 30px; }
+    }
+    @media (min-width: 1250px) {
+      :root { --two-up-margin: 100px; --two-up-pad: 64px; --two-up-max: 1440px; }
+    }
+    @media (max-width: 739px) {
+      :root { --text-size: 18px; --text-leading: 27px; }
+    }
+    /* Header tokens change at the reference's two header breakpoints; the rules that use them don't. */
+    @media screen and (max-width: 359px) {
+      :root { --header-h: 67vh; --header-copy-top: 13%; --headline-size: 44px; --dek-size: .85rem; }
+    }
+    @media screen and (min-width: 1024px) {
+      :root {
+        --headline-size: clamp(72px, 7.2vw, 96px);   /* 72px until a 1000px screen, 96px from 1333px */
+        --headline-leading: .92;
+        --headline-measure: 12ch;
+        --dek-size: clamp(16px, 1.4vw, 20px);
+        --dek-measure: 32ch;
+      }
+    }
+
+    /* ============ 2. BASE ============ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--paper); color: var(--ink); }
+    body { font-family: var(--font-body); }
+
+    /* ============ 3. THE TEXT COLUMN ============
+       No media query decides the width: min() picks whichever is smaller, the screen minus two gutters or 600px.
+       margin-inline: auto centers it. */
+    .g-text {
+      width: var(--col);
+      margin: 0 auto var(--gap-para);
+      font: var(--text-size) / var(--text-leading) var(--font-text);
+    }
+    @supports (text-wrap: pretty) {
+      .g-text { text-wrap: pretty; }   /* evens the rag, avoids one-word last lines */
+    }
+
+    /* Byline and credits share the column, in the sans "furniture" face */
+    .byline, .credits {
+      width: var(--col);
+      margin-inline: auto;
+      font: 600 var(--meta-size) / 1.4 var(--font-body);
+      color: var(--soft);
+    }
+    .byline { margin-block: var(--gap-byline); }
+    .credits { margin-block: var(--gap-credits); font-weight: 400; color: var(--faint); }
+    .credits p { margin: 0; }
+
+    /* ============ 5. THE HEADER (chunk 4) ============
+       A fixed-height box (not 100vh) with two absolutely positioned layers: art behind, copy on top.
+       The 675px is measured. On a tall phone the article starts below it, which invites the scroll. */
+    .header {
+      position: relative;            /* explicit: the copy layer is positioned against this box (the reference relied on .bleed for it) */
+      height: var(--header-h);
+      margin-top: var(--header-mt);
+      overflow: hidden;              /* crops the art at the sides */
+    }
+    .header-copy {
+      position: absolute;
+      top: var(--header-copy-top);
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 var(--header-pad);
+      pointer-events: none;          /* lets clicks reach any interactive art underneath */
+    }
+    .kicker {
+      margin: 0 0 var(--kicker-gap);
+      font: 600 var(--kicker-size) / 1.4 var(--font-body);
+      color: var(--soft);
+    }
+    .kicker .bar { color: var(--faint); font-weight: 400; }
+    .headline {
+      max-width: var(--headline-measure);   /* sized in characters: 6ch ≈ one word per line on phones */
+      margin: 2px auto 6px;
+      font: var(--headline-weight) var(--headline-size) / var(--headline-leading) var(--font-display);
+      letter-spacing: var(--headline-tracking);
+      color: var(--ink);
+    }
+    .subtitle {
+      max-width: var(--dek-measure);
+      margin: 0 auto;
+      font: var(--dek-size) / 1.4 var(--font-body);
+      color: var(--soft);
+      text-wrap: balance;
+    }
+    .header-art {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Height-driven scale: the art always fills the header's height and keeps its aspect ratio,
+       so on narrow screens it overflows sideways (cropped by .header) and never squashes. */
+    .header-art svg { height: 100%; width: auto; flex: none; }
+    .art-page  { fill: var(--surface); stroke: var(--line); stroke-width: 3; }
+    .art-lines { fill: none; stroke: var(--line); stroke-width: 10; stroke-linecap: round; }
+    .art-ring  { fill: none; stroke: var(--line); stroke-width: 14; }
+
+    @media screen and (min-width: 1024px) {
+      .header-copy { top: 0; bottom: 0; justify-content: center; }   /* vertically centered on desktop */
+    }
+    @media screen and (min-width: 1024px) and (orientation: landscape) {
+      .byline { margin-bottom: var(--gap-byline-desktop); }
+    }
+
+    /* ============ 6. INTRO MOTION (chunk 5) ============
+       Start state only when JS is running (.js is set in <head>). .is-ready is added once the fonts have loaded,
+       so the headline never animates in a fallback font and then jumps when Newsreader swaps in. */
+    .js .headline {
+      opacity: 0;
+      transform: translateY(var(--intro-rise));
+      transition: opacity var(--intro-dur) var(--ease-intro), transform var(--intro-dur) var(--ease-intro);
+    }
+    .js .subtitle {
+      opacity: 0;
+      transform: translateY(var(--intro-rise-dek));
+      transition: opacity var(--intro-dur) var(--ease-intro) var(--intro-stagger),
+                  transform var(--intro-dur) var(--ease-intro) var(--intro-stagger);
+    }
+    .is-ready .headline, .is-ready .subtitle { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      /* No animation, so nothing to protect from the font swap: show the text immediately instead of waiting for fonts. */
+      .js .headline, .js .subtitle { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* ============ 4. FULL-BLEED BREAKOUT (chunk 3) ============
+       Any block can escape the text column by itself. No wrapper divs.
+       left: 50% puts the block's left edge at its parent's center; translateX(-50%) pulls it back by half
+       its own width (50vw), so it is centered on the viewport whatever column it sits in.
+       Note: transform makes this the containing block for position: fixed children. Never nest a fixed element inside. */
+    .bleed {
+      position: relative;
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    /* 100vw includes the vertical scrollbar on Windows and Linux (15px here), so a bleed block is wider than the page
+       and a horizontal scrollbar appears. clip (not hidden) cuts that overflow off without creating a scroll container,
+       so position: sticky keeps working (chunk 8); with hidden, sticky stops sticking.
+       On body alone (as in the reference) there's no scrollbar, but script can still nudge the page 8px sideways
+       (scrollTo, scrollIntoView, find-in-page). Clipping html as well removes the overflow entirely. */
+    html, body { overflow-x: clip; }
+
+    /* ============ 7. TWO-UP (chunk 6) ============
+       Mobile-first: these base rules ARE the phone layout. Each min-width query below only adds to them. */
+    /* The <figure> itself is the flex container: <figcaption> must be a direct child of <figure>, so there's no inner wrapper. */
+    .two-up {
+      display: flex;
+      flex-direction: column;
+      gap: var(--two-up-gap);
+      margin-block: var(--two-up-margin);
+      margin-inline: 0;                  /* figure has a default 40px side margin; .bleed does the positioning */
+      padding-inline: var(--two-up-pad);
+      max-width: var(--two-up-max);      /* caps growth on very wide screens (.bleed still centers it) */
+    }
+    .two-up img {
+      display: block;                    /* no inline-image gap under the picture */
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 5;               /* width/height attributes reserve the space too, so nothing jumps */
+      object-fit: cover;
+    }
+    .group-caption {
+      padding-top: 9px;
+      font: var(--caption-size) / var(--caption-leading) var(--font-body);
+      color: var(--soft);
+    }
+    .group-caption .credit { color: var(--faint); }
+    @media (min-width: 640px) {
+      .two-up { flex-flow: row wrap; }
+      .two-up img { flex: 1 1 0; min-width: 0; }   /* basis 0: both images get exactly half, whatever their content */
+      .group-caption { flex: 0 0 100%; margin-top: 4px; padding-top: 0; }   /* 100% basis + wrap = its own row, no wrapper */
+    }
+
+    /* ============ 8. CONNECTOR DIAGRAM (chunk 7) ============
+       Two layers: CSS grid positions the boxes; an SVG on top draws arrows between wherever the boxes ended up.
+       Phones: a plain stacked list in the text column, no arrows. Desktop: a 4-column stage up to 1200px wide. */
+    .diagram { position: relative; width: var(--col); margin: var(--diagram-margin) auto; }
+    .diagram-inner { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--diagram-gap); }
+    .node {
+      position: relative;
+      z-index: 3;                        /* boxes sit above the arrows */
+      padding: 12px 14px;
+      border: var(--node-border) solid var(--ink);
+      background: var(--paper);          /* hides any arrow passing behind a box */
+      font: 600 15px / 1.3 var(--font-body);
+    }
+    .connectors {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      z-index: 2;
+      display: none;                     /* no arrows on phones */
+      color: var(--ink);
+      pointer-events: none;
+    }
+    .connectors path { fill: none; stroke: currentColor; stroke-width: var(--node-border); }
+    @media (min-width: 1024px) {
+      .diagram {
+        width: 100vw;
+        max-width: var(--diagram-stage);
+        left: 50%;
+        transform: translateX(-50%);     /* the same breakout as .bleed, capped at 1200px */
+        padding: var(--diagram-pad);
+      }
+      .diagram-inner { grid-template-columns: repeat(4, 1fr); column-gap: 6%; align-items: center; }
+      .connectors { display: block; }
+    }
+
+    /* ============ 9. SCROLL ENGINE (chunk 8, gated in chunk 10) ============
+       Base = a static, readable stack. Everything scroll-specific is under .scrolly-ready, a class the page script adds
+       as its LAST line, so it only exists if the whole engine set up without throwing. JS off, JS blocked, or JS
+       crashing all leave the base: no tall blank runways and no hidden frames (breakdown §19 #2). */
+    .runway { position: relative; margin: 40px 0; }
+    .sticky { position: relative; }
+    .progress { display: none; }
+
+    /* A runway is a tall section; its sticky panel is one screen tall and pinned to the top until the runway's bottom
+       edge arrives. Scrolling through the runway is the "timeline" JS reads. */
+    .scrolly-ready .runway { margin: 0; height: calc(var(--steps) * var(--runway-step)); }
+    .scrolly-ready .sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;                     /* fallback for browsers without svh */
+      height: 100svh;                    /* smallest visible height: doesn't jump when the phone URL bar moves */
+      overflow: hidden;
+    }
+    .scrolly-ready .progress {
+      display: block;
+      position: absolute;
+      bottom: var(--progress-bottom);
+      left: 50%;
+      transform: translateX(-50%);
+      width: var(--progress-w);
+      height: 3px;
+      background: var(--line);
+      transition: opacity .3s;
+    }
+    .progress.hidden { opacity: 0; }
+    .progress-fill { height: 100%; width: 0; background: var(--ink); }
+    .progress-marker {
+      position: absolute;
+      top: 50%;
+      width: var(--marker);
+      height: var(--marker);
+      border-radius: 50%;
+      background: var(--line);
+      transform: translate(-50%, -50%);
+    }
+    .progress-marker.on { background: var(--ink); }
+
+    /* ============ 10. SCENES (chunk 9, gated in chunk 10) ============
+       The engine (section 9) knows nothing about these. Each scene only says what step n looks like.
+       One motion idea per scene: A cuts, B fades its words, C settles its objects. */
+
+    /* --- Base: every frame and caption, stacked in reading order --- */
+    .frame { width: var(--col); margin: 0 auto 40px; text-align: center; }
+    .a-heading { margin: 0 0 12px; font: var(--headline-weight) clamp(22px, 3vw, 34px) / 1.1 var(--font-display); }
+    .a-card { position: relative; width: min(44.85vw, 250px); aspect-ratio: 1; margin: 0 auto 48px; }
+    .a-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .a-label {
+      position: absolute;
+      top: 100%;
+      inset-inline: 0;
+      margin: 12px 0 0;
+      color: var(--soft);
+      font: 600 15px / 1.3 var(--font-body);
+    }
+    .a-arrow { display: none; }
+    /* B: `display: contents` dissolves the two list wrappers, so each caption and page is a flex item of .b-wrapper,
+       and the inline `order` interleaves them: caption i = 2i, page i = 2i + 1. */
+    .b-wrapper { width: var(--col); margin: 0 auto; display: flex; flex-direction: column; }
+    .b-text-overlay, .b-content { display: contents; }
+    .b-text { margin: 0 0 10px; text-align: center; font: 20px / 1.3 var(--font-display); }
+    .b-content .frame { width: auto; margin: 0 0 40px; }
+    .b-content img { display: block; width: 100%; height: auto; }
+    .c-caption { width: var(--col); margin: 0 auto 14px; text-align: center; font: 600 15px / 1.3 var(--font-body); }
+    .c-stage { width: var(--col); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .c-painting { margin: 0; }
+    .c-steps { width: var(--col); margin: 0 auto 14px; padding-inline-start: 1.25em; color: var(--soft); font: 15px / 1.4 var(--font-body); }
+    .c-caption { display: none; }
+    .c-painting img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
+
+    /* --- Enhanced: frames stack in one spot; only the active one shows. A hard cut, so no transition. --- */
+    .scrolly-ready .frame {
+      position: absolute;
+      inset: 0;
+      width: auto;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .scrolly-ready .frame.is-active { opacity: 1; visibility: visible; }
+
+    /* A: sizes follow the viewport, so the composition holds on any screen. */
+    .scrolly-ready .a-heading { position: absolute; top: 10vh; inset-inline: 0; margin: 0; padding: 0 20px; }
+    .scrolly-ready .a-card { margin: 0; }
+    /* The arrow's position is an API of custom properties: a designer can move one arrow inline, with no new CSS. */
+    .scrolly-ready .a-arrow {
+      display: block;
+      position: absolute;
+      top: var(--arrow-top, 50%);
+      left: var(--arrow-left, 100%);
+      width: var(--arrow-length, 80px);
+      height: 16px;
+      transform: translateY(-50%);
+      overflow: visible;
+    }
+    .a-arrow line { fill: none; stroke: var(--ink); stroke-width: var(--arrow-stroke, 2); }
+    @media (orientation: portrait) {   /* orientation, not width: a landscape phone shares the desktop arrow layout */
+      .a-arrow line { stroke-width: var(--arrow-mobile-stroke, 1.5); }
+      .scrolly-ready .a-arrow.hide-portrait { display: none; }
+    }
+
+    /* B: an image band with fading captions. */
+    .scrolly-ready .b-panel { height: 100%; padding: 0 16px; }
+    .scrolly-ready .b-wrapper { width: auto; height: 100%; margin: 0; }
+    .scrolly-ready .b-text-overlay { display: block; position: relative; min-height: 30vh; }   /* phones: caption area on top */
+    .scrolly-ready .b-content { display: block; position: relative; flex: 1; }
+    .scrolly-ready .b-text {
+      position: absolute;                 /* every caption in the same spot, so different lengths never shift the layout */
+      inset-inline: 0;
+      bottom: 0;
+      width: 90%;
+      margin: 0 auto 16px;
+      opacity: 0;
+      transition: opacity .4s var(--ease-fade);
+    }
+    .scrolly-ready .b-text.is-visible { opacity: 1; }
+    /* Pin the image to the frame. height: 100% alone fails here: the frame is a grid, and a % height inside an
+       auto-sized grid row has nothing definite to resolve against, so the image falls back to its natural size. */
+    .scrolly-ready .b-content img { position: absolute; inset: 0; height: 100%; object-fit: contain; }
+    @media (min-width: 768px) {
+      .scrolly-ready .b-panel { padding: 0 40px; }
+      .scrolly-ready .b-wrapper {         /* a centered band 65vh tall: 17.5vh empty above and below */
+        position: absolute;
+        top: 17.5vh;
+        bottom: 17.5vh;
+        left: 40px;
+        right: 40px;
+        height: auto;
+      }
+      .scrolly-ready .b-text-overlay { min-height: min(20vh, 80px); }
+      .scrolly-ready .b-content { flex: none; height: calc(100% - min(20vh, 80px)); }
+      .scrolly-ready .b-text { top: 0; bottom: auto; width: min(545px, 90%); margin: 0 auto; font-size: 1.5rem; line-height: 1.25; }
+    }
+
+    /* C: re-arranging paintings. JS writes each step's layout inline; CSS animates the change. */
+    .scrolly-ready .c-steps {           /* same as .visually-hidden */
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+    }
+    .scrolly-ready .c-caption { display: block; position: absolute; top: 6vh; inset-inline: 0; z-index: 5; width: auto; margin: 0; padding: 0 20px; }
+    .scrolly-ready .c-stage { position: absolute; inset: 0; width: auto; margin: 0; display: block; }
+    .scrolly-ready .c-painting {
+      position: absolute;
+      transition: opacity .95s var(--ease-settle), transform .95s var(--ease-settle), top .95s var(--ease-settle),
+                  left .95s var(--ease-settle), right .95s var(--ease-settle), width .95s var(--ease-settle);
+    }
+    .scrolly-ready .c-painting img { box-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+
+    /* ============ 11. SCENE D: SCROLL-SCRUBBED LOTTIE (chunk 10) ============
+       The animation's playhead IS the scroll position. Base: the text description. Enhanced: a pinned stage. */
+    .scrub-stage { width: var(--col); margin: 0 auto; }
+    .scrub-fallback { margin: 0; color: var(--soft); font: 16px / 1.5 var(--font-body); text-align: center; }
+    .scrub-anim { display: none; }
+    .scrolly-ready .scrub-stage {      /* flex, not grid: a flex item's % height resolves against this definite height */
+      width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .scrolly-ready .scrub-anim { display: block; height: 80%; aspect-ratio: var(--aspect); max-width: calc(100% - 32px); }
+    .scrolly-ready .scrub-anim svg { display: block; }
+    /* Once the animation is on screen, the description moves to screen readers only. If the Lottie fails to load,
+       it stays visible, centered on the stage. */
+    .scrolly-ready .scrub-loaded .scrub-fallback {
+      position: absolute;
+      width: 1px; height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .scrolly-ready .scrub-failed .scrub-anim { display: none; }
+
+    /* ============ 12. HARDENING (chunk 10) ============ */
+    /* Reduced motion: every transition and animation ends instantly. Steps still change; nothing slides or fades.
+       Scene D shows its end frame instead of scrubbing (in JS). */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+    }
+    /* No @media (scripting: none) block: the reference needs one to undo its scroll layout, but here the base CSS IS the
+       no-script layout, and nothing scroll-specific applies until .scrolly-ready. There is nothing left to undo. */
+
+    /* Screen-reader-only text: in the accessibility tree, off the screen. */
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      margin: -1px; padding: 0; border: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* ============ 99. TWINS (chunk 6): keep LAST in the stylesheet ============
+       Two versions of a visual, one for each shape of screen, like ai2html artboards. Switch at 1024px.
+       These utilities only ever HIDE. A "show" rule (display: block) would override each component's own display,
+       e.g. the header art's flex. They come last, with !important, so no component rule can undo them: that ordering
+       is exactly the cascade bug in the reference, where .header-art { display: flex } beat .desktop-only. */
+    @media (max-width: 1023.98px) { .desktop-only { display: none !important; } }
+    @media (min-width: 1024px)    { .mobile-only  { display: none !important; } }
+  </style>
+</head>
+<body>
+
+<!--
+  Phase 1 · Chunk 1: skeleton and content model.
+  Semantic markup only. No CSS, no JavaScript yet.
+
+  The page is a flat list of sibling blocks: text, visual, text, visual.
+  A newsroom stores that list as data (ArchieML in a Google Doc, or JSON) and a loop renders it.
+  This is the same page written as data. Chunk 11 renders from a file shaped like this.
+
+  content model
+  [
+    { type: "header",  headline: "The Second Draft",
+                       dek: "Most of what a reader sees was decided after the first version failed. That is where the argument lives.",
+                       art: { mobile: "header-mobile.svg", desktop: "header-desktop.svg" } },
+    { type: "byline",  author: "A. Writer", date: "2026-10-01" },
+    { type: "text",    value: "Every essay you have read in a newspaper…" },
+    { type: "text",    value: "We hide the drafts…" },
+    { type: "two-up",  images: [{ src: "two-up-draft-1.webp", alt: "…" }, { src: "two-up-draft-4.webp", alt: "…" }],
+                       caption: "The first and fourth drafts of the same opening paragraph." },
+    { type: "text",    value: "…" },
+    { type: "text",    value: "…" },
+    { type: "diagram", nodes: ["Idea", "Draft", "Revise", "Ship"] },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "slides",  steps: [ { heading: "…", card: "…" }, … ×6 ] },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "band",    steps: [ { image: "…", caption: "…" }, … ×5 ] },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "arrange", steps: [ { caption: "…", layout: [ {top, left, width, rot, op, z}, … ] }, … ×3 ] },
+    { type: "text",    value: "…" },
+    { type: "text",    value: "…" },
+    { type: "scrolly", scene: "scrub",   animation: { mobile: "scrub-mobile.json", desktop: "scrub-desktop.json" }, steps: 2.5 },
+    { type: "text",    value: "…" },
+    { type: "credits", value: "…" }
+  ]
+-->
+
+<article class="story">
+
+  <header class="header bleed">
+    <div class="header-copy">
+      <p class="kicker">Our Opinions <span class="bar">|</span> Guest Essay · Demo</p>
+      <h1 class="headline">The Second Draft</h1>
+      <p class="subtitle">Most of what a reader sees was decided after the first version failed. That is where the argument lives.</p>
+    </div>
+    <!-- Twin art (chunk 6): a landscape artboard for desktop and a portrait one for phones, each composed for its shape.
+         Only one is displayed at any width (see section 99 of the CSS). -->
+    <div class="header-art mobile-only">
+      <!-- 800×1200 portrait artboard. On a phone the copy covers roughly the top 55% of the header, so the art sits
+           below it and keeps that band clear. Rendered 450px wide at 675px tall: a 375px screen crops ~37px each side. -->
+      <svg viewBox="0 0 800 1200" aria-hidden="true" focusable="false">
+        <g class="art-page">
+          <rect x="120" y="760" width="460" height="560" transform="rotate(-7 350 1040)"/>
+          <rect x="240" y="720" width="460" height="560"/>
+        </g>
+        <g class="art-lines">
+          <path d="M300 820h340M300 870h340M300 920h280M300 1000h340M300 1050h300"/>
+        </g>
+        <g class="art-ring">
+          <circle cx="660" cy="1080" r="90"/>
+          <circle cx="110" cy="130" r="60"/>
+        </g>
+      </svg>
+    </div>
+    <div class="header-art desktop-only">
+      <!-- Placeholder art: three manuscript pages and two coffee rings, drawn on an 1800×1200 landscape artboard.
+           It scales by height, so the sides crop on narrow screens. Key content sits in the middle 40% (x 540–1260).
+           The circles are the squash test: if they ever turn oval, the art is being stretched. -->
+      <svg viewBox="0 0 1800 1200" aria-hidden="true" focusable="false">
+        <g class="art-page">
+          <rect x="250" y="260" width="520" height="680" transform="rotate(-6 510 600)"/>
+          <rect x="1030" y="230" width="520" height="680" transform="rotate(5 1290 570)"/>
+          <rect x="640" y="330" width="520" height="680"/>
+        </g>
+        <g class="art-lines">
+          <path d="M700 420h400M700 470h400M700 520h340M700 600h400M700 650h380M700 700h400M700 750h220M700 830h400M700 880h300"/>
+        </g>
+        <g class="art-ring">
+          <circle cx="1380" cy="900" r="120"/>
+          <circle cx="430" cy="300" r="90"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <p class="byline">By A. Writer · <time datetime="2026-10-01">Oct. 1, 2026</time></p>
+
+  <p class="g-text">Every essay you have read in a newspaper arrived looking finished. The sentences sit in order, the argument advances, and the conclusion feels as if it had been waiting at the end of the road all along. That calm is a performance. Behind it are versions that went nowhere, paragraphs that argued the opposite and an opening that was rewritten until it stopped apologizing.</p>
+
+  <p class="g-text">We hide the drafts because we think they make the writer look unsure. I think they do the opposite. A draft shows the moment an idea met resistance and changed shape, and that moment is usually the most persuasive part of the whole process.</p>
+
+  <figure class="two-up bleed" data-block="two-up">
+    <img src="assets/two-up-draft-1.webp" srcset="assets/two-up-draft-1-400w.webp 400w, assets/two-up-draft-1.webp 800w" sizes="(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw" alt="The first draft of the opening paragraph, crowded with qualifications." width="800" height="1000" loading="lazy" decoding="async">
+    <img src="assets/two-up-draft-4.webp" srcset="assets/two-up-draft-4-400w.webp 400w, assets/two-up-draft-4.webp 800w" sizes="(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw" alt="The fourth draft of the same paragraph, about half as long." width="800" height="1000" loading="lazy" decoding="async">
+    <figcaption class="group-caption">The first and fourth drafts of the same opening paragraph. <span class="credit">Placeholder images</span></figcaption>
+  </figure>
+
+  <p class="g-text">Look at the first and the fourth version of the same opening. The first one explains. The fourth one asks the reader to notice something. Nothing about the facts changed between them. What changed was the writer's sense of who was on the other side of the page.</p>
+
+  <p class="g-text">Editors know this rhythm well. It rarely runs in a straight line, but it does have stages, and each stage asks a different question of the work.</p>
+
+  <section class="diagram" data-block="diagram" aria-label="The four stages of an essay">
+    <!-- A process is an ordered list: screen readers announce "list, 4 items" and the order survives without CSS. -->
+    <ol class="diagram-inner">
+      <li class="node">Idea</li>
+      <li class="node">Draft</li>
+      <li class="node">Revise</li>
+      <li class="node">Ship</li>
+    </ol>
+    <!-- The arrows. Two paths whose "d" attribute the script rewrites; decorative, so hidden from screen readers. -->
+    <svg class="connectors" aria-hidden="true" focusable="false">
+      <path class="connector-curves" d=""/>
+      <path class="connector-heads" d=""/>
+    </svg>
+  </section>
+
+  <p class="g-text">The stages look tidy in a diagram. In practice the arrow from revising back to drafting gets used far more than the one that points to publishing. Here is one paragraph moving through all four.</p>
+
+  <section class="runway" data-block="scrolly-a" data-scrolly="a" aria-labelledby="scrolly-a-title" style="--steps: 6">
+    <h2 class="visually-hidden" id="scrolly-a-title">One paragraph through six versions</h2>
+    <!-- The accessible version: every step, in order. The frames below are visual only (aria-hidden), because the
+         inactive ones are visibility: hidden and a screen reader would never reach them (breakdown §19 #4). -->
+    <ol class="visually-hidden">
+      <li>Version 1: Explains.</li>
+      <li>Version 2: Hedges.</li>
+      <li>Version 3: Cuts.</li>
+      <li>Version 4: Asks.</li>
+      <li>Version 5: Trims.</li>
+      <li>Version 6: Lands.</li>
+    </ol>
+    <div class="sticky">
+      <div class="frames" aria-hidden="true">
+      <div class="frame is-active">
+        <p class="a-heading">Version 1</p>
+        <div class="a-card">
+          <img src="assets/slides/slide-1.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
+          <p class="a-label">Explains</p>
+            <svg class="a-arrow" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
+        </div>
+      </div>
+      <div class="frame">
+        <p class="a-heading">Version 2</p>
+        <div class="a-card">
+          <img src="assets/slides/slide-2.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
+          <p class="a-label">Hedges</p>
+            <svg class="a-arrow hide-portrait" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
+        </div>
+      </div>
+      <div class="frame">
+        <p class="a-heading">Version 3</p>
+        <div class="a-card">
+          <img src="assets/slides/slide-3.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
+          <p class="a-label">Cuts</p>
+            <svg class="a-arrow" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
+        </div>
+      </div>
+      <div class="frame">
+        <p class="a-heading">Version 4</p>
+        <div class="a-card">
+          <img src="assets/slides/slide-4.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
+          <p class="a-label">Asks</p>
+            <svg class="a-arrow hide-portrait" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
+        </div>
+      </div>
+      <div class="frame">
+        <p class="a-heading">Version 5</p>
+        <div class="a-card">
+          <img src="assets/slides/slide-5.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
+          <p class="a-label">Trims</p>
+            <svg class="a-arrow" style="--arrow-length: min(18vw, 120px)"><line x1="8" y1="8" x2="100%" y2="8"/></svg>
+        </div>
+      </div>
+      <div class="frame">
+        <p class="a-heading">Version 6</p>
+        <div class="a-card">
+          <img src="assets/slides/slide-6.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async">
+          <p class="a-label">Lands</p>
+        </div>
+      </div>
+      </div>
+      <div class="progress hidden" aria-hidden="true">
+        <div class="progress-fill"></div>
+        <span class="progress-marker" style="left: 0%"></span>
+        <span class="progress-marker" style="left: 20%"></span>
+        <span class="progress-marker" style="left: 40%"></span>
+        <span class="progress-marker" style="left: 60%"></span>
+        <span class="progress-marker" style="left: 80%"></span>
+        <span class="progress-marker" style="left: 100%"></span>
+      </div>
+    </div>
+  </section>
+
+  <p class="g-text">By the sixth version the paragraph is shorter, plainer and much harder to disagree with. Most of the cuts were not about style. They removed claims the writer could not yet support.</p>
+
+  <section class="runway" data-block="scrolly-b" data-scrolly="b" aria-labelledby="scrolly-b-title" style="--steps: 5">
+    <h2 class="visually-hidden" id="scrolly-b-title">Five marked-up pages from the editing process</h2>
+    <ol class="visually-hidden">
+      <li>Page one: a question in the margin.</li>
+      <li>Page two: an arrow moves a sentence up.</li>
+      <li>Page three: one word circled.</li>
+      <li>Page four: a paragraph struck through.</li>
+      <li>Page five: almost clean.</li>
+    </ol>
+    <div class="sticky">
+      <div class="b-panel" aria-hidden="true">
+        <div class="b-wrapper">
+          <div class="b-text-overlay">
+            <p class="b-text is-visible" style="order: 0">Page one: a question in the margin.</p>
+            <p class="b-text" style="order: 2">Page two: an arrow moves a sentence up.</p>
+            <p class="b-text" style="order: 4">Page three: one word circled.</p>
+            <p class="b-text" style="order: 6">Page four: a paragraph struck through.</p>
+            <p class="b-text" style="order: 8">Page five: almost clean.</p>
+          </div>
+          <div class="b-content">
+            <div class="frame is-active" style="order: 1"><img src="assets/marked-up-1.webp" srcset="assets/marked-up-1-600w.webp 600w, assets/marked-up-1.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 3"><img src="assets/marked-up-2.webp" srcset="assets/marked-up-2-600w.webp 600w, assets/marked-up-2.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 5"><img src="assets/marked-up-3.webp" srcset="assets/marked-up-3-600w.webp 600w, assets/marked-up-3.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 7"><img src="assets/marked-up-4.webp" srcset="assets/marked-up-4-600w.webp 600w, assets/marked-up-4.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+            <div class="frame" style="order: 9"><img src="assets/marked-up-5.webp" srcset="assets/marked-up-5-600w.webp 600w, assets/marked-up-5.webp 1200w" sizes="(min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)" alt="" width="1200" height="900" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="progress hidden" aria-hidden="true">
+        <div class="progress-fill"></div>
+        <span class="progress-marker" style="left: 0%"></span>
+        <span class="progress-marker" style="left: 25%"></span>
+        <span class="progress-marker" style="left: 50%"></span>
+        <span class="progress-marker" style="left: 75%"></span>
+        <span class="progress-marker" style="left: 100%"></span>
+      </div>
+    </div>
+  </section>
+
+  <p class="g-text">Marked-up pages tell the same story from the editor's side: questions in the margin, arrows that move a sentence to where it belongs, a single word circled because it promises more than the evidence delivers.</p>
+
+  <section class="runway" data-block="scrolly-c" data-scrolly="c" aria-labelledby="scrolly-c-title" style="--steps: 3">
+    <h2 class="visually-hidden" id="scrolly-c-title">Three arguments competing for the lead</h2>
+    <!-- Visible in the stack (one set of cards, three captions); screen-reader-only once the scene runs. -->
+    <ol class="c-steps">
+      <li>Three arguments, none leading yet.</li>
+      <li>The first argument takes the lead.</li>
+      <li>The skeptic's argument moves to the front.</li>
+    </ol>
+    <div class="sticky">
+      <div aria-hidden="true">
+        <p class="c-caption">Three arguments, none leading yet.</p>
+        <div class="c-stage">
+          <!-- Each step's layout is applied by the script. Without it, the cards sit in a plain row (the stack). -->
+          <figure class="c-painting"><img src="assets/argument-a.webp" alt="" width="600" height="800" loading="lazy" decoding="async"></figure>
+          <figure class="c-painting"><img src="assets/argument-b.webp" alt="" width="600" height="800" loading="lazy" decoding="async"></figure>
+          <figure class="c-painting"><img src="assets/argument-c.webp" alt="" width="600" height="800" loading="lazy" decoding="async"></figure>
+        </div>
+      </div>
+      <div class="progress hidden" aria-hidden="true">
+        <div class="progress-fill"></div>
+        <span class="progress-marker" style="left: 0%"></span>
+        <span class="progress-marker" style="left: 50%"></span>
+        <span class="progress-marker" style="left: 100%"></span>
+      </div>
+    </div>
+  </section>
+
+  <p class="g-text">Choosing which argument leads is the hardest call in the whole process. Each of the three had a claim on the top of the page, and each made the other two read differently depending on where it sat.</p>
+
+  <p class="g-text">What finally decided it was not which point was strongest, but which one a skeptical reader would need to accept before the others could land.</p>
+
+  <!-- Scene D twins: a landscape animation for wide screens, a portrait one for phones. Only the visible twin ever
+       loads its file (the hidden one never intersects the viewport), and the engine skips the hidden one. -->
+  <section class="runway desktop-only" data-block="scrolly-d" data-scrolly="d" data-lottie="assets/scrub-desktop.json" aria-labelledby="scrolly-d-title" style="--steps: 2.5">
+    <h2 class="visually-hidden" id="scrolly-d-title">A draft condensing into its final form</h2>
+    <div class="sticky">
+      <div class="scrub-stage">
+        <p class="scrub-fallback">A long draft condenses, step by step, into a short final paragraph.</p>
+        <div class="scrub-anim" aria-hidden="true" style="--aspect: 1800 / 1200"></div>
+      </div>
+    </div>
+  </section>
+  <section class="runway mobile-only" data-block="scrolly-d" data-scrolly="d" data-lottie="assets/scrub-mobile.json" aria-labelledby="scrolly-d-title-m" style="--steps: 2.5">
+    <h2 class="visually-hidden" id="scrolly-d-title-m">A draft condensing into its final form</h2>
+    <div class="sticky">
+      <div class="scrub-stage">
+        <p class="scrub-fallback">A long draft condenses, step by step, into a short final paragraph.</p>
+        <div class="scrub-anim" aria-hidden="true" style="--aspect: 800 / 1200"></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="g-text">Readers will never see most of this, and that is fine. But a little more of it on the page would make the argument more honest about how it was made, and, I suspect, more convincing.</p>
+
+  <footer class="credits">
+    <p>Demo content. The essay, author and drafts are invented for a front-end study project. Illustrations and animations are placeholders.</p>
+  </footer>
+
+</article>
+
+<script>
+  /* ============ PAGE SCRIPT ============ */
+
+  /* Chunk 5: reveal the header once every font in use has loaded (or failed).
+     document.fonts.ready is a promise; older browsers without the Font Loading API just reveal immediately. */
+  (document.fonts ? document.fonts.ready : Promise.resolve())
+    .then(() => document.documentElement.classList.add('is-ready'));
+
+  /* Chunk 7: draw the diagram's arrows from where the boxes actually are.
+     Read every box position first, then write the two paths once (reading after writing forces extra layouts). */
+  function drawConnectors(diagram) {
+    const svg = diagram.querySelector('.connectors');
+    if (getComputedStyle(svg).display === 'none') return;          // phones: no arrows
+
+    // --- read ---
+    const box = svg.getBoundingClientRect();
+    const nodes = [...diagram.querySelectorAll('.node')].map((n) => n.getBoundingClientRect());
+    const lift = parseFloat(getComputedStyle(diagram).getPropertyValue('--connector-lift')) || 40;
+
+    // --- compute: one quadratic curve + one arrowhead per neighbouring pair ---
+    let curves = '', heads = '';
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const a = nodes[i], b = nodes[i + 1];
+      const x1 = a.right - box.left, y1 = a.top + a.height / 2 - box.top;   // right edge of box i, vertical middle
+      const x2 = b.left - box.left - 6, y2 = b.top + b.height / 2 - box.top; // just short of box i+1's left edge
+      const mid = (x1 + x2) / 2, dy = lift * (i % 2 ? 1 : -1);              // alternate up, down, up…
+      curves += `M${x1},${y1} Q${mid},${y1 + dy} ${x2},${y2} `;
+      heads += `M${x2 - 7},${y2 - 5} L${x2},${y2} L${x2 - 7},${y2 + 5} `;
+    }
+
+    // --- write ---
+    svg.querySelector('.connector-curves').setAttribute('d', curves.trim());
+    svg.querySelector('.connector-heads').setAttribute('d', heads.trim());
+  }
+
+  // ResizeObserver fires whenever the grid changes size: window resize, zoom, fonts loading, text wrapping.
+  for (const diagram of document.querySelectorAll('.diagram')) {
+    new ResizeObserver(() => drawConnectors(diagram)).observe(diagram.querySelector('.diagram-inner'));
+  }
+
+  /* Chunk 8: the scroll engine, built once for every runway on the page.
+     progress = how far into the runway ÷ the distance the panel stays pinned; step = floor(progress × steps). */
+  function progressOf(runway, sticky) {
+    const r = runway.getBoundingClientRect();
+    // Divide by the sticky's own height, not innerHeight: the panel is 100svh, and on phones innerHeight
+    // grows when the URL bar hides, so the two disagree (the reference's bug, breakdown §19 #10).
+    const span = r.height - sticky.offsetHeight;
+    return span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
+  }
+  function stepOf(progress, steps) {
+    return Math.min(steps - 1, Math.floor(progress * steps));   // p = 1 would give `steps`, one past the end
+  }
+
+  /* Chunk 9: the scenes. Each renderer answers one question, "what does step n look like?", and runs only when the
+     step changes. The engine above never changes when a scene is added. */
+  const C_LAYOUTS = [   // one array per step, one object per painting, all in % of the stage (the reference's values)
+    [{ top: 25, left: 6, width: 37.5, rot: 0, op: .15, z: 2 }, { top: 10, left: 35, width: 34, rot: 0, op: .15, z: 1 }, { top: 25, right: 9, width: 30, rot: 1, op: .15, z: 2 }],
+    [{ top: 15, left: 4, width: 40, rot: -3, op: 1, z: 3 },    { top: 12, left: 38, width: 30, rot: 2, op: .4, z: 1 },   { top: 30, right: 4, width: 28, rot: 4, op: .4, z: 2 }],
+    [{ top: 20, left: 20, width: 30, rot: 0, op: .4, z: 1 },   { top: 15, left: 35, width: 36, rot: -2, op: 1, z: 3 },   { top: 22, right: 12, width: 26, rot: 3, op: 1, z: 2 }],
+  ];
+  const C_PORTRAIT_SCALE = 1.6;   // tall screens have spare height but little width, so paintings get wider
+  const portrait = matchMedia('(orientation: portrait)');
+
+  function showFrame(scope, step) {
+    scope.querySelectorAll('.frame').forEach((f, i) => f.classList.toggle('is-active', i === step));
+  }
+  const renderers = {
+    a(el, step) { showFrame(el, step); },                      // hard cut
+    b(el, step) {
+      showFrame(el.querySelector('.b-content'), step);         // images cut…
+      el.querySelectorAll('.b-text').forEach((t, i) => t.classList.toggle('is-visible', i === step)); // …words fade
+    },
+    c(el, step) {                                               // objects settle (CSS transitions do the motion)
+      const scale = portrait.matches ? C_PORTRAIT_SCALE : 1;
+      el.querySelectorAll('.c-painting').forEach((painting, i) => {
+        const L = C_LAYOUTS[step][i];
+        Object.assign(painting.style, {
+          top: L.top + '%',
+          left: L.left != null ? L.left + '%' : 'auto',          // right-side paintings anchor to the right edge
+          right: L.right != null ? L.right + '%' : 'auto',
+          width: Math.min(L.width * scale, 70) + '%',
+          zIndex: L.z,
+          opacity: L.op,
+          transform: `rotate(${L.rot}deg)`,
+        });
+      });
+      el.querySelector('.c-caption').textContent = el.querySelectorAll('ol li')[step].textContent;
+    },
+  };
+
+  const runways = [...document.querySelectorAll('.runway')].map((el) => ({
+    el,
+    kind: el.dataset.scrolly,
+    sticky: el.querySelector('.sticky'),
+    steps: Math.ceil(parseFloat(getComputedStyle(el).getPropertyValue('--steps'))) || 1,
+    bar: el.querySelector('.progress'),
+    fill: el.querySelector('.progress-fill'),
+    markers: [...el.querySelectorAll('.progress-marker')],
+    last: -1,
+    scrub: null,                                   // scene D: set once its Lottie has loaded
+  }));
+
+  let ticking = false;
+  window.updateCount = 0;                          // checkpoint aid: how many times update() has run
+  function update() {
+    ticking = false;
+    window.updateCount++;
+    for (const r of runways) {
+      if (r.el.offsetParent === null) continue;    // a hidden twin (display: none): skip it
+      const p = progressOf(r.el, r.sticky);
+      // Scrubbed scenes skip the step logic entirely: the playhead follows p on every frame.
+      if (r.kind === 'd') { r.scrub?.(p); continue; }
+      const step = stepOf(p, r.steps);
+      // cheap writes every frame
+      r.fill.style.width = (p * 100).toFixed(2) + '%';
+      r.bar.classList.toggle('hidden', p <= 0 || p >= 1);
+      // anything heavier waits for the step to change
+      if (step === r.last) continue;
+      r.last = step;
+      r.markers.forEach((m, i) => m.classList.toggle('on', i <= step));
+      renderers[r.kind]?.(r.el, step);             // the engine's only link to the scenes
+    }
+  }
+  // rAF throttle: scroll can fire several times per frame; `ticking` lets through at most one update per frame.
+  // passive: we promise never to preventDefault, so the browser never waits on us before scrolling.
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  // Resize and rotation can change a scene's layout (C's portrait scale), so force every renderer to re-apply.
+  const reapply = () => { runways.forEach((r) => (r.last = -1)); update(); };
+  addEventListener('resize', reapply);
+  portrait.addEventListener('change', reapply);
+
+  /* Chunk 10: scene D, a scroll-scrubbed Lottie. Scrub vs autoplay: autoplay runs on a clock; scrub runs on the
+     reader's thumb, so they set the pace and can rewind. */
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let lottieLib;
+  function loadLottie() {                          // the library itself only downloads when a scrub scene is near
+    return (lottieLib ??= new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js';
+      script.onload = () => resolve(window.lottie);
+      script.onerror = reject;
+      document.head.append(script);
+    }));
+  }
+  function setUpScrub(r) {
+    const stage = r.el.querySelector('.scrub-stage');
+    loadLottie()
+      .then((lottie) => {
+        const anim = lottie.loadAnimation({
+          container: stage.querySelector('.scrub-anim'), renderer: 'svg', loop: false, autoplay: false, path: r.el.dataset.lottie,
+        });
+        anim.addEventListener('data_failed', () => stage.classList.add('scrub-failed'));
+        anim.addEventListener('DOMLoaded', () => {
+          const last = anim.totalFrames - 1;
+          stage.classList.add('scrub-loaded');
+          // Reduced motion: show the end state, still. Otherwise frame = p × last (true = a frame number, not ms).
+          r.scrub = reducedMotion.matches ? null : (p) => anim.goToAndStop(p * last, true);
+          anim.goToAndStop(reducedMotion.matches ? last : 0, true);
+          update();
+        });
+      })
+      .catch(() => stage.classList.add('scrub-failed'));   // the text description stays on screen
+  }
+  // Load a twin's animation only when its runway comes within 200px of the viewport. A display: none twin never
+  // intersects, so the hidden twin's file is never requested.
+  const near = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      near.unobserve(e.target);
+      setUpScrub(runways.find((r) => r.el === e.target));
+    }
+  }, { rootMargin: '200px' });
+  runways.filter((r) => r.kind === 'd').forEach((r) => near.observe(r.el));
+
+  /* Last lines: switch the page to the scroll layout. Reaching this line proves every bit of setup above ran without
+     throwing. If anything failed, the class is never added and the reader gets the static stack (breakdown §19 #2).
+     The first measurement has to happen in the scroll layout, so update() runs after the class; if even that throws,
+     the class comes off again. */
+  const root = document.documentElement;
+  root.classList.add('scrolly-ready');
+  try { update(); } catch (err) { root.classList.remove('scrolly-ready'); throw err; }
+</script>
+
+</body>
+</html>

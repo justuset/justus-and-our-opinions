@@ -1,0 +1,10 @@
+/* Story app global styles. Every value comes from the shared design system, so a token change in
+   packages/design-system/tokens.css shows up here and in the graphics app at the same time. */
+@import '@opinion/design-system/tokens.css';
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
