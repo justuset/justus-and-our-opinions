@@ -64,4 +64,4 @@ Project-specific overrides:
 ## Conventions
 
 - Conventional Commits (`feat(tally): …`). One chunk ≈ one PR.
-- Scripts (once chunk 00 lands): `npm run dev | build | check | lint | format | test | test:e2e | preflight`.
+- Scripts (root, since Phase 2 chunk 00): `npm run dev | build | check | lint | format | test`. `test:e2e` and `preflight` arrive in later chunks. Requires npm 11 (`packageManager` in `package.json`).

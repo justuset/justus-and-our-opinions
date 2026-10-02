@@ -22,6 +22,7 @@ concepts it taught.
 | 15 | [Phase 1, chunk 10: scrubbed Lottie and hardening](15-chunk-10-scrub-and-hardening.md) | 2026-10-01 |
 | 16 | [Phase 1, chunk 11: finishing the port and proving parity](16-chunk-11-port-and-parity.md) | 2026-10-01 |
 | 17 | [Phase 1 retro](17-phase-1-retro.md) | 2026-10-01 |
+| 18 | [Phase 2, chunk 00: the monorepo foundation](18-phase-2-chunk-00-foundation.md) | 2026-10-02 |
 
 ## Entry template
 

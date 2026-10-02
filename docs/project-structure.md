@@ -36,6 +36,9 @@ says what a thing is, why it exists, and what you'd touch it for.
 justus-and-our-opinions/
 ├─ README.md                    what this repo is, where to start
 ├─ CLAUDE.md                    rules for Claude Code (and humans) working here
+├─ package.json                 PHASE 2 WORKSPACE root: "workspaces": ["apps/*", "packages/*"], shared lint/format
+├─ apps/story/, apps/graphics/  Phase 2 apps (React story page, SvelteKit graphics desk)
+├─ packages/                    Phase 2 shared code: design-system (tokens.css), archie (ArchieML → blocks)
 ├─ .claude/skills/              vendored Svelte skills for Claude Code (MIT, see its README)
 ├─ docs/                        everything you read: plans, references, learning log, this guide
 │  ├─ plan/                     Phase 1 (hand-built, 10 chunks) and Phase 2 (Times-shaped stack)
@@ -53,6 +56,10 @@ justus-and-our-opinions/
 | `prototype/` | Learning sandbox. One file, no build step, so every idea is visible in DevTools | Doing a Phase 1 chunk |
 | `projects/the-second-draft/` | The production-shaped story. Same page, as components, content data and a real build | Porting a chunk that passed, or editing copy and media |
 | `docs/` | The written explanation of all of it | Learning, or deciding what to build next |
+| `apps/`, `packages/` | The Phase 2 Times-shaped stack, one npm workspace (see `docs/architecture.md`) | Doing a Phase 2 chunk |
+
+`projects/the-second-draft/` is **not** part of the workspace: it keeps its own `package.json` and lockfile, as each
+Birdkit-style story does (§2). CI builds it as a separate job.
 
 ---
 

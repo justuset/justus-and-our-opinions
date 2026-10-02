@@ -1,0 +1,14 @@
+/* @opinion/design-system: tokens.css
+   The one place design decisions live. Both apps import this file, so changing a value here changes the story app
+   and the graphics desk together.
+
+   Chunk 00 ships just enough to prove the wiring. Chunk 01 fills in the full diatour system: rem-based fluid type,
+   spacing, layout widths, motion and light/dark themes. Values match Phase 1 (docs/design-system.md). */
+:root {
+  /* color: diatour's dark paper is the house look */
+  --paper: #121211;
+  --ink: #ededeb;
+
+  /* type */
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+}

@@ -1,0 +1,19 @@
+# Generated files and lockfiles
+package-lock.json
+build/
+dist/
+.svelte-kit/
+.react-router/
+
+# Phase 1 artifacts are finished and hand-formatted: leave them exactly as built
+prototype/
+projects/
+
+# Prose is formatted by hand (tables, line breaks)
+*.md
+docs/
+.claude/
+
+# Static files are copied as-is
+apps/graphics/static/
+apps/story/public/

@@ -13,7 +13,7 @@ separately and embedded, and story copy in **ArchieML**.
 
 ## Status
 
-✅ **Phase 1 complete.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md) are built, and [chunk 11](docs/plan/phase-1/11-optional-svelte-port.md)'s parity check passes, so **Phase 1 is complete** ([retro](docs/learning-log/17-phase-1-retro.md)). Next: [Phase 2](docs/plan/phase-2/README.md), which ports it to the Times-shaped stack.
+✅ **Phase 1 complete.** Phase 1 rebuilds the NYT-style scrolly article by hand in one `prototype/index.html`, in ten chunks with a browser checkpoint each. Chunks [1](docs/plan/phase-1/01-skeleton-and-content-model.md)–[10](docs/plan/phase-1/10-scrubbed-lottie-and-hardening.md) are built, and [chunk 11](docs/plan/phase-1/11-optional-svelte-port.md)'s parity check passes, so **Phase 1 is complete** ([retro](docs/learning-log/17-phase-1-retro.md)). [Phase 2](docs/plan/phase-2/README.md) ports it to the Times-shaped stack: [chunk 00](docs/plan/phase-2/00-foundation.md) (the monorepo foundation) is done, and next is [chunk 01](docs/plan/phase-2/01-tokens-and-base-css.md), the design-system package.
 
 🏗 **Story project in place.** [`projects/the-second-draft/`](projects/the-second-draft/) is a Birdkit-style SvelteKit project whose build output matches a live NYT interactive's folder shape: a prerendered `index.html`, a hashed `_app.<build-hash>/` and a hashed `_big_assets.<content-hash>/`. Each prototype chunk is ported into it once its checkpoint passes. All chunks are ported, and `npm run parity` confirms the project matches the prototype within 1px at 375, 1024 and 1440px.
 
@@ -22,6 +22,14 @@ separately and embedded, and story copy in **ArchieML**.
 ```
 justus-and-our-opinions/
 ├─ README.md · CLAUDE.md
+├─ package.json                npm workspaces: apps/* and packages/* (Phase 2)
+├─ apps/
+│  ├─ story/                   @opinion/story: React 19 + React Router 7, Node SSR (:5173)
+│  └─ graphics/                @opinion/graphics: SvelteKit 3 + Svelte 5, prerendered (:5174)
+├─ packages/
+│  ├─ design-system/           @opinion/design-system: diatour tokens.css, shared by both apps
+│  └─ archie/                  @opinion/archie: ArchieML → typed blocks (stub until Phase 2 chunk 03)
+├─ .github/workflows/ci.yml    lint → check → test → build on every push and PR
 ├─ .claude/skills/             Svelte skills for Claude Code (vendored, MIT)
 ├─ docs/                       plans, references, learning log, and the guides below
 ├─ prototype/index.html        Phase 1 sandbox: plain HTML/CSS/JS, one idea per chunk
@@ -34,6 +42,20 @@ justus-and-our-opinions/
 ```
 
 Every folder and file is explained in **[docs/project-structure.md](docs/project-structure.md)**.
+
+### Phase 2 workspace commands
+
+Node 22+ and **npm 11** (`npm install --global npm@11.21.0`; Node 22 ships npm 10, which can't install this tree).
+
+```bash
+npm install        # once, at the root: installs every app and package, links @opinion/* together
+npm run dev        # story app on http://localhost:5173 and graphics desk on http://localhost:5174, together
+npm run build      # build every workspace
+npm run check      # type-check (tsc, svelte-check)
+npm test           # unit tests (vitest)
+npm run lint       # prettier --check + eslint
+npm run format     # prettier --write
+```
 
 ## Start here
 
@@ -55,8 +77,8 @@ Every folder and file is explained in **[docs/project-structure.md](docs/project
 | Layer | Tool | Role |
 |-------|------|------|
 | Visual-essay story project | [SvelteKit 2](https://svelte.dev/docs/kit) + Svelte 5 + adapter-static + lottie-web, in `projects/<slug>/` | Birdkit-style: prerendered page, hashed code and media folders. **Built** |
-| Story page (product side) | [React 19](https://react.dev) + [React Router 7](https://reactrouter.com) framework mode, Node SSR | Article template, quiz, roundtable |
-| Graphics desk | [SvelteKit](https://svelte.dev/docs/kit) + Svelte 5 + d3-scale (ai2html optional) | Tally, stat chart, scrollytelling, built as embeds |
+| Story page (product side) | [React 19](https://react.dev) + [React Router 7](https://reactrouter.com) framework mode, Node SSR, Vite 8, in `apps/story` | Article template, quiz, roundtable. **Scaffolded** (Phase 2 chunk 00) |
+| Graphics desk | [SvelteKit 3](https://svelte.dev/docs/kit) + Svelte 5 + adapter-static + d3-scale (ai2html optional), in `apps/graphics` | Tally, stat chart, scrollytelling, built as embeds. **Scaffolded** (Phase 2 chunk 00) |
 | Design system | `packages/design-system`: diatour tokens in rem, fluid `clamp()` type, `@layer` | One visual source for both apps |
 | Content | [ArchieML](http://archieml.org/) → typed blocks (TypeScript + Zod) | Editors change stories without touching code |
 | Quality | Vitest, Testing Library, Playwright, axe | Unit, visual regression, accessibility |

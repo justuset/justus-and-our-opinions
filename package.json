@@ -1,0 +1,41 @@
+{
+  "name": "justus-and-our-opinions",
+  "private": true,
+  "description": "Learning project: an Opinion-style interactive article template (React story app + SvelteKit graphics desk) in the diatour design system.",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "concurrently --names story,graphics --prefix-colors cyan,magenta \"npm run dev -w @opinion/story\" \"npm run dev -w @opinion/graphics\"",
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-svelte": "^3.23.0",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-svelte": "^4.1.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vite": "^8.3.2"
+  },
+  "packageManager": "npm@11.21.0",
+  "allowScripts": {
+    "esbuild": false
+  }
+}
