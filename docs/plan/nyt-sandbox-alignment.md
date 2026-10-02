@@ -1,7 +1,7 @@
 # Aligning the build with the NYT Opinion sandbox blueprint
 
 **Date:** 2026-10-02  **Source:** [`../reference/nyt-sandbox-blueprint.md`](../reference/nyt-sandbox-blueprint.md) (the
-"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** proposed, nothing built yet
+"In Defense of the Detour" architecture blueprint, supplied 2026-10-02)  **Status:** decisions made 2026-10-02 (§2); S1 done
 
 ## Why this plan exists
 
@@ -115,7 +115,10 @@ CLAUDE.md version wins.
 
 ---
 
-## 2. Decisions needed before starting
+## 2. Decisions
+
+**Decided 2026-10-02:** the owner went with every recommendation below. For D4, which had no recommendation, the
+default is (b): build `DataScrolly` fresh from the blueprint's `stages.json`.
 
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
@@ -157,6 +160,13 @@ checked by a diff, since AI doesn't write or edit the argument.
   - The page renders identically: `npm run parity` stays within 1px.
   - "Verified N media URLs" still passes.
   - A misspelled component name shows the placeholder in dev and fails the build.
+
+**✅ Done** ([learning log 20](../learning-log/20-s1-body-document.md)):
+- **Rendered markup:** identical to the old build once hashes, hydration comments and inter-tag whitespace are set aside.
+- **Checks:** `npm run parity` within 1px; "verified 23 media URLs".
+- **A misspelled component** stops the build with `body[8]: missing component "Diagramm"` and shows the placeholder in dev.
+- **Inline HTML:** `<em>` and `<a href="#…">` render, and `<script>` is shown as text.
+- **One deviation:** the build-time check lives in `+page.js` (`docProblems()`), not a separate sanitizing step. Inline HTML is allow-listed at render time by a pure function with tests, so it's equally safe on the server and in the browser.
 
 ### S2. The platform shell
 

@@ -24,6 +24,7 @@ concepts it taught.
 | 17 | [Phase 1 retro](17-phase-1-retro.md) | 2026-10-01 |
 | 18 | [Phase 2, chunk 00: the monorepo foundation](18-phase-2-chunk-00-foundation.md) | 2026-10-02 |
 | 19 | [Checking the build against the NYT sandbox blueprint](19-nyt-sandbox-blueprint-review.md) | 2026-10-02 |
+| 20 | [NYT sandbox S1: the `body` document](20-s1-body-document.md) | 2026-10-02 |
 
 ## Entry template
 

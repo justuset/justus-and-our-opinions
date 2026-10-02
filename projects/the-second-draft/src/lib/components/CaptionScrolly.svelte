@@ -5,7 +5,10 @@
   import Scrolly from './Scrolly.svelte';
   import { asset } from '$lib/assets.js';
   import { srcset } from '$lib/media.js';
-  let { label, steps, sizes } = $props();
+  import { series } from '$lib/doc.js';
+  // Flat props from content/doc.json: image1, srcset1, alt1, caption1, image2, … (one numbered set per page)
+  let { label, sizes, ...props } = $props();
+  const steps = $derived(series(props, ['image', 'srcset', 'alt', 'caption']));
 </script>
 
 <Scrolly {label} steps={steps.length} stepTexts={steps.map((s) => s.caption)}>

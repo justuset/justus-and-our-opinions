@@ -27,11 +27,11 @@ Generated placeholder motion (self-authored, no third-party license): `node scri
 
 | You want to… | Edit |
 |--------------|------|
-| Change words | `content/story.json` |
-| Swap an image or animation | `big_assets/` (paths in `story.json` are relative to this folder) |
+| Change words | `content/doc.json` (one ordered `body` of blocks) |
+| Swap an image or animation | `big_assets/` (paths in `doc.json` are relative to this folder) |
 | Change a token (color, spacing, type, easing) | `src/app.css` |
 | Change how a block looks or behaves | `src/lib/components/<Block>.svelte` |
-| Add a block type | A new component + one line in `BLOCKS` in `src/routes/+page.svelte` |
+| Add a kind of block | A new component + one line in `registry` in `src/lib/blocks.js` |
 | Change the build output shape | `svelte.config.js` (every setting is commented) |
 
 ## Build output

@@ -25,9 +25,9 @@ Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-struc
 
 `projects/the-second-draft/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.
 
-- **Words** live only in `content/story.json`. **Media** lives only in `big_assets/`, never in `src/` or `static/`, and is referenced with `asset(path)` from `$lib/assets.js`.
+- **Words** live only in `content/doc.json` (one ordered `body` of `text` and `svelte` blocks with flat props, the shipped NYT payload's shape). **Media** lives only in `big_assets/`, never in `src/` or `static/`, and is referenced with `asset(path)` from `$lib/assets.js`.
 - `src/lib/assets.js` is **generated** by `scripts/hash-assets.js`. Don't edit it by hand. Commit the regenerated file when media changes.
-- One component per block type in `src/lib/components/`. Register new types in `BLOCKS` in `src/routes/+page.svelte`.
+- One component per block type in `src/lib/components/`. Register new components in `registry` in `src/lib/blocks.js`; an unregistered name fails the production build.
 - Every component renders a readable **no-JS state** first. Motion comes from `{@attach}` and is gated behind a class the JS adds.
 - Ported components keep the prototype's measured px values (Phase 1 rule). The top comment says ✅ ported, or ⏳ and which chunk finishes it.
 - Svelte work here follows the Svelte skills and the SSR/`{@attach}`/token rules in the next section.

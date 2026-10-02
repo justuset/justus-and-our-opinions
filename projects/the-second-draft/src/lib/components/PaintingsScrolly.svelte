@@ -5,7 +5,12 @@
 <script>
   import Scrolly from './Scrolly.svelte';
   import { asset } from '$lib/assets.js';
-  let { label, items, steps, portraitScale = 1.6 } = $props();
+  import { series } from '$lib/doc.js';
+  // Flat props from content/doc.json: image1/alt1… are the cards, caption1… the steps. `layouts` (one array per step,
+  // one object per card) has no flat form yet; it moves to the doc's `sheets` data slot in chunk S6.
+  let { label, layouts, portraitScale = 1.6, ...props } = $props();
+  const items = $derived(series(props, ['image', 'alt']));
+  const steps = $derived(series(props, ['caption']).map((s, i) => ({ caption: s.caption, layout: layouts[i] })));
 
   let portrait = $state(false);
   /** Attachment: follow the screen's orientation (matchMedia is browser-only, so it lives here, not at the top level). */

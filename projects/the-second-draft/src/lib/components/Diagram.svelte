@@ -3,7 +3,10 @@
      Phones: a plain ordered list in the text column (no arrows). ≥1024px: a 4-column stage up to 1200px wide.
      The arrows are redrawn by a ResizeObserver, so they stay attached through resizes, zoom and text reflow. -->
 <script>
-  let { label, nodes } = $props();
+  import { series } from '$lib/doc.js';
+  // Flat props from content/doc.json: `label` names the section; label1, label2, … are the boxes in order.
+  let { label, ...props } = $props();
+  const nodes = $derived(series(props, ['label']).map((n) => n.label));
 
   /** Attachment: runs in the browser once the element exists; the returned function cleans up. */
   function connectors(diagram) {

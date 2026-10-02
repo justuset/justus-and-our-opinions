@@ -35,7 +35,7 @@ justus-and-our-opinions/
 ├─ prototype/index.html        Phase 1 sandbox: plain HTML/CSS/JS, one idea per chunk
 └─ projects/
    └─ the-second-draft/        Birdkit-style story project (SvelteKit → dist/index.html + _app.<hash>/ + _big_assets.<hash>/)
-      ├─ content/story.json    the words, as ordered blocks
+      ├─ content/doc.json      the words, as one ordered body of blocks (the NYT payload shape)
       ├─ big_assets/           media, hashed and deployed separately
       ├─ scripts/              hash-assets.js, deploy.js
       └─ src/                  app.html, app.css, routes/, lib/ (assets.js, scroll.js, lottie.js, components/)

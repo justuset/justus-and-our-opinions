@@ -46,5 +46,6 @@ jobs:
           cache: npm
           cache-dependency-path: projects/the-second-draft/package-lock.json
       - run: npm ci
+      - run: npm test
       # Ends with "verified N media URLs", or fails if a media URL in index.html points at a missing file
       - run: npm run build

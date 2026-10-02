@@ -17,7 +17,7 @@ says what a thing is, why it exists, and what you'd touch it for.
 2. [Why each story is its own project](#2-why-each-story-is-its-own-project)
 3. [Quick start](#3-quick-start)
 4. [The source tree, file by file](#4-the-source-tree-file-by-file)
-5. [Content: `story.json`](#5-content-storyjson)
+5. [Content: `doc.json`](#5-content-docjson)
 6. [Media: `big_assets/`](#6-media-big_assets)
 7. [The build pipeline, step by step](#7-the-build-pipeline-step-by-step)
 8. [The output tree, file by file](#8-the-output-tree-file-by-file)
@@ -95,6 +95,7 @@ npm run dev            # http://localhost:5173: live reload, media served from b
 npm run build          # writes dist/ (see §7)
 npm run preview        # serves dist/ locally, as a reader would get it
 npm run deploy         # prints the upload plan with cache headers (dry run, see §9)
+npm test               # unit tests (node --test, built into Node)
 npm run parity         # compares dist/ with prototype/index.html at 375/1024/1440 (needs `npx playwright install chromium` once)
 ```
 
@@ -114,7 +115,7 @@ projects/the-second-draft/
 ├─ .gitignore
 ├─ README.md
 ├─ content/
-│  └─ story.json
+│  └─ doc.json
 ├─ big_assets/
 │  ├─ images/
 │  │  ├─ two-up-draft-1.webp, two-up-draft-4.webp
@@ -133,6 +134,7 @@ projects/the-second-draft/
 │  ├─ make-hero-lottie.js
 │  ├─ make-scrub-lottie.js
 │  ├─ parity.js
+│  ├─ migrations/2026-10-02-story-to-doc.js   one-time: story.json → doc.json (S1)
 │  └─ deploy.js
 ├─ static/
 │  └─ favicon.png
@@ -147,6 +149,10 @@ projects/the-second-draft/
    │  └─ +page.svelte
    └─ lib/
       ├─ assets.js               (generated)
+      ├─ Blocks.svelte          the renderer: walks doc.json's body (S1)
+      ├─ blocks.js             the component registry + docProblems() (S1)
+      ├─ doc.js                series() and list() for flat props (S1)
+      ├─ inline-html.js        the allow-list for inline HTML in text blocks, + .test.js (S1)
       ├─ scroll.js
       ├─ lottie.js
       ├─ media.js
@@ -173,7 +179,7 @@ projects/the-second-draft/
 
 | File | What it is |
 |------|-----------|
-| `story.json` | The whole story **as data**: header, byline, an ordered list of `blocks`, and credits. It's the only file an editor needs. See §5 |
+| `doc.json` | The whole story **as data**: one ordered `body` of text blocks and component blocks, in the shape of the shipped NYT payload. It's the only file an editor needs. See §5 |
 
 ### `big_assets/`: the media
 
@@ -189,6 +195,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `make-hero-lottie.js` | Writes the header intro twins (`big_assets/videos/hero/hero-desktop.json`, `hero-mobile.json`) from the **same coordinates as the SVG posters** in `Header.svelte`, so the last frame is the poster (measured: 11 of 540,000 pixels differ, all anti-aliasing). Run by hand: `node scripts/make-hero-lottie.js` |
 | `make-scrub-lottie.js` | Writes the two scene D placeholder animations (`big_assets/videos/scrub-desktop.json`, `scrub-mobile.json`): 12 bars of "text" on a page, 7 shrink and fade, 5 close up. Self-authored, so no license to record. A readable example of what's inside a Lottie file (canvas, frame range, layers, keyframes). Run it by hand: `node scripts/make-scrub-lottie.js` |
 | `parity.js` | `npm run parity`: measures the prototype and `dist/` side by side at three widths and fails on any difference over 1px (§11). Uses the `playwright` dev dependency |
+| `migrations/2026-10-02-story-to-doc.js` | **One-time** (S1): converted `content/story.json` into `content/doc.json`, refusing to write if any of the 105 strings would change. Kept as a record; `story.json` was removed in the same commit |
 | `deploy.js` | Prints the upload plan: every file in `dist/` with its `Cache-Control` header, hashed folders first and `index.html` last. Swap its `upload()` function for your host's CLI to deploy for real (§9) |
 
 ### `static/`
@@ -206,12 +213,16 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
 | `routes/+layout.svelte` | The root layout: imports `app.css` once and renders the page inside it | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
-| `routes/+page.js` | Runs at build time: imports `content/story.json` and hands it to the page as `data.story` | Inlined into `index.html` |
-| `routes/+page.svelte` | **The story page.** A loop over `story.blocks`, where each block's `type` (and `scene` for scroll sections) picks a component from the `BLOCKS` map | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
+| `routes/+page.js` | Runs at build time: imports `content/doc.json`, stops a production build if a block can't be rendered, and hands the doc to the page as `data.doc` | Inlined into `index.html` |
+| `routes/+page.svelte` | **The story page.** Hands the doc's `body` to `<Blocks>` and sets the title from the Header block | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | `lib/assets.js` | **Generated.** `ASSET_BASE` is `/big_assets` in dev and `./_big_assets.<hash>` in production, plus an `asset(path)` helper. Committed, so `npm run dev` works on a fresh clone | Bundled into a chunk |
 | `lib/scroll.js` | The shared scroll engine: `progressOf()`, `stepOf()`, `onScrollFrame()` (rAF-throttled). ✅ Wired up by `Scrolly.svelte` (chunk 8). `progressOf` defaults to the runway's `.sticky`, not its first child (the first child is the hidden step list) | A chunk, once imported |
 | `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header (chunk 11). `scrubber()` resolves to `seek(p)` once the animation is ready, and **rejects** if the JSON fails, so the caller can keep its text fallback. ✅ Used by `ScrubStage` | A lazy chunk, once imported |
-| `lib/media.js` | `srcset(sources)` turns `{ "400w": path, "800w": path }` from `story.json` into a `srcset` string (chunk 10) | Bundled into the components |
+| `lib/media.js` | `srcset(value)` turns a doc srcset (`"images/a-400w.webp 400w, images/a.webp 800w"`) into hashed media URLs (chunk 10, string form since S1) | Bundled into the components |
+| `lib/Blocks.svelte` | **The renderer** (S1): walks the doc's `body`. A text block becomes `Text`, a svelte block becomes its registered component with the flat props spread on. Unknown names show a placeholder in dev | Bundled into the page |
+| `lib/blocks.js` | **The registry** (S1): component name → component, plus `docProblems(body)`, which `+page.js` uses to stop a production build on an unknown block | Bundled into the page |
+| `lib/doc.js` | `series(props, fields)` rebuilds a list from numbered keys (`heading1`, `heading2`…); `list(str)` splits a comma-separated string (S1) | Bundled into the components |
+| `lib/inline-html.js` | The **allow-list** for inline HTML in text blocks: `<em>`, `<strong>`, safe `<a href>`; everything else is escaped. Tested by `inline-html.test.js` (`npm test`) (S1) | Bundled into `Text` |
 
 ### `src/lib/components/`: one component per block type
 
@@ -229,7 +240,7 @@ shows which prototype chunk each one mirrors (see §11).
 | `Scrolly.svelte` | The shared runway + sticky panel. Passes `{ step, progress }` to its content through a **snippet**. Includes a visually hidden list of every step for screen readers | ✅ Engine ported (chunk 8): `{@attach}` + `data-enhanced`, progress bar and markers. Passes `enhanced` to scenes (chunk 9). No-JS = readable stack |
 | `SlidesScrolly.svelte` | Section A: six frames, server-rendered (never `innerHTML`) | ✅ Hard cuts, vw card, arrow custom-property API (chunk 9) |
 | `CaptionScrolly.svelte` | Section B: images + captions | ✅ 30vh caption area on phones, 65vh band from 768px, 0.4s caption fades, hard-cut images (chunk 9) |
-| `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `story.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
+| `PaintingsScrolly.svelte` | Section C: items + per-step layouts from `doc.json` | ✅ Per-step `%` layouts, 0.95s settle, ×1.6 in portrait via a `matchMedia` `{@attach}` (chunk 9) |
 | `ScrubLottie.svelte` | Section D: two `Scrolly` runways, one per twin (`class="desktop-only"` / `"mobile-only"`, `bar={false}`) | ✅ Scrubbing (chunk 10) |
 | `ScrubStage.svelte` | One twin's stage. An `{@attach}` **loads** the Lottie when the stage is within 200px (a hidden twin never loads); an `$effect` **feeds** it `progress`. Reduced motion holds the end frame. Text fallback stays visible if loading fails | ✅ (chunk 10) |
 
@@ -237,45 +248,71 @@ shows which prototype chunk each one mirrors (see §11).
 
 ---
 
-## 5. Content: `story.json`
+## 5. Content: `doc.json`
+
+Since NYT sandbox chunk S1, the story is one **content document** in the shape of the shipped NYT page's payload
+([`reference/nyt-sandbox-blueprint.md`](reference/nyt-sandbox-blueprint.md) §5): an ordered **`body`** of two kinds of block.
 
 ```jsonc
 {
   "slug": "the-second-draft",
-  "header":  { "kicker": "Our Opinions", "kind": "Guest Essay · Demo", "headline": "The Second Draft", "dek": "…",
-               "art": { "lottie": { "desktop": "videos/hero/hero-desktop.json", "mobile": "videos/hero/hero-mobile.json" } } },
-  "byline":  { "author": "A. Writer", "date": "2026-10-01", "dateText": "Oct. 1, 2026" },
-  "blocks": [
+  "theme": "diatour",                                   // color theme (chunk S3): "diatour" (dark) or "opinion" (light)
+  "body": [
+    { "type": "svelte", "value": { "component": "Header", "kicker": "Our Opinions", "kind": "Guest Essay · Demo",
+        "headline": "The Second Draft", "dek": "…",
+        "url": "videos/hero/hero-desktop.json", "urlMobile": "videos/hero/hero-mobile.json" } },
+    { "type": "svelte", "value": { "component": "Byline", "author": "A. Writer", "date": "2026-10-01", "dateText": "Oct. 1, 2026" } },
     { "type": "text", "value": "Every essay you have read…" },
-    { "type": "two-up", "label": "…", "images": [{ "src": "images/two-up-draft-1.webp", "alt": "…", "width": 800, "height": 1000 }, …],
-      "caption": "…", "credit": "…" },
-    { "type": "diagram", "label": "…", "nodes": ["Idea", "Draft", "Revise", "Ship"] },
-    { "type": "scrolly", "scene": "slides",    "label": "…", "steps": [{ "heading": "Version 1", "card": "Explains", "image": "images/slides/slide-1/slide.jpg", "alt": "…" }, …] },
-    { "type": "scrolly", "scene": "captions",  "label": "…", "steps": [{ "image": "…", "alt": "…", "caption": "…" }, …] },
-    { "type": "scrolly", "scene": "paintings", "label": "…", "items": [{ "image": "…", "alt": "…" }, …],
-      "steps": [{ "caption": "…", "layout": [{ "top": 25, "left": 6, "width": 37.5, "rot": 0, "op": 0.15, "z": 2 }, …] }, …],
-      "portraitScale": 1.6 },
-    { "type": "lottie", "mode": "scrub", "label": "…", "steps": 2.5, "desktop": "videos/scrub-desktop.json",
-      "mobile": "videos/scrub-mobile.json", "fallback": "…" }
-  ],
-  "credits": "Demo content. …"
+    { "type": "svelte", "value": { "component": "TwoUp", "label": "…",
+        "url1": "images/two-up-draft-1.webp", "alt1": "…", "width1": 800, "height1": 1000,
+        "srcset1": "images/two-up-draft-1-400w.webp 400w, images/two-up-draft-1.webp 800w",
+        "url2": "…", "alt2": "…", "width2": 800, "height2": 1000, "srcset2": "…",
+        "sizes": "(min-width: 1250px) 656px, (min-width: 640px) 50vw, 100vw", "groupCaption": "…", "credit": "…" } },
+    { "type": "svelte", "value": { "component": "Diagram", "label": "…", "label1": "Idea", "label2": "Draft", "label3": "Revise", "label4": "Ship" } },
+    { "type": "svelte", "value": { "component": "SlidesScrolly", "label": "…",
+        "heading1": "Version 1", "card1": "Explains", "image1": "images/slides/slide-1/slide.jpg", "alt1": "…", "heading2": "…" } },
+    { "type": "svelte", "value": { "component": "CaptionScrolly", "label": "…", "image1": "…", "srcset1": "…", "alt1": "…", "caption1": "…", "sizes": "…" } },
+    { "type": "svelte", "value": { "component": "PaintingsScrolly", "label": "…", "image1": "…", "alt1": "…", "caption1": "…",
+        "portraitScale": 1.6, "layouts": [[{ "top": 25, "left": 6, "width": 37.5, "rot": 0, "op": 0.15, "z": 2 }, …], …] } },
+    { "type": "svelte", "value": { "component": "ScrubLottie", "label": "…", "steps": 2.5,
+        "desktop": "videos/scrub-desktop.json", "mobile": "videos/scrub-mobile.json", "fallback": "…" } },
+    { "type": "svelte", "value": { "component": "Credits", "text": "Demo content. …" } }
+  ]
 }
 ```
 
-| Block | Component | Required fields | Notes for designers |
-|-------|-----------|-----------------|---------------------|
-| `text` | `Text` | `value` | One paragraph. Plain text, so no HTML is injected |
-| `two-up` | `TwoUp` | `images[2]` (`src`, `alt`, `width`, `height`, `srcset`), `sizes`, `caption`, `credit`, `label` | Images at **4:5**. `width`/`height` reserve space so nothing jumps. `srcset` lists each file by width (`{ "400w": …, "800w": … }`), and `sizes` describes the slot |
-| `diagram` | `Diagram` | `nodes[]`, `label` | 3–6 short labels, in order |
-| `scrolly` + `scene: "slides"` | `SlidesScrolly` | `steps[]` (`heading`, `card`, `image`, `alt`) | One square image per step. Each step ≈ 1.35 screens of scrolling |
-| `scrolly` + `scene: "captions"` | `CaptionScrolly` | `steps[]` (`image`, `alt`, `caption`, `srcset`), `sizes` | Write captions to fit about 80px. The longest one sets the overlay height |
-| `scrolly` + `scene: "paintings"` | `PaintingsScrolly` | `items[]`, `steps[]` (`caption`, `layout[]` with `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z`) | One layout per step per item. `portraitScale` widens items on tall screens |
-| `lottie` + `mode: "scrub"` | `ScrubLottie` | `desktop`, `mobile` (JSON paths), `steps` (runway length), `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
+**The rules, as on the real page:**
 
-**Media paths in `story.json` are relative to `big_assets/`** (`images/…`, `videos/…`). Components turn them into full URLs with
+- **Text blocks** are one paragraph each. They may carry a little inline HTML: `<em>`, `<strong>` and `<a href>` (http, https, `/path` or `#anchor`). Anything else is shown as text, never run ([`$lib/inline-html.js`](../projects/the-second-draft/src/lib/inline-html.js), with tests).
+- **Svelte blocks** name a component, and every setting is a **flat key/value pair**: that's how doc-converted content arrives. A list of things becomes **numbered keys** (`heading1`, `card1`, `heading2`…); components rebuild the list with `series()` from `$lib/doc.js`. Numbered keys survive commas inside a caption, which a comma-separated list wouldn't.
+- **Comma-separated strings** are used only where the value already is one in HTML (`srcset`).
+- **Order is the page.** The renderer walks `body` top to bottom. Header, byline and credits are blocks like any other.
+- **One exception, for now:** `PaintingsScrolly`'s per-step `layouts` are nested numbers with no flat form. They move to the doc's `sheets` data slot in chunk S6.
+
+| Component | Props | Notes for designers |
+|-----------|-------|---------------------|
+| `Header` | `kicker`, `kind`, `headline`, `dek`, `url`, `urlMobile` | `url` / `urlMobile` are the hero Lottie twins; the SVG in the component is their poster |
+| `Byline` | `author`, `date` (ISO), `dateText` | |
+| `TwoUp` | `url1`/`url2`, `alt1`/`alt2`, `width1`… `height1`…, `srcset1`/`srcset2`, `sizes`, `groupCaption`, `credit`, `label` | Images at **4:5**. `width`/`height` reserve space so nothing jumps. `srcset` lists each file with its width, `sizes` describes the slot |
+| `Diagram` | `label` (the section's name), `label1`… (the boxes, in order) | 3–6 short labels |
+| `SlidesScrolly` | `label`, then per slide `headingN`, `cardN`, `imageN`, `altN` | One square image per step. Each step ≈ 1.35 screens of scrolling |
+| `CaptionScrolly` | `label`, `sizes`, then per page `imageN`, `srcsetN`, `altN`, `captionN` | Write captions to fit about 80px. The longest one sets the overlay height |
+| `PaintingsScrolly` | `label`, `imageN`/`altN` (the cards), `captionN` (the steps), `layouts`, `portraitScale` | One layout per step per card: `top`, `left` *or* `right`, `width` in **% of the stage**, `rot` in degrees, `op` 0–1, `z` |
+| `ScrubLottie` | `label`, `steps` (runway length), `desktop`, `mobile`, `fallback` | Landscape and portrait exports. `fallback` is the sentence shown without JS, and read by screen readers once the animation shows |
+| `Credits` | `text` | |
+
+**A name the renderer doesn't know** (a typo, or a component that isn't registered) shows a dashed
+"Missing component: X" placeholder in `npm run dev`, and **stops `npm run build`** with the block's position, e.g.
+`body[8]: missing component "Diagramm"`. A missing section can't ship silently.
+
+**Media paths in `doc.json` are relative to `big_assets/`** (`images/…`, `videos/…`). Components turn them into full URLs with
 `asset(path)`, so the same file works in dev and production.
 
-At the Times, editors write this in a Google Doc using **ArchieML**. JSON is the same data in a stricter syntax. Phase 2 adds the ArchieML step.
+At the Times, editors write this in a Google Doc using **ArchieML**, and a build step converts it. Chunk S7 adds that step here.
+
+**History:** until chunk S1 the same words lived in `content/story.json`, with typed blocks and nested lists. A one-time
+migration ([`scripts/migrations/2026-10-02-story-to-doc.js`](../projects/the-second-draft/scripts/migrations/2026-10-02-story-to-doc.js))
+moved them, checking that all 105 strings arrived unchanged. The rendered page was identical before and after.
 
 ---
 
@@ -291,8 +328,8 @@ At the Times, editors write this in a Google Doc using **ArchieML**. JSON is the
 **How a media URL is built:**
 
 ```
-story.json:      "src": "images/two-up-draft-1.webp"
-component:       asset(img.src)
+doc.json:        "url1": "images/two-up-draft-1.webp"
+component:       asset(img.url)
 dev:             /big_assets/images/two-up-draft-1.webp                 (served raw by Vite, no build needed)
 production:      ./_big_assets.d09a166288/images/two-up-draft-1.webp    (next to index.html, cached forever)
 ```
@@ -365,7 +402,7 @@ dist/                                              total ≈ 465 KB
 | `src/routes/+error.svelte` | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
 | `src/routes/+page.svelte` + every component | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
 | Svelte runtime, `$lib/*`, shared component code | `chunks/<hash>.js` |
-| `src/app.html` + prerendered page + `story.json` | `index.html` |
+| `src/app.html` + prerendered page + `doc.json` | `index.html` |
 | `static/*` | `dist/*`, unchanged |
 | `big_assets/**` | `_big_assets.<content-hash>/**`, unchanged |
 
@@ -427,7 +464,7 @@ Phase 1 chunk N:  build it in prototype/index.html  →  checkpoint passes in De
 |-------------------------------|---------------------------|
 | `:root` tokens in `<style>` | `src/app.css` |
 | A block's CSS rules | That component's `<style>` (scoped) |
-| A block's HTML | That component's markup, fed by `story.json` |
+| A block's HTML | That component's markup, fed by `doc.json` |
 | `<script>` behavior | An `{@attach}` function in the component (runs in the browser only, after the element exists) |
 | `<head>` script (`.js`, failsafe) | `src/app.html` |
 | `.js .headline` | `:global(.js) .headline` (the class lives on `<html>`, outside the component) |
@@ -441,38 +478,39 @@ direction and image widths, diagram width, every runway's height, page height, a
 steps change. It exits with code 1 if anything differs by more than 1px. Its first run found a real bug: enhanced runways
 in the project kept the no-JS stack's 40px margins, which made the page 270px taller (fixed in `Scrolly.svelte`).
 
-Two things exist only in the project: the header's intro Lottie, and `srcset` driven by `story.json`. The prototype stays
+Two things exist only in the project: the header's intro Lottie, and `srcset` driven by `doc.json`. The prototype stays
 as the hand-built reference.
 
 ---
 
 ## 12. How to…
 
-**Edit copy.** Change the text in `content/story.json`, and `npm run dev` reloads. No component changes.
+**Edit copy.** Change the text in `content/doc.json`, and `npm run dev` reloads. No component changes.
 
-**Replace an image.** Drop the new file into `big_assets/images/` (the same name, or update the path in `story.json`) and keep its
+**Replace an image.** Drop the new file into `big_assets/images/` (the same name, or update the path in `doc.json`) and keep its
 aspect ratio, or update `width`/`height`. The next build gets a new `_big_assets` hash automatically.
 
-**Add a new block type.**
-1. Add the data to `story.json`: `{ "type": "pull-quote", "text": "…", "cite": "…" }`.
-2. Create `src/lib/components/PullQuote.svelte`: markup from props, a scoped `<style>`, tokens only.
-3. Register it in `src/routes/+page.svelte`: `'pull-quote': PullQuote` in `BLOCKS`.
+**Add a new kind of block.**
+1. Add it to `doc.json`'s `body`: `{ "type": "svelte", "value": { "component": "PullQuote", "text": "…", "cite": "…" } }`.
+2. Create `src/lib/components/PullQuote.svelte`: markup from flat props, a scoped `<style>`, tokens only.
+3. Register it in `src/lib/blocks.js`: add `PullQuote` to `registry`. (Until you do, dev shows "Missing component: PullQuote" and the build stops.)
 4. Check it reads correctly **with JavaScript off** (`npm run build && npm run preview`, then disable JS in DevTools).
 
-**Add another scroll section.** Only `story.json` changes. Insert a block with an existing `scene`, and the runway, step list,
-progress markers and scene come from the components. For example, a second "paintings" scene:
+**Add another scroll section.** Only `doc.json` changes. Insert a block naming an existing scene component, and the runway,
+step list, progress markers and scene come from the components. For example, a second `PaintingsScrolly`:
 ```json
-{ "type": "scrolly", "scene": "paintings", "label": "…",
-  "items": [{ "image": "images/argument-a.webp", "alt": "…" }, { "image": "images/argument-b.webp", "alt": "…" }],
-  "steps": [
-    { "caption": "…", "layout": [{ "top": 20, "left": 10, "width": 35, "rot": -2, "op": 1, "z": 2 }, { "top": 20, "right": 10, "width": 35, "rot": 2, "op": 0.4, "z": 1 }] },
-    { "caption": "…", "layout": [{ "top": 25, "left": 30, "width": 30, "rot": 0, "op": 0.4, "z": 1 }, { "top": 15, "right": 25, "width": 40, "rot": -3, "op": 1, "z": 2 }] }
-  ] }
+{ "type": "svelte", "value": { "component": "PaintingsScrolly", "label": "…",
+  "image1": "images/argument-a.webp", "alt1": "…", "image2": "images/argument-b.webp", "alt2": "…",
+  "caption1": "…", "caption2": "…",
+  "layouts": [
+    [{ "top": 20, "left": 10, "width": 35, "rot": -2, "op": 1, "z": 2 }, { "top": 20, "right": 10, "width": 35, "rot": 2, "op": 0.4, "z": 1 }],
+    [{ "top": 25, "left": 30, "width": 30, "rot": 0, "op": 0.4, "z": 1 }, { "top": 15, "right": 25, "width": 40, "rot": -3, "op": 1, "z": 2 }]
+  ] } }
 ```
-Chunk 11 tested exactly this in a scratch copy: a 2-step runway (2430px at 900px tall), 2 markers, captions following the
-scroll, and no component edits (learning log 16).
+Chunk 11 tested the same section (in the old `story.json` form) in a scratch copy: a 2-step runway (2430px at 900px tall),
+2 markers, captions following the scroll, and no component edits (learning log 16).
 
-**Start a second story.** Copy the folder to `projects/<new-slug>/`, change `name` in `package.json`, replace `content/story.json` and
+**Start a second story.** Copy the folder to `projects/<new-slug>/`, change `name` in `package.json`, replace `content/doc.json` and
 `big_assets/`, then `npm install && npm run dev`.
 
 **Check the production build like a reader.**

@@ -12,14 +12,15 @@
   import { asset } from '$lib/assets.js';
   import { prefersReducedMotion } from 'svelte/motion';
 
-  let { kicker, kind, headline, dek, art } = $props();
+  // url / urlMobile: the hero Lottie twins (flat props from content/doc.json, like the shipped page's Header)
+  let { kicker, kind, headline, dek, url, urlMobile } = $props();
 
   // Which twin's animation is on screen (poster hidden). Keys: 'desktop', 'mobile'.
   let playing = $state({});
 
   /** Attachment factory: play one twin's intro. A display: none twin never intersects, so it never downloads. */
   const hero = (twin) => (artEl) => {
-    const path = art?.lottie?.[twin];
+    const path = twin === 'desktop' ? url : urlMobile;
     if (!path || prefersReducedMotion.current) return; // reduced motion: the poster is the art
     let anim;
     let cancelled = false;
