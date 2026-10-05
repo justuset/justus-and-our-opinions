@@ -3,7 +3,7 @@
      Phones: a plain ordered list in the text column (no arrows). ≥740px (the tablet tier): a 4-column stage up to 1200px wide.
      The arrows are redrawn by a ResizeObserver, so they stay attached through resizes, zoom and text reflow. -->
 <script>
-  import { series } from '$lib/doc.js';
+  import { series } from '$kit/doc.js';
   // Flat props from content/doc.json: `label` names the section; label1, label2, … are the boxes in order.
   let { label, ...props } = $props();
   const nodes = $derived(series(props, ['label']).map((n) => n.label));
@@ -68,7 +68,7 @@
     padding: 12px 14px;
     border: var(--node-border) solid var(--ink);
     background: var(--paper);
-    font: 600 15px / 1.3 var(--font-body);
+    font: 600 0.9375rem / 1.3 var(--font-body);
   }
   .connectors {
     position: absolute;

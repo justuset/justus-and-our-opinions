@@ -5,7 +5,7 @@
   import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
   import { srcset } from '$lib/media.js';
-  import { series } from '$lib/doc.js';
+  import { series } from '$kit/doc.js';
   // Flat props from content/doc.json: image1, srcset1, alt1, caption1, image2, … (one numbered set per page)
   let { label, height, sizes, ...props } = $props();
   const steps = $derived(series(props, ['image', 'srcset', 'alt', 'caption']));
@@ -38,7 +38,7 @@
      (caption i = 2i, page i = 2i + 1). Once enhanced, the wrappers are blocks again and `order` does nothing. */
   .b-wrapper { width: var(--col); margin: 0 auto; display: flex; flex-direction: column; }
   .b-text-overlay, .b-content { display: contents; }
-  .b-text { margin: 0 0 10px; font: 20px / 1.3 var(--font-display); text-align: center; }
+  .b-text { margin: 0 0 10px; font: 1.25rem / 1.3 var(--font-display); text-align: center; }
   .frame { margin-bottom: 40px; }
   img { display: block; width: 100%; height: auto; }
 

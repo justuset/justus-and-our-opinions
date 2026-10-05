@@ -3,16 +3,16 @@
      tools, recirculation, ads, footer. The story never edits the shell, and the shell never styles the story.
      S2 built a simple sticky bar. S4b replaces it with a replica measured from the shipped page: a transparent masthead
      that floats over the story and scrolls away, then share tools, related content, an ad slot and the footer.
-     Each region is one component in src/lib/shell/; the platform's tokens live in shell.css, apart from the story's. -->
+     Each region is one component in ../birdkit-kit/shell/; the platform's tokens live in shell.css, apart from the story's. -->
 <script>
   import '../app.css';
-  import '$lib/shell/shell.css';
+  import '$kit/shell/shell.css';
   import { page } from '$app/state';
-  import Masthead from '$lib/shell/Masthead.svelte';
-  import ShareTools from '$lib/shell/ShareTools.svelte';
-  import Recirc from '$lib/shell/Recirc.svelte';
-  import AdSlot from '$lib/shell/AdSlot.svelte';
-  import SiteFooter from '$lib/shell/SiteFooter.svelte';
+  import Masthead from '$kit/shell/Masthead.svelte';
+  import ShareTools from '$kit/shell/ShareTools.svelte';
+  import Recirc from '$kit/shell/Recirc.svelte';
+  import AdSlot from '$kit/shell/AdSlot.svelte';
+  import SiteFooter from '$kit/shell/SiteFooter.svelte';
 
   let { children } = $props();
   // The masthead floats over the story's header, so its wordmark must contrast with it. Only the light "opinion"

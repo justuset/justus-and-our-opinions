@@ -134,12 +134,10 @@ projects/interactive/
 │  │  └─ images/diagram/frame-1, 2.webp
 │  └─ scripts/                  (empty for now; .gitkeep)
 ├─ scripts/
-│  ├─ hash-assets.js
 │  ├─ lottie-kit.js
 │  ├─ make-hero-lottie.js
 │  ├─ make-scrub-lottie.js
 │  ├─ parity.js
-│  ├─ migrations/2026-10-02-story-to-doc.js   one-time: story.json → doc.json (S1)
 │  └─ deploy.js
 ├─ playwright.config.js        three projects: mobile 390, tablet 800, desktop 1440 (S4b)
 ├─ tests/                       e2e specs: masthead, footer (share tools, recirc, ad, footer), responsive + helpers.js (S4b)
@@ -156,21 +154,31 @@ projects/interactive/
    │  └─ +page.svelte
    └─ lib/
       ├─ assets.js               (generated)
-      ├─ Blocks.svelte          the renderer: walks doc.json's body (S1)
       ├─ blocks.js             the component registry + docProblems() (S1)
-      ├─ doc.js                series() and list() for flat props (S1)
-      ├─ inline-html.js        the allow-list for inline HTML in text blocks, + .test.js (S1)
       ├─ scroll.js             loads GSAP ScrollTrigger once; trackBounds(), stepOf(), + .test.js (S4)
       ├─ lottie.js
-      ├─ shell/                the mock platform shell (S4b): shell.css (--shell-* tokens), Masthead, ShareTools, Recirc, AdSlot, SiteFooter
       ├─ media.js
       └─ components/
-         ├─ Header.svelte, Byline.svelte, Text.svelte, Credits.svelte
+         ├─ Header.svelte, Byline.svelte, Credits.svelte
          ├─ TwoUp.svelte, Diagram.svelte
          ├─ StickyScroller.svelte   the shared track + sticky panel (was Scrolly.svelte until S4)
          ├─ SlidesScrolly.svelte, CaptionScrolly.svelte, PaintingsScrolly.svelte
          └─ ScrubLottie.svelte, ScrubStage.svelte
+
+projects/birdkit-kit/           shared by every template, imported as $kit/… (no package.json, no node_modules)
+├─ config.js                    kit(adapter): the SvelteKit settings that produce the output tree
+├─ hash-assets.js               media hashing + copy + verify, run from the template's folder
+├─ Blocks.svelte                the renderer: walks doc.json's body; takes the template's registry as a prop (S1)
+├─ Text.svelte                  one paragraph, through the allow-list
+├─ doc.js                       series() and list() for flat props (S1)
+├─ inline-html.js               the allow-list for inline HTML in text blocks, + .test.js (S1)
+└─ shell/                       the mock platform shell (S4b): shell.css (--shell-* tokens), Masthead, ShareTools, Recirc, AdSlot, SiteFooter
 ```
+
+**Why `birdkit-kit` isn't in `packages/`:** `packages/` belongs to the Phase 2 npm workspace (linted, built and tested by
+the root scripts), while each template is a standalone project with its own lockfile (§2). The kit is plain source that
+the templates compile with their own Svelte: `svelte.config.js` passes its adapter to `kit()`, the `$kit` alias points at
+the folder, and `vite.config.js` allows it (`server.fs.allow`) and dedupes `svelte`, so the page never loads two Svelte runtimes.
 
 ### Project root
 
@@ -178,8 +186,8 @@ projects/interactive/
 |------|-----------|-------------------------|
 | `package.json` | The project's name, scripts and dependencies | `build` runs three steps: `hash-assets` → `vite build` → `hash-assets --copy` (§7). `lottie-web` is the only runtime dependency |
 | `package-lock.json` | Exact installed versions | Committed, so everyone builds with the same versions. Never edit by hand |
-| `svelte.config.js` | SvelteKit settings | The four settings that *produce the output tree*: `adapter-static` (writes `dist/`), `appDir` (names `_app.<hash>`), `paths.relative` (relative URLs), `prerender` (bakes HTML), plus `bundleStrategy: 'split'` (separate `entry/`, `nodes/`, `chunks/`). Every line is commented |
-| `vite.config.js` | Vite settings | Adds the SvelteKit plugin and lets the dev server read `content/` and `big_assets/` (`server.fs.allow`) |
+| `svelte.config.js` | SvelteKit settings: three lines that call `kit(adapter)` from `../birdkit-kit/config.js` | The four settings that *produce the output tree*: `adapter-static` (writes `dist/`), `appDir` (names `_app.<hash>`), `paths.relative` (relative URLs), `prerender` (bakes HTML), plus `bundleStrategy: 'split'` (separate `entry/`, `nodes/`, `chunks/`). Every line is commented |
+| `vite.config.js` | Vite settings | Adds the SvelteKit plugin, lets the dev server read `content/`, `big_assets/` and `../birdkit-kit/` (`server.fs.allow`), and dedupes `svelte` |
 | `.gitignore` | What Git skips | `dist/`, `.svelte-kit/` and `node_modules/` are all regenerated, never committed |
 | `README.md` | The project's front door | Commands and a link back to this guide |
 
@@ -192,18 +200,17 @@ projects/interactive/
 ### `big_assets/`: the media
 
 Raw images, Lottie animations and helper scripts. It sits **outside `src/` and `static/` on purpose**: Vite never bundles or
-renames these files. Instead `scripts/hash-assets.js` gives the whole folder one content hash and copies it next to the page. See §6.
+renames these files. Instead `../birdkit-kit/hash-assets.js` gives the whole folder one content hash and copies it next to the page. See §6.
 
 ### `scripts/`: build helpers (run by Node, never shipped)
 
 | File | What it does |
 |------|-------------|
-| `hash-assets.js` | **Before the build:** hashes every file in `big_assets/` (paths + bytes) and writes `src/lib/assets.js` with the media URL. **After the build (`--copy`):** copies the folder to `dist/_big_assets.<hash>/`, then checks that every media URL in `index.html` points at a real file |
+| `../birdkit-kit/hash-assets.js` (shared) | **Before the build:** hashes every file in `big_assets/` (paths + bytes) and writes `src/lib/assets.js` with the media URL. **After the build (`--copy`):** copies the folder to `dist/_big_assets.<hash>/`, then checks that every media URL in `index.html` points at a real file |
 | `lottie-kit.js` | Small helpers for writing Lottie JSON by hand: `still()` / `animated()` properties, `rect` / `ellipse` / `hline` shapes, `fill` / `stroke`, `layer()` and `file()`. Its header comment explains the format |
 | `make-hero-lottie.js` | Writes the header intro twins (`big_assets/videos/hero/hero-desktop.json`, `hero-mobile.json`) from the **same coordinates as the SVG posters** in `Header.svelte`, so the last frame is the poster (measured: 11 of 540,000 pixels differ, all anti-aliasing). Run by hand: `node scripts/make-hero-lottie.js` |
 | `make-scrub-lottie.js` | Writes the two scene D placeholder animations (`big_assets/videos/scrub-desktop.json`, `scrub-mobile.json`): 12 bars of "text" on a page, 7 shrink and fade, 5 close up. Self-authored, so no license to record. A readable example of what's inside a Lottie file (canvas, frame range, layers, keyframes). Run it by hand: `node scripts/make-scrub-lottie.js` |
 | `parity.js` | `npm run parity`: measures the prototype and `dist/` side by side at three widths and fails on any difference over 1px (§11). Switches the platform shell off first, since parity is about the story. Uses the `playwright` dev dependency |
-| `migrations/2026-10-02-story-to-doc.js` | **One-time** (S1): converted `content/story.json` into `content/doc.json`, refusing to write if any of the 105 strings would change. Kept as a record; `story.json` was removed in the same commit |
 | `deploy.js` | Prints the upload plan: every file in `dist/` with its `Cache-Control` header, hashed folders first and `index.html` last. Swap its `upload()` function for your host's CLI to deploy for real (§9) |
 
 ### `static/`
@@ -219,7 +226,7 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `app.html` | The document shell around every page. Holds `<html lang>`, the viewport meta, the **chunk 5 `<head>` script** (`.js` class + 2.5s failsafe), the Google Fonts link, and the `%sveltekit.head%` / `%sveltekit.body%` slots SvelteKit fills | The outside of `index.html` |
 | `app.css` | **Global** tokens and base rules, including `--masthead-h` (S2; `0px` since S4b, because the measured masthead isn't sticky): gutter, column, type, color (diatour), easing, header sizes, `overflow-x: clip`, the `.bleed` and `.visually-hidden` utilities, and the **twin utilities** (`.mobile-only` / `.desktop-only`, deliberately the last rules in the file). Since S3: the NYT tier tokens `--bp-tablet: 740px` / `--bp-desktop: 1150px` (documentation, since custom properties can't be used in `@media`), and the **theme blocks** `.g-theme-diatour` / `.g-theme-opinion`, which only redefine color tokens. Ported from the prototype's chunks 2–6. Story-wide rules are scoped with `:where(.birdkit-body)`, which keeps them out of the shell without changing their specificity | `assets/0.<hash>.css` |
 | `routes/+layout.js` | `prerender = true` (render to HTML at build time) and `trailingSlash = 'never'` (so `/` becomes `index.html`) | Build settings, no file of its own |
-| `routes/+layout.svelte` | **The mock platform shell.** S2 made it a sticky bar and a footer note. Since S4b it's a replica measured from the shipped page, composed from `src/lib/shell/`:<br>• `Masthead`: transparent, `position: absolute`, 6px from the top; it floats over the story's header and scrolls away. 47px tall on phones, 42px from 740px. It holds the skip link, and the wordmark is light over a dark (diatour) header;<br>• `<main id="site-content">`, then `#standalone-footer`: `ShareTools` (comment button + share pills), `Recirc` (placeholder related-content grid), `AdSlot` (`#bottom-wrapper`, "Advertisement") and `SiteFooter`.<br>The platform's tokens live in `shell.css` as `--shell-*`, apart from the story's: **widths, heights and type sizes are measured**, while **colors and fonts are diatour dark** (aliases of `--paper`, `--ink`, `--faint`, `--line`, `--surface`, plus `--surface-2` `#1b1b1a`; Newsreader and the system sans). The shell owns the page background (`--paper`) and everything outside the story's `<article>` | `nodes/0.<hash>.js` |
+| `routes/+layout.svelte` | **The mock platform shell.** S2 made it a sticky bar and a footer note. Since S4b it's a replica measured from the shipped page, composed from `$kit/shell/` (`projects/birdkit-kit/shell/`):<br>• `Masthead`: transparent, `position: absolute`, 6px from the top; it floats over the story's header and scrolls away. 47px tall on phones, 42px from 740px. It holds the skip link, and the wordmark is light over a dark (diatour) header;<br>• `<main id="site-content">`, then `#standalone-footer`: `ShareTools` (comment button + share pills), `Recirc` (placeholder related-content grid), `AdSlot` (`#bottom-wrapper`, "Advertisement") and `SiteFooter`.<br>The platform's tokens live in `shell.css` as `--shell-*`, apart from the story's: **widths, heights and type sizes are measured**, while **colors and fonts are diatour dark** (aliases of `--paper`, `--ink`, `--faint`, `--line`, `--surface`, plus `--surface-2` `#1b1b1a`; Newsreader and the system sans). The shell owns the page background (`--paper`) and everything outside the story's `<article>` | `nodes/0.<hash>.js` |
 | `routes/+error.svelte` | Shown if a route fails | `nodes/1.<hash>.js` + `assets/1.<hash>.css` |
 | `routes/+page.js` | Runs at build time: imports `content/doc.json`, stops a production build if a block can't be rendered, and hands the doc to the page as `data.doc` | Inlined into `index.html` |
 | `routes/+page.svelte` | **The story page.** Hands the doc's `body` to `<Blocks>` and sets the title from the Header block | `nodes/2.<hash>.js` + `assets/2.<hash>.css` |
@@ -227,10 +234,10 @@ renames these files. Instead `scripts/hash-assets.js` gives the whole folder one
 | `lib/scroll.js` | The shared scroll engine. Since S4 it's **GSAP ScrollTrigger 3.12.5**, the shipped page's library:<br>• `loadScrollTrigger()` dynamic-imports `gsap` + `gsap/ScrollTrigger` once for the page, and sets up one `ResizeObserver` that calls `ScrollTrigger.refresh()` when the layout changes;<br>• `trackBounds(sticky)` gives a track's `start` (its top meets the panel's CSS `top`, the masthead) and `end` (its bottom meets the panel's bottom), so progress is the same formula the chunk 8 engine used;<br>• `stepOf()` is unchanged and unit-tested.<br>ScrollTrigger only reads progress; CSS `position: sticky` does the pinning. Chunk 8's hand-written `progressOf()` / `onScrollFrame()` engine was removed | Two chunks (gsap 70 KB, ScrollTrigger 43 KB; 28 + 18 KB gzipped), loaded after hydration |
 | `lib/lottie.js` | Loads `lottie-web` on demand (its own chunk). `playOnce()` for the header (chunk 11). `scrubber()` resolves to `seek(p)` once the animation is ready, and **rejects** if the JSON fails, so the caller can keep its text fallback. ✅ Used by `ScrubStage` | A lazy chunk, once imported |
 | `lib/media.js` | `srcset(value)` turns a doc srcset (`"images/a-400w.webp 400w, images/a.webp 800w"`) into hashed media URLs (chunk 10, string form since S1) | Bundled into the components |
-| `lib/Blocks.svelte` | **The renderer** (S1): walks the doc's `body`. A text block becomes `Text`, a svelte block becomes its registered component with the flat props spread on. Unknown names show a placeholder in dev | Bundled into the page |
+| `$kit/Blocks.svelte` | **The renderer** (S1), shared; `+page.svelte` passes it this template's `registry`: walks the doc's `body`. A text block becomes `Text`, a svelte block becomes its registered component with the flat props spread on. Unknown names show a placeholder in dev | Bundled into the page |
 | `lib/blocks.js` | **The registry** (S1): component name → component, plus `docProblems(body)`, which `+page.js` uses to stop a production build on an unknown block | Bundled into the page |
-| `lib/doc.js` | `series(props, fields)` rebuilds a list from numbered keys (`heading1`, `heading2`…); `list(str)` splits a comma-separated string (S1) | Bundled into the components |
-| `lib/inline-html.js` | The **allow-list** for inline HTML in text blocks: `<em>`, `<strong>`, safe `<a href>`; everything else is escaped. Tested by `inline-html.test.js` (`npm test`) (S1) | Bundled into `Text` |
+| `$kit/doc.js` | `series(props, fields)` rebuilds a list from numbered keys (`heading1`, `heading2`…); `list(str)` splits a comma-separated string (S1) | Bundled into the components |
+| `$kit/inline-html.js` | The **allow-list** for inline HTML in text blocks: `<em>`, `<strong>`, safe `<a href>`; everything else is escaped. Tested by `inline-html.test.js` (`npm test`) (S1) | Bundled into `Text` |
 
 ### `src/lib/components/`: one component per block type
 
@@ -241,7 +248,7 @@ shows which prototype chunk each one mirrors (see §11).
 |-----------|---------|--------|
 | `Header.svelte` | Kicker, headline, dek and the art stage. A fixed 675px box, height-scaled **twin** art (portrait for phones, landscape for desktop), and the intro fade-up after `document.fonts.ready` (via an `{@attach}`) | ✅ Ported (chunks 4–6). Hero Lottie twins play once over the SVG poster, which stays for no JS and reduced motion (chunk 11) |
 | `Byline.svelte` | "By … · `<time>`" in the text column | ✅ Ported (chunks 1–2) |
-| `Text.svelte` | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
+| `$kit/Text.svelte` (shared, in `projects/birdkit-kit/`) | One `<p class="g-text">` at `width: var(--col)` | ✅ Ported (chunk 2) |
 | `Credits.svelte` | The footer line | ✅ Ported (chunk 2) |
 | `TwoUp.svelte` | Two images + one shared caption, full bleed. The `<figure>` is the flex container: stacked, then a row at the 740px tablet tier, capped at 1440px with 64px padding from the 1150px desktop tier (S3) | ✅ Ported (chunk 6) |
 | `Diagram.svelte` | The process as an `<ol>`. At ≥740px (the tablet tier, since S3) a 4-column stage (≤1200px), with curved SVG arrows drawn from the boxes' live positions by an `{@attach}` ResizeObserver | ✅ Ported (chunk 7) |
@@ -319,7 +326,7 @@ Since NYT sandbox chunk S1, the story is one **content document** in the shape o
 At the Times, editors write this in a Google Doc using **ArchieML**, and a build step converts it. Chunk S7 adds that step here.
 
 **History:** until chunk S1 the same words lived in `content/story.json`, with typed blocks and nested lists. A one-time
-migration ([`scripts/migrations/2026-10-02-story-to-doc.js`](../projects/interactive/scripts/migrations/2026-10-02-story-to-doc.js))
+migration (`scripts/migrations/2026-10-02-story-to-doc.js`, removed once it had run; it's in git history)
 moved them, checking that all 105 strings arrived unchanged. The rendered page was identical before and after.
 
 ---
@@ -356,7 +363,7 @@ All media in this repo is **placeholder**: canvas-drawn images labelled "PLACEHO
 ```
 npm run build
 │
-├─ 1. node scripts/hash-assets.js
+├─ 1. node ../birdkit-kit/hash-assets.js
 │     hash big_assets/ → d09a166288
 │     write src/lib/assets.js  (ASSET_BASE = dev ? '/big_assets' : './_big_assets.d09a166288')
 │
@@ -366,7 +373,7 @@ npm run build
 │     ├─ prerender      runs the server build on "/", crawling every link → index.html with the full story inside
 │     └─ adapter-static EMPTIES dist/, then writes index.html + _app.<build-hash>/ + static files into it
 │
-└─ 3. node scripts/hash-assets.js --copy
+└─ 3. node ../birdkit-kit/hash-assets.js --copy
       copy big_assets/ → dist/_big_assets.d09a166288/
       verify: every _big_assets URL in index.html exists → "verified 16 media URLs"
 ```

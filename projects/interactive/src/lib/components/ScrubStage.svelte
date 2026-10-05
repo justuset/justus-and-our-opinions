@@ -57,7 +57,7 @@
 <style>
   /* Base: the text description, in the column. */
   .scrub-stage { width: var(--col); margin: 0 auto; }
-  .scrub-fallback { margin: 0; color: var(--soft); font: 16px / 1.5 var(--font-body); text-align: center; }
+  .scrub-fallback { margin: 0; color: var(--soft); font: 1rem / 1.5 var(--font-body); text-align: center; }
   .scrub-anim { display: none; }
 
   /* Enhanced: a pinned stage; the animation is 80% of the screen tall. Flex, not grid, so the % height resolves. */

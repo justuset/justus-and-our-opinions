@@ -5,7 +5,7 @@
 <script>
   import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
-  import { series } from '$lib/doc.js';
+  import { series } from '$kit/doc.js';
   // Flat props from content/doc.json: heading1, card1, image1, alt1, heading2, … (one numbered set per slide)
   let { label, height, ...props } = $props();
   const steps = $derived(series(props, ['heading', 'card', 'image', 'alt']));
@@ -35,7 +35,7 @@
 <style>
   /* No JS: a readable stack. */
   .frame { width: var(--col); margin: 0 auto 40px; text-align: center; }
-  .a-heading { margin: 0 0 12px; font: var(--headline-weight) clamp(22px, 3vw, 34px) / 1.1 var(--font-display); }
+  .a-heading { margin: 0 0 12px; font: var(--headline-weight) clamp(1.375rem, 3vw, 2.125rem) / 1.1 var(--font-display); }
   .a-card { position: relative; width: min(44.85vw, 250px); aspect-ratio: 1; margin: 0 auto 48px; }
   .a-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .a-label {
@@ -44,7 +44,7 @@
     inset-inline: 0;
     margin: 12px 0 0;
     color: var(--soft);
-    font: 600 15px / 1.3 var(--font-body);
+    font: 600 0.9375rem / 1.3 var(--font-body);
   }
   .a-arrow { display: none; }
 

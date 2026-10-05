@@ -15,7 +15,7 @@ npm run photos       # make WebP renditions of photos/ into big_assets/images/ (
 npm run dev          # http://localhost:5173, media served raw from big_assets/
 npm run build        # hash media → vite build (prerender) → copy media → verify media URLs
 npm run preview      # serve dist/ as a reader would get it
-npm test             # unit tests (inline-html allow-list)
+npm test             # unit tests (renditions, plus the kit's inline-html allow-list)
 npm run test:e2e     # Playwright at 390 / 800 / 1440: measured layout, PhotoScrolly, JS off, shell
 ```
 
@@ -45,9 +45,9 @@ sticky overlay apply. Reduced motion drops the fade (global rule in `app.css`).
 | Change a block | `src/lib/components/<Block>.svelte` |
 | Add a block | a new component + one line in `registry` in `src/lib/blocks.js` |
 
-Copied unchanged from `interactive/`: `scripts/hash-assets.js`, `svelte.config.js`, `src/lib/shell/`,
-`src/lib/Blocks.svelte`, `src/lib/inline-html.js`, `src/lib/doc.js`, `src/lib/components/Text.svelte`, the routes and
-`tests/helpers.js`, `footer.spec.js`, `responsive.spec.js`. A fix in one template's copy should go to the other's.
+Shared with `interactive/` through [`../birdkit-kit/`](../birdkit-kit/) (imported as `$kit/…`): the platform shell,
+`Blocks`, `Text`, `inline-html.js`, `doc.js`, `hash-assets.js` and the SvelteKit config. Change those there, then build
+and test both templates. Still copied per template: the routes and `tests/helpers.js`, `footer.spec.js`, `responsive.spec.js`.
 
 ## Photos
 

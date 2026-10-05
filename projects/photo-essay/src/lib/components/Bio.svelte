@@ -1,6 +1,6 @@
 <!-- Bio: the contributor note at the end of the essay, in the text column, smaller sans type. -->
 <script>
-  import { inlineHtml } from '$lib/inline-html.js';
+  import { inlineHtml } from '$kit/inline-html.js';
   let { text, note } = $props();
 </script>
 

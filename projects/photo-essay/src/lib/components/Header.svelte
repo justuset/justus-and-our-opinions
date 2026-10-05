@@ -27,7 +27,7 @@
   .essay-header { text-align: center; padding-top: var(--header-top); }
   .kicker {
     margin: 0 0 16px;
-    font: 600 var(--kicker-size) / 1.2 var(--font-display);
+    font: 600 var(--kicker-size) / var(--kicker-leading) var(--font-display);
     letter-spacing: var(--kicker-tracking);
     text-transform: uppercase;
   }
@@ -41,7 +41,7 @@
   .lead { width: var(--col-large); margin: 0 auto var(--gap-photo); }
   .lead img { width: 100%; }
   figcaption { padding: 9px var(--gutter) 0 0; text-align: start; font: var(--caption-size) / 1.4 var(--font-text); color: var(--soft); }
-  .credit { display: block; margin-top: 4px; font-size: var(--credit-size); color: var(--faint); }
+  .credit { display: block; margin-top: 4px; font-size: var(--credit-size); line-height: var(--credit-leading); color: var(--faint); }
   @media (max-width: 739.98px) {
     figcaption { padding-inline-start: var(--gutter); }
   }

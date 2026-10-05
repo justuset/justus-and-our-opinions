@@ -25,7 +25,7 @@
   .ad-label {
     margin: 0 0 9px;
     color: var(--shell-muted);
-    font: 500 10px / 10px var(--shell-font-label);
+    font: 500 0.625rem / 1 var(--shell-font-label);
     letter-spacing: 0.05rem;
     text-transform: uppercase;
   }
@@ -37,7 +37,7 @@
     margin: 0 auto;
     border: 1px dashed var(--shell-muted);
     color: var(--shell-muted);
-    font: 12px var(--shell-font-label);
+    font: 0.75rem var(--shell-font-label);
   }
   .skip-ad { position: absolute; left: -9999px; }
   .skip-ad:focus {
@@ -46,6 +46,6 @@
     transform: translateX(-50%);
     padding: 8px;
     background: var(--shell-bg);
-    font: 11px var(--shell-font-label);
+    font: 0.6875rem var(--shell-font-label);
   }
 </style>

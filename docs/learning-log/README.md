@@ -43,6 +43,8 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 27 | [The page shell in diatour dark](27-shell-in-diatour-dark.md) | 2026-10-02 |
 | 28 | [A photo essay template](28-photo-essay-template.md) | 2026-10-02 |
 | 29 | [`npm run photos`: WebP renditions](29-photo-renditions.md) | 2026-10-02 |
+| 30 | [Shared code in `projects/birdkit-kit/`](30-birdkit-kit.md) | 2026-10-02 |
+| 31 | [Photo essay colors and type from token files](31-photo-essay-tokens.md) | 2026-10-05 |
 
 ## Entry template
 
