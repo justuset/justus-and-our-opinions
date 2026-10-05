@@ -5,10 +5,14 @@
   "description": "The React story page: React 19 + React Router 7 (framework mode) with Node server rendering.",
   "type": "module",
   "scripts": {
+    "photos": "node scripts/copy-photos.mjs",
+    "predev": "npm run photos",
     "dev": "react-router dev",
+    "prebuild": "npm run photos",
     "build": "react-router build",
     "start": "react-router-serve ./build/server/index.js",
-    "check": "react-router typegen && tsc"
+    "check": "react-router typegen && tsc",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@opinion/archie": "*",
@@ -21,6 +25,7 @@
     "react-router": "^7.18.4"
   },
   "devDependencies": {
+    "@playwright/test": "~1.62.0",
     "@react-router/dev": "^7.18.4",
     "@types/node": "^22",
     "@types/react": "^19.2.18",

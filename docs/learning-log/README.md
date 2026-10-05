@@ -45,6 +45,7 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 29 | [`npm run photos`: WebP renditions](29-photo-renditions.md) | 2026-10-02 |
 | 30 | [Shared code in `projects/birdkit-kit/`](30-birdkit-kit.md) | 2026-10-02 |
 | 31 | [Photo essay colors and type from token files](31-photo-essay-tokens.md) | 2026-10-05 |
+| 32 | [The photo essay in the reference page's React components](32-react-photo-essay.md) | 2026-10-05 |
 
 ## Entry template
 

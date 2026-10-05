@@ -1,0 +1,26 @@
+.header {
+  text-align: center;
+  padding-block-start: var(--header-top);
+}
+.kicker {
+  margin: 0 0 1rem;
+  font: 600 var(--kicker-size) / var(--kicker-leading) var(--font-display);
+  letter-spacing: var(--kicker-tracking);
+  text-transform: uppercase;
+}
+.headline {
+  inline-size: var(--col);
+  margin: 0 auto 1.125rem;
+  font: 550 var(--headline-size) / var(--headline-leading) var(--font-display);
+  text-wrap: balance;
+}
+.date {
+  display: block;
+  margin-block-end: 1.75rem;
+  font-size: var(--credit-size);
+  color: var(--soft);
+}
+.lead {
+  margin-block: 0 var(--gap-photo);
+  text-align: start;
+}

@@ -1,0 +1,11 @@
+.p {
+  inline-size: var(--col);
+  margin: 0 auto var(--gap-para);
+  font: var(--text-size) / var(--text-leading) var(--font-text);
+  color: var(--ink-dim);
+}
+@supports (text-wrap: pretty) {
+  .p {
+    text-wrap: pretty;
+  }
+}
