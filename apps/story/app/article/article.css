@@ -1,5 +1,9 @@
+@import '../../../../projects/birdkit-kit/tpl.css';
+
 /* article.css: the photo essay's tokens for the React story app. Imported once by routes/photo-essay.tsx.
-   Same values as projects/photo-essay/src/app.css (measured from the reference, colors from the token files),
+   Colors, the font faces and the theme switch come from the shared tpl.css (G1–G3): --color-* roles written once with
+   light-dark(), and g-theme-<name> on #story only sets color-scheme. This file adds the measured layout and type.
+   Values measured from the reference (the photo essay template, before it moved here from Svelte),
    converted for Phase 2: px → rem (÷ 16), and logical properties in the components. Breakpoints stay
    740 / 1150 and are repeated as numbers in each @media rule (custom properties can't go in a media query). */
 :root {
@@ -42,39 +46,27 @@
 
   --fade: 0.35s ease-in-out;
 
-  /* color: Dark.json */
-  --paper: #121211;
-  --ink: #ededeb;
-  --ink-dim: #acacac;
-  --soft: #969696;
-  --faint: #838383;
-  --link: #9f8be7;
-  --accent: #ddf160; /* color.content.accent: the section label */
-  --line: #333332;
-  --surface: #1c1c1c;
+  /* text over a photo, in both themes: the measured near-white with a soft shadow */
   --on-photo: #f8f8f8;
   --photo-shadow: rgba(18, 18, 18, 0.5) 0 2px 4px;
 
-  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-  --font-text: var(--font-body);
-
-  /* the platform shell's tokens (projects/birdkit-kit/shell/shell.css) */
+  /* the platform shell's tokens: aliases of the tpl.css color roles, as in projects/birdkit-kit/shell/shell.css.
+     The shell sits outside #story, so it follows :root's dark color-scheme whatever theme the story picks. */
   --shell-font-label: var(--font-body);
   --shell-font-wordmark: var(--font-display);
-  --shell-bg: var(--paper);
-  --shell-bg-secondary: #1b1b1a;
-  --shell-surface: var(--surface);
-  --shell-ink: var(--ink);
-  --shell-muted: var(--faint);
-  --shell-rule: var(--line);
-  --shell-rule-strong: var(--ink);
-  --shell-border: var(--line);
-  --shell-button: var(--ink);
-  --shell-button-text: var(--paper);
-  --shell-button-hover: var(--soft);
-  --shell-wordmark: var(--paper);
-  --shell-wordmark-inverse: var(--ink);
+  --shell-bg: var(--color-background-primary);
+  --shell-bg-secondary: #1b1b1a; /* diatour --surface-2: the ad slot, recirc placeholders */
+  --shell-surface: var(--color-background-secondary);
+  --shell-ink: var(--color-content-primary);
+  --shell-muted: var(--color-content-secondary-dim);
+  --shell-rule: var(--color-stroke-tertiary);
+  --shell-rule-strong: var(--color-stroke-primary);
+  --shell-border: var(--color-stroke-tertiary);
+  --shell-button: var(--color-content-primary);
+  --shell-button-text: var(--color-background-primary);
+  --shell-button-hover: var(--color-content-secondary);
+  --shell-wordmark: var(--color-background-primary);
+  --shell-wordmark-inverse: var(--color-content-primary);
   --shell-gutter: 1.25rem;
   --shell-col: 37.5rem;
   --shell-page-max: 75rem;
@@ -88,19 +80,6 @@
     --card-size: 1.5rem;
     --card-leading: 1.25; /* 24/30 */
   }
-}
-
-.g-theme-opinion {
-  /* Light.json */
-  --paper: #ffffff;
-  --ink: #121212;
-  --ink-dim: #363636;
-  --soft: #5a5a5a;
-  --faint: #727272;
-  --link: #326891;
-  --accent: #346eb7;
-  --line: #dfdfdf;
-  --surface: #f8f8f8;
 }
 
 *,
@@ -125,8 +104,8 @@ body {
 /* :where() keeps these at zero specificity, so any component class wins over them (like the Svelte template). */
 #story {
   display: flow-root;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--color-background-primary);
+  color: var(--color-content-primary);
 }
 :where(#story) img {
   display: block;
@@ -134,7 +113,7 @@ body {
   block-size: auto;
 }
 :where(#story) a {
-  color: var(--link);
+  color: var(--color-content-accent-dim);
   text-underline-offset: 2px;
 }
 

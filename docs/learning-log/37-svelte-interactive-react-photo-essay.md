@@ -24,6 +24,5 @@ so it shouldn't be a Svelte build.
   could go back to a Birdkit build if the essay ever needed custom code.
 
 ## What I'd do differently / left as is
-- `apps/story/app/article/article.css` still has its own color names (`--ink`, `--line` …). It should import
-  `projects/birdkit-kit/tpl.css` (or a copy in `packages/design-system`) so both stacks share the `--color-*` roles.
+- ~~`article.css` kept its own color names~~: done in entry 38.
 - The rendition widths are written twice (`scripts/renditions.js` and `apps/story/app/article/media.ts`).

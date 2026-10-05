@@ -5,11 +5,11 @@
   min-block-size: 6.375rem; /* 102px rule to rule, so a one-line bio doesn't shrink the box */
   margin-block-start: 1.875rem; /* 30px */
   padding-block: 1.125rem 1.1875rem; /* 18 / 19px */
-  border-block: 1px solid var(--line);
+  border-block: var(--rule-horizontal-tertiary);
 }
 .byline p {
   margin: 0;
-  color: var(--ink);
+  color: var(--color-content-primary);
 }
 .author {
   font: 700 var(--byline-size) / 1.4 var(--font-body);

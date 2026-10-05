@@ -18,7 +18,7 @@
   padding-inline: var(--gutter);
   font-size: var(--credit-size);
   line-height: var(--credit-leading);
-  color: var(--faint);
+  color: var(--color-content-secondary-dim);
 }
 .card {
   inline-size: var(--col);
@@ -68,7 +68,7 @@
   text-shadow: var(--photo-shadow);
 }
 .scrolly[data-enhanced] .card[data-style='black'] {
-  color: var(--paper);
+  color: var(--color-background-primary);
   text-shadow: none;
 }
 /* by step, not :first-of-type: the credit is a <p> too */

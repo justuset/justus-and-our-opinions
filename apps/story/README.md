@@ -38,5 +38,10 @@ npm run test:e2e -w @opinion/story   # Playwright at 390 / 800 / 1440, JS on and
 | shell `Recirc` | `RelatedLinksBlock` (in body) + `Recirc` (shell) | `RelatedLinks` › `RelatedLink` |
 | `Blocks` ($kit) | | `Body` + `withErrorBoundary` |
 
+Colors come from the `--color-*` roles in `projects/birdkit-kit/tpl.css` (imported by `app/article/article.css`), the
+same roles the Svelte interactive uses. They're written once with `light-dark()`, and `g-theme-<name>` on `#story`
+only sets `color-scheme`. `vite.config.ts` sets `build.cssTarget` to browsers with `light-dark()`: with an older
+target, Lightning CSS rewrites it into `:root` variables and the theme stops switching.
+
 Photos are copied from `projects/photo-essay/big_assets/images` into `public/images` (gitignored) by
 `npm run photos`, which runs before `dev` and `build`.

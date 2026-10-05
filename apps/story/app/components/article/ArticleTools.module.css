@@ -5,7 +5,7 @@
   justify-content: space-between;
   gap: var(--space-1-5);
   padding-block-start: 1.3125rem; /* 21px */
-  border-block-start: 1px solid var(--line);
+  border-block-start: var(--rule-horizontal-tertiary);
 }
 .tools button {
   display: inline-flex;
@@ -13,7 +13,7 @@
   gap: 0.3125rem; /* 5px */
   border: 0;
   background: none;
-  color: var(--ink);
+  color: var(--color-content-primary);
   font: var(--tool-size) / 1.25 var(--font-body);
   cursor: pointer;
 }
@@ -35,9 +35,9 @@
 .tools .pill {
   block-size: 2.125rem; /* 34px */
   padding-inline: 0.625rem;
-  border: 1px solid var(--line);
+  border: var(--rule-horizontal-tertiary);
   border-radius: 50px;
-  background: var(--paper);
+  background: var(--color-background-primary);
 }
 .tools .icon {
   inline-size: 2.125rem;
@@ -46,7 +46,7 @@
 }
 .tools .pill:hover,
 .tools .pill:focus-visible {
-  background: var(--surface);
+  background: var(--color-background-secondary);
 }
 .pill svg {
   inline-size: 1.25rem;

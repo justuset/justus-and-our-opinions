@@ -3,5 +3,5 @@
   margin-block-start: 0.25rem;
   font-size: var(--credit-size);
   line-height: var(--credit-leading);
-  color: var(--faint);
+  color: var(--color-content-secondary-dim);
 }

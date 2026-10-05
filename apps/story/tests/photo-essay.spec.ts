@@ -101,6 +101,19 @@ test('platform blocks: ad slots and related links sit in the body', async ({ pag
   await expect(page.locator('[data-testid=related-links] li')).toHaveCount(2);
 });
 
+// The tpl.css roles are light-dark(): the story's theme class flips them, the shell outside it stays dark. Fails if
+// the CSS build rewrites light-dark() into :root variables (vite.config.ts cssTarget).
+test('theme class flips the color roles inside the story only', async ({ page }) => {
+  const colors = () =>
+    page.evaluate(() => [
+      getComputedStyle(document.querySelector('#story')!).backgroundColor,
+      getComputedStyle(document.body).backgroundColor,
+    ]);
+  expect(await colors()).toEqual(['rgb(18, 18, 17)', 'rgb(18, 18, 17)']);
+  await page.evaluate(() => (document.querySelector('#story')!.className = 'g-theme-opinion'));
+  expect(await colors()).toEqual(['rgb(255, 255, 255)', 'rgb(18, 18, 17)']);
+});
+
 test('no console errors (hydration included)', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
