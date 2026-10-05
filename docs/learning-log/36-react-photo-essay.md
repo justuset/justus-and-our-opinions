@@ -1,4 +1,4 @@
-# Learning log 32: The photo essay in the reference page's React components
+# Learning log 36: The photo essay in the reference page's React components
 
 **Date:** 2026-10-05  **Step:** Svelte photo essay → React story app  **Branch:** `feat/story-photo-essay-react`
 

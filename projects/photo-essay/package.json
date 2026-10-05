@@ -2,24 +2,12 @@
   "name": "photo-essay",
   "private": true,
   "type": "module",
-  "description": "Birdkit-style template for photo-led Opinion guest essays (demo story: photo-essay-demo): one prerendered SvelteKit page, hashed code bundles, separately hashed media. Demo content.",
+  "description": "Content for the photo essay template (demo story: photo-essay-demo): doc.json, original photos and their WebP renditions. The page itself is React, in apps/story (/photo-essay). Demo content.",
   "scripts": {
-    "dev": "vite dev",
     "photos": "node scripts/make-renditions.js",
-    "assets": "node ../birdkit-kit/hash-assets.js",
-    "build": "npm run assets && vite build && node ../birdkit-kit/hash-assets.js --copy",
-    "preview": "vite preview",
-    "test": "node --test \"src/lib/**/*.test.js\" \"../birdkit-kit/**/*.test.js\"",
-    "test:e2e": "playwright test"
+    "test": "node --test scripts/renditions.test.js"
   },
   "devDependencies": {
-    "@playwright/test": "~1.62.0",
-    "@sveltejs/adapter-static": "^3",
-    "@sveltejs/kit": "^2",
-    "@sveltejs/vite-plugin-svelte": "^5",
-    "playwright": "~1.62.0",
-    "sharp": "^0.35.5",
-    "svelte": "^5",
-    "vite": "^6"
+    "sharp": "^0.35.5"
   }
 }

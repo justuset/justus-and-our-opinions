@@ -1,0 +1,20 @@
+.byline {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-block-size: 6.375rem; /* 102px rule to rule, so a one-line bio doesn't shrink the box */
+  margin-block-start: 1.875rem; /* 30px */
+  padding-block: 1.125rem 1.1875rem; /* 18 / 19px */
+  border-block: 1px solid var(--line);
+}
+.byline p {
+  margin: 0;
+  color: var(--ink);
+}
+.author {
+  font: 700 var(--byline-size) / 1.4 var(--font-body);
+}
+.byline .bio {
+  margin-block-start: 0.125rem;
+  font: var(--meta-size) / 1.4286 var(--font-body);
+}

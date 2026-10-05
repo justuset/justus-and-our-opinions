@@ -13,14 +13,20 @@
   --gap-photo: 2.5rem;
   --gap-scrolly: 3.75rem;
   --masthead-h: 0rem; /* the masthead scrolls away */
-  --header-top: 5rem;
+  --header-top: 6.25rem; /* 100px, Figma header.essay-header */
+
+  /* spacing: size.spacing.* (Dark.json) */
+  --space-1-5: 0.75rem; /* 12px */
+  --space-2: 1rem; /* 16px */
+  --space-3: 1.5rem; /* 24px */
+  --space-4: 2rem; /* 32px */
 
   /* type: rem sizes, unitless leading */
   --headline-size: 3.5625rem;
   --headline-leading: 1.0526; /* 57/60 */
-  --kicker-size: 1rem;
-  --kicker-leading: 1.5;
-  --kicker-tracking: 0.07em;
+  --kicker-size: 0.875rem;
+  --kicker-leading: 1.7143; /* 14/24, Figma p.kicker */
+  --kicker-tracking: 0.08em; /* 1.12px at 14px */
   --text-size: 1.25rem;
   --text-leading: 1.5; /* 20/30 */
   --card-size: 1.75rem;
@@ -30,6 +36,9 @@
   --credit-leading: 1.3077; /* 13/17 */
   --bio-size: 1rem;
   --bio-leading: 1.375;
+  --byline-size: 0.9375rem; /* 15/21, Figma byline name */
+  --meta-size: 0.875rem; /* 14px */
+  --tool-size: 0.75rem; /* 12px, Figma share tools */
 
   --fade: 0.35s ease-in-out;
 
@@ -40,6 +49,7 @@
   --soft: #969696;
   --faint: #838383;
   --link: #9f8be7;
+  --accent: #ddf160; /* color.content.accent: the section label */
   --line: #333332;
   --surface: #1c1c1c;
   --on-photo: #f8f8f8;
@@ -88,6 +98,7 @@
   --soft: #5a5a5a;
   --faint: #727272;
   --link: #326891;
+  --accent: #346eb7;
   --line: #dfdfdf;
   --surface: #f8f8f8;
 }

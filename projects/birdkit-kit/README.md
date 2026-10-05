@@ -1,7 +1,7 @@
 # birdkit-kit: code every Birdkit-style template shares
 
-`projects/interactive/` and `projects/photo-essay/` used to carry byte-identical copies of these files. Now they live
-here once, and each template imports them as `$kit/…`.
+Birdkit-style (SvelteKit) templates import these as `$kit/…`. Today that's `projects/interactive/`; the photo essay
+moved to React in `apps/story`, because standard NYT articles are drawn by the React platform, not built with Birdkit.
 
 | File | What it is |
 |---|---|

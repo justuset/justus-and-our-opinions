@@ -25,12 +25,18 @@ export interface Image {
 
 export interface HeaderBasicBlock {
   __typename: 'HeaderBasicBlock';
+  section?: string; // the accent line above the kicker, "Opinion"
   label: string; // the kicker, "Guest Essay"
   headline: string;
   seoHeadline: string; // <title>, not drawn
   summary: string; // meta description, not drawn on this page type
   timestampBlock: { timestamp: string; text: string };
   media?: Image;
+  /** Under the lead photo (Figma header.essay-header, Frame 2). On the reference these are platform pieces. */
+  listenTime?: string;
+  commentCount?: number;
+  byline?: { author: string; bio?: TextInline[] };
+  promo?: { text: string; cta: string; url: string };
 }
 
 export interface ParagraphBlock {

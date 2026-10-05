@@ -1,6 +1,5 @@
-// Rendition naming (the photo prep step, `npm run photos`). Shared by scripts/make-renditions.js, which writes the files,
-// and $lib/media.js, which writes the srcset, so the two can never disagree about which files exist.
-// No imports: it runs in Node (the script, `node --test`) and in SvelteKit.
+// Rendition naming (the photo prep step, `npm run photos`), used by scripts/make-renditions.js to write the files.
+// apps/story/app/article/media.ts writes the srcset with the same widths: change both together.
 
 /** Target widths: phones, the 600px column at 2×, the 945px lead and full-screen scroller at 2×. */
 export const WIDTHS = [600, 1200, 2000];

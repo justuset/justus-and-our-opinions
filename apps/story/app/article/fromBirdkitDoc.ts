@@ -1,9 +1,10 @@
-// The Svelte template's content (flat props in content/doc.json) → the React platform's block shape (types.ts).
-// One doc feeds both templates: the words stay in projects/photo-essay/content/doc.json and nowhere else.
+// The photo essay's content (flat props in projects/photo-essay/content/doc.json) → the React platform's block shape
+// (types.ts). The words stay in that doc and nowhere else; the doc keeps the Birdkit shape (component names and flat
+// props) so a story can move between the two stacks without rewriting its content.
 //
-//   Svelte doc                         React block (__typename)          React component
+//   doc block                          React block (__typename)          React component
 //   text                               ParagraphBlock                    ParagraphBlock
-//   svelte · Header                    HeaderBasicBlock                  HeaderBasic
+//   svelte · Header                    HeaderBasicBlock                  HeaderBasic › ArticleTools, Byline
 //   svelte · Photo                     ImageBlock                        MediaFigure
 //   svelte · Diptych                   DiptychBlock                      Diptych
 //   svelte · PhotoScrolly              UnstructuredBlock (Scrolly)       Scrolly
@@ -70,12 +71,19 @@ export function fromBirdkitDoc(doc: BirdkitDoc): Article {
       case 'Header':
         header = {
           __typename: 'HeaderBasicBlock',
+          ...(p.section ? { section: String(p.section) } : {}),
           label: String(p.kicker),
           headline: String(p.headline),
           seoHeadline: String(p.seoTitle ?? p.headline),
           summary: String(p.dek ?? ''),
           timestampBlock: { timestamp: String(p.date), text: String(p.dateText) },
           media: p.url ? image(p) : undefined,
+          ...(p.listenTime ? { listenTime: String(p.listenTime) } : {}),
+          commentCount: Number(p.comments ?? 0),
+          ...(p.author ? { byline: { author: String(p.author), bio: p.bio ? toInlines(String(p.bio)) : undefined } } : {}),
+          ...(p.promoText
+            ? { promo: { text: String(p.promoText), cta: String(p.promoCta), url: String(p.promoHref ?? '#') } }
+            : {}),
         };
         break;
       case 'Photo':

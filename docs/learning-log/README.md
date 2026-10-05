@@ -45,7 +45,12 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 29 | [`npm run photos`: WebP renditions](29-photo-renditions.md) | 2026-10-02 |
 | 30 | [Shared code in `projects/birdkit-kit/`](30-birdkit-kit.md) | 2026-10-02 |
 | 31 | [Photo essay colors and type from token files](31-photo-essay-tokens.md) | 2026-10-05 |
-| 32 | [The photo essay in the reference page's React components](32-react-photo-essay.md) | 2026-10-05 |
+| 32 | [The essay header from Figma](32-figma-essay-header.md) | 2026-10-05 |
+| 33 | [G1, color roles with `light-dark()`](33-g1-color-roles.md) | 2026-10-05 |
+| 34 | [G2, the size scales and rules](34-g2-scales.md) | 2026-10-05 |
+| 35 | [G3, typography roles](35-g3-type-roles.md) | 2026-10-05 |
+| 36 | [The photo essay in the reference page's React components](36-react-photo-essay.md) | 2026-10-05 |
+| 37 | [Svelte for interactives, React for the photo essay](37-svelte-interactive-react-photo-essay.md) | 2026-10-05 |
 
 ## Entry template
 
