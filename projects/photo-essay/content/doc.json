@@ -9,7 +9,8 @@
         "component": "Header",
         "seoTitle": "Placeholder SEO Headline for Search and Social",
         "dek": "A template for a photo-led Opinion guest essay. Demo content.",
-        "kicker": "Guest Essay · Demo",
+        "section": "Opinion",
+        "kicker": "Guest Essay",
         "headline": "The Display Headline Sits Here, Centered and Tight",
         "date": "2026-09-05",
         "dateText": "Sept. 5, 2026",
@@ -17,7 +18,14 @@
         "alt": "A rider leans back on a bucking gray horse as a judge and a pickup rider watch.",
         "width": 2000,
         "height": 1333,
-        "credit": "Photo credit TK"
+        "credit": "Photo credit TK",
+        "listenTime": "3:44",
+        "comments": 42,
+        "author": "Photographer Name",
+        "bio": "Photographer Name is a photographer based in Somewhere. (Demo byline.)",
+        "promoText": "See more of our coverage in your search results.",
+        "promoCta": "Add Our Opinions on Google",
+        "promoHref": "#"
       }
     },
     {

@@ -29,7 +29,7 @@
     width: var(--col);
     margin: 0 auto var(--gap-para);
     padding: 12px 16px;
-    border: 2px dashed var(--ink);
-    font: 600 var(--meta-size) / 1.4 var(--font-body);
+    border: var(--size-border-2) dashed var(--color-content-primary);
+    font: var(--type-title-14);
   }
 </style>

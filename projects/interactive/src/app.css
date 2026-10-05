@@ -34,34 +34,26 @@
   --intro-rise-dek: 10px;
   --runway-step: 135svh;                                     /* scroll distance per step (chunk 8) */
 
-  /* color: diatour */
-  --paper: #121211;
-  --ink: #ededeb;
-  --soft: rgba(235, 235, 240, 0.66);
-  --faint: rgba(235, 235, 240, 0.56);
-  --line: rgba(255, 255, 255, 0.14);
-  --surface: rgba(255, 255, 255, 0.05);
+  /* color: the roles live in ../birdkit-kit/tpl.css (G1) */
 
-  /* type */
-  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-  --font-serif-body: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --font-text: var(--font-body);                             /* the body-face decision: one token to flip */
-  --text-size: 1.25rem;                                      /* type in rem (px ÷ 16), unitless leading */
-  --text-leading: 1.5;                                       /* 20/30 */
-  --meta-size: 0.875rem;
+  /* type roles (G3): faces and the shared roles (--type-body, --type-text-14, --type-title-14) are in tpl.css.
+     These compose the header tokens below, which the breakpoints redefine. */
+  --type-kicker: 600 0.8125rem / 1.4 var(--font-body);                         /* 13px */
+  --type-headline: var(--headline-weight) var(--headline-size) / var(--headline-leading) var(--font-display);
+  --type-headline-ls: -0.02em;
+  --type-dek: var(--dek-size) / 1.4 var(--font-body);
+  --type-caption: 0.9375rem / var(--caption-leading) var(--font-body);         /* 15px */
+  --type-title-15: 600 0.9375rem / 1.3 var(--font-body);                       /* step labels, diagram nodes */
 
   /* header */
   --header-h: 675px;
   --header-mt: 90px;
   --header-copy-top: 12%;
   --header-pad: 20px;
-  --kicker-size: 0.8125rem;
   --kicker-gap: 12px;
   --headline-size: 3.625rem;
   --headline-weight: 550;
   --headline-leading: 1;
-  --headline-tracking: -0.02em;
   --headline-measure: 6ch;
   --dek-size: 1.1rem;
   --dek-measure: 30ch;
@@ -72,7 +64,6 @@
   --two-up-pad: 20px;
   --two-up-gap: 12px;
   --two-up-max: none;
-  --caption-size: 0.9375rem;
   --caption-leading: 1.2;
 
   /* connector diagram (chunk 7) */
@@ -80,7 +71,7 @@
   --diagram-gap: 18px;
   --diagram-stage: 1200px;
   --diagram-pad: 6rem clamp(10px, 6vw, 72px) 9.25rem;
-  --node-border: 1.5px;
+  --node-border: var(--size-border-1-5);
   --connector-lift: 40;
 
   /* scroll engine (chunk 8, measured) */
@@ -96,7 +87,7 @@
   :root { --two-up-margin: 100px; --two-up-pad: 64px; --two-up-max: 1440px; }
 }
 @media (max-width: 739.98px) {
-  :root { --text-size: 1.125rem; }   /* 18/27 */
+  :root { --type-body: 400 var(--size-font-18) / 1.5 var(--font-text); }   /* 18/27, measured in Phase 1 (tpl.css has 18/25) */
 }
 @media screen and (max-width: 359px) {
   :root { --header-h: 67vh; --header-copy-top: 13%; --headline-size: 2.75rem; --dek-size: .85rem; }
@@ -111,30 +102,13 @@
   }
 }
 
-/* ============ 1b. THEMES (NYT sandbox S3) ============
-   The doc's `theme` key puts g-theme-<name> on the story root (<article class="birdkit-body g-theme-…">). A theme is
-   nothing but a block of color tokens: every component colors itself through these, so switching the class
-   re-colors the whole story. The story owns its theme; the platform shell (masthead, footer) keeps the :root
-   tokens, as on the real site, where a dark visual essay can sit inside a light platform page. */
-.g-theme-diatour {               /* dark, the default (diatour's source palette) */
-  --paper: #121211;
-  --ink: #ededeb;
-  --soft: rgba(235, 235, 240, 0.66);
-  --faint: rgba(235, 235, 240, 0.56);
-  --line: rgba(255, 255, 255, 0.14);
-  --surface: rgba(255, 255, 255, 0.05);
-}
-.g-theme-opinion {               /* light: diatour's derived light palette (docs/design-system.md) */
-  --paper: #fbfbf8;
-  --ink: #121212;
-  --soft: rgba(18, 18, 18, 0.72);
-  --faint: rgba(18, 18, 18, 0.6);  /* 0.56 failed AA on --paper (4.23:1); 0.6 passes (4.8:1) */
-  --line: rgba(0, 0, 0, 0.12);
-  --surface: rgba(0, 0, 0, 0.04);
-}
+/* ============ 1b. THEMES (NYT sandbox S3, reworked in G1) ============
+   The doc's `theme` key puts g-theme-<name> on the story root (<article class="birdkit-body g-theme-…">). A theme
+   class only sets color-scheme; every color role in ../birdkit-kit/tpl.css follows it. The story owns its theme; the
+   platform shell (masthead, footer) stays on :root's dark scheme. */
 /* The story paints its own ground, so its theme never depends on the page behind it. flow-root keeps its children's
    margins (the header's 90px top margin) inside it, so no band of the platform's color shows above the header. */
-:where(.birdkit-body) { display: flow-root; background: var(--paper); color: var(--ink); }
+:where(.birdkit-body) { display: flow-root; background: var(--color-background-primary); color: var(--color-content-primary); }
 /* Lottie colors are baked into the JSON, not tokens. The placeholder art is white-on-dark, so the light theme inverts
    it to dark-on-light. (A real light-theme story would export its own Lottie files instead.) */
 .g-theme-opinion :is(.hero-anim, .scrub-anim) { filter: invert(1); }

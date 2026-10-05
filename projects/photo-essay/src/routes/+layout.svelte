@@ -5,6 +5,7 @@
      that floats over the story and scrolls away, then share tools, related content, an ad slot and the footer.
      Each region is one component in ../birdkit-kit/shell/; the platform's tokens live in shell.css, apart from the story's. -->
 <script>
+  import '$kit/tpl.css';
   import '../app.css';
   import '$kit/shell/shell.css';
   import { page } from '$app/state';

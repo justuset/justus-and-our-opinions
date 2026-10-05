@@ -10,8 +10,8 @@
     width: var(--col);
     margin-inline: auto;
     margin-block: var(--gap-byline);
-    font: 600 var(--meta-size) / 1.4 var(--font-body);
-    color: var(--soft);
+    font: var(--type-title-14);
+    color: var(--color-content-secondary);
   }
   @media screen and (min-width: 740px) and (orientation: landscape) {
     .byline { margin-bottom: var(--gap-byline-desktop); }

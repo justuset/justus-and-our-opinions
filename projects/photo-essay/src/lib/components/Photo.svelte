@@ -22,8 +22,8 @@
   .size-large { width: var(--col-large); }
   .size-medium { width: var(--col); }
   img { width: 100%; }
-  figcaption { padding-top: 9px; font: var(--caption-size) / 1.4 var(--font-text); color: var(--soft); }
-  .credit { display: block; font-size: var(--credit-size); line-height: var(--credit-leading); color: var(--faint); }
+  figcaption { padding-top: 9px; font: var(--type-caption); color: var(--color-content-secondary); }
+  .credit { display: block; font: var(--type-credit); color: var(--color-content-secondary-dim); }
   @media (max-width: 739.98px) {
     .size-large figcaption { padding-inline: var(--gutter); }
   }

@@ -36,10 +36,10 @@ test('footer width and type', async ({ page }) => {
 test('the shell is diatour dark', async ({ page }) => {
   await page.goto('/');
   const body = await css(page, 'body', ['background-color', 'color']);
-  expect(body['background-color']).toBe('rgb(18, 18, 17)'); // --paper
-  expect(body.color).toBe('rgb(237, 237, 235)'); // --ink
+  expect(body['background-color']).toBe('rgb(18, 18, 17)'); // --color-background-primary
+  expect(body.color).toBe('rgb(237, 237, 235)'); // --color-content-primary
   const ad = await css(page, '#bottom-wrapper', ['background-color']);
   expect(ad['background-color']).toBe('rgb(27, 27, 26)'); // --surface-2
   const link = await css(page, '.site-footer a', ['color']);
-  expect(link.color).toBe('rgb(131, 131, 131)'); // --faint (Dark.json color.content.secondary-dim)
+  expect(link.color).toBe('rgb(131, 131, 131)'); // --color-content-secondary-dim (Dark.json)
 });

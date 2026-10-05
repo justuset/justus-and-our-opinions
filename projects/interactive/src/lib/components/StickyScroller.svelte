@@ -113,22 +113,22 @@
     transform: translateX(-50%);
     width: var(--progress-w);
     height: 3px;
-    background: var(--line);
+    background: var(--color-stroke-tertiary);
     transition: opacity 0.3s;
   }
   .progress.hidden { opacity: 0; }
   /* The fill is full width and scaled, not resized: a transform is composited, so the bar costs no layout per frame. */
-  .progress-fill { height: 100%; background: var(--ink); transform-origin: left center; }
+  .progress-fill { height: 100%; background: var(--color-content-primary); transform-origin: left center; }
   .progress-marker {
     position: absolute;
     top: 50%;
     width: var(--marker);
     height: var(--marker);
     border-radius: 50%;
-    background: var(--line);
+    background: var(--color-stroke-tertiary);
     transform: translate(-50%, -50%);
   }
-  .progress-marker.on { background: var(--ink); }
+  .progress-marker.on { background: var(--color-content-primary); }
   @media (prefers-reduced-motion: reduce) {
     [data-enhanced] .progress { transition: none; } /* same specificity as the rule that sets it */
   }

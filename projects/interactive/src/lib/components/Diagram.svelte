@@ -66,9 +66,9 @@
     position: relative;
     z-index: 3;
     padding: 12px 14px;
-    border: var(--node-border) solid var(--ink);
-    background: var(--paper);
-    font: 600 0.9375rem / 1.3 var(--font-body);
+    border: var(--node-border) solid var(--color-content-primary);
+    background: var(--color-background-primary);
+    font: var(--type-title-15);
   }
   .connectors {
     position: absolute;
@@ -79,7 +79,7 @@
     overflow: visible;
     z-index: 2;
     display: none;
-    color: var(--ink);
+    color: var(--color-content-primary);
     pointer-events: none;
   }
   .connectors path { fill: none; stroke: currentColor; stroke-width: var(--node-border); }

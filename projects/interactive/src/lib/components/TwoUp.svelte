@@ -38,10 +38,10 @@
   }
   .group-caption {
     padding-top: 9px;
-    font: var(--caption-size) / var(--caption-leading) var(--font-body);
-    color: var(--soft);
+    font: var(--type-caption);
+    color: var(--color-content-secondary);
   }
-  .credit { color: var(--faint); }
+  .credit { color: var(--color-content-secondary-dim); }
 
   @media (min-width: 740px) {
     .two-up { flex-flow: row wrap; }

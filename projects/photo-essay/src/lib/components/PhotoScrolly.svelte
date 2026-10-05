@@ -58,11 +58,11 @@
   /* No-JS layout: photos in a column, credit, then the cards as text. */
   .stage { width: var(--col-large); margin: 0 auto var(--gap-photo); display: grid; gap: 10px; }
   img { width: 100%; }
-  .credit { margin: 9px 0; padding-inline: var(--gutter); font-size: var(--credit-size); line-height: var(--credit-leading); color: var(--faint); }
+  .credit { margin: 9px 0; padding-inline: var(--gutter); font: var(--type-credit); color: var(--color-content-secondary-dim); }
   .card {
     width: var(--col);
     margin: 0 auto var(--gap-para);
-    font: var(--card-size) / var(--card-leading) var(--font-display);
+    font: var(--type-card);
   }
 
   /* Enhanced: one sticky screen, photos stacked, cards scroll over it. */

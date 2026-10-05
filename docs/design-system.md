@@ -9,6 +9,12 @@ breakpoints. The fluid `--step-*` tokens in `layout-system.md` §2 are derived f
 
 ## Color
 
+> **Since G1 (2026-10-05)** the code uses NYT role names from `projects/birdkit-kit/tpl.css`, with `Dark.json` /
+> `Light.json` values: `--paper` → `--color-background-primary`, `--ink` → `--color-content-primary`, `--soft` →
+> `--color-content-secondary`, `--faint` → `--color-content-secondary-dim`, `--line` → `--color-stroke-tertiary`,
+> `--surface` → `--color-background-secondary`, plus `--color-content-primary-dim` (body text) and
+> `--color-content-accent` / `-accent-dim`. The table below is the diatour source those values descend from.
+
 | Token | Dark (source) | Light (derived) | Use |
 |-------|---------------|-----------------|-----|
 | `--paper` | `#121211` | `#fbfbf8` | Page background |

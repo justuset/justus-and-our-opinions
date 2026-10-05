@@ -11,6 +11,6 @@
 
 <style>
   .error { width: var(--col); margin: 20vh auto; color: var(--shell-ink); font-family: var(--shell-font-label); }
-  h1 { font: 550 var(--headline-size) / 1 var(--shell-font-wordmark); margin: 0 0 12px; }
+  h1 { font: var(--type-headline); margin: 0 0 12px; }
   p { color: var(--shell-muted); }
 </style>

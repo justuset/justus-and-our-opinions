@@ -24,7 +24,7 @@ npm run test:e2e     # Playwright at 390 / 800 / 1440: measured layout, PhotoScr
 | Component | Props (flat, numbered for lists) | Measured |
 |---|---|---|
 | `text` block | one paragraph, inline `<a>`, `<em>`, `<strong>` | 20/30 in 600px, 18/25 in 350px on phones |
-| `Header` | `kicker headline date dateText url alt width height caption credit`, plus `seoTitle dek` for `<head>` | 57/60 headline (40/44 phones), 945px lead photo |
+| `Header` | `section kicker headline date dateText url alt width height caption credit`, then `listenTime comments author bio promoText promoCta promoHref` for the tools row, byline and promo (each part drops out when its prop is missing), plus `seoTitle dek` for `<head>` | 57/60 headline (40/44 phones) under a 72px rule, 945px lead photo. Renders `ArticleTools` and `Byline` (not registered blocks) |
 | `Photo` | `url alt width height caption credit size` (`large` or `medium`) | 945px or 600px |
 | `Diptych` | `url1 alt1 width1 height1 url2 … credit` | 2 × 465px, 15px gap; stacked under 740px |
 | `PhotoScrolly` | `url1 alt1 width1 height1 card1 url2 … credit` | sticky 100svh stage, 0.35s crossfade, cards 100svh apart (first −33svh, last +66svh), 28/32 type (24/30 phones) |

@@ -114,20 +114,20 @@
     padding: 0 var(--header-pad);
     pointer-events: none;               /* clicks reach any interactive art underneath */
   }
-  .kicker { margin: 0 0 var(--kicker-gap); font: 600 var(--kicker-size) / 1.4 var(--font-body); color: var(--soft); }
-  .kicker .bar { color: var(--faint); font-weight: 400; }
+  .kicker { margin: 0 0 var(--kicker-gap); font: var(--type-kicker); color: var(--color-content-secondary); }
+  .kicker .bar { color: var(--color-content-secondary-dim); font-weight: 400; }
   .headline {
     max-width: var(--headline-measure); /* sized in characters: 6ch ≈ one word per line on phones */
     margin: 2px auto 6px;
-    font: var(--headline-weight) var(--headline-size) / var(--headline-leading) var(--font-display);
-    letter-spacing: var(--headline-tracking);
-    color: var(--ink);
+    font: var(--type-headline);
+    letter-spacing: var(--type-headline-ls);
+    color: var(--color-content-primary);
   }
   .subtitle {
     max-width: var(--dek-measure);
     margin: 0 auto;
-    font: var(--dek-size) / 1.4 var(--font-body);
-    color: var(--soft);
+    font: var(--type-dek);
+    color: var(--color-content-secondary);
     text-wrap: balance;
   }
   .header-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
@@ -137,9 +137,9 @@
   /* Hide the poster once the animation is drawn. Scoped CSS only matches this component's own <svg>, never the one
      Lottie injects at runtime, so this can't hide the animation. */
   .playing > svg { visibility: hidden; }
-  .art-page  { fill: var(--surface); stroke: var(--line); stroke-width: 3; }
-  .art-lines { fill: none; stroke: var(--line); stroke-width: 10; stroke-linecap: round; }
-  .art-ring  { fill: none; stroke: var(--line); stroke-width: 14; }
+  .art-page  { fill: var(--color-background-secondary); stroke: var(--color-stroke-tertiary); stroke-width: 3; }
+  .art-lines { fill: none; stroke: var(--color-stroke-tertiary); stroke-width: 10; stroke-linecap: round; }
+  .art-ring  { fill: none; stroke: var(--color-stroke-tertiary); stroke-width: 14; }
 
   @media screen and (min-width: 740px) {
     .header-copy { top: 0; bottom: 0; justify-content: center; }

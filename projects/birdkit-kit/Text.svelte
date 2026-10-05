@@ -13,7 +13,7 @@
   .g-text {
     width: var(--col);
     margin: 0 auto var(--gap-para);
-    font: var(--text-size) / var(--text-leading) var(--font-text);
+    font: var(--type-body);
   }
   @supports (text-wrap: pretty) {
     .g-text { text-wrap: pretty; }
