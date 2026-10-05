@@ -16,7 +16,7 @@
 </footer>
 
 <style>
-  .site-footer { padding: 0 0 45px; font-size: 11px; text-align: center; }
+  .site-footer { padding: 0 0 45px; font-size: 0.6875rem; text-align: center; }
   @media (min-width: 1024px) {
     .site-footer { padding: 0 3% 45px; }
   }
@@ -28,7 +28,7 @@
   @media (min-width: 600px) {
     ul { display: inline-block; }
   }
-  li { display: inline-block; padding: 0 10px; line-height: 20px; }
+  li { display: inline-block; padding: 0 10px; line-height: 1.8182; /* 20px at 11px */ }
   a { padding: 10px 0; color: var(--shell-muted); font-family: var(--shell-font-label); text-decoration: none; white-space: nowrap; }
   a:hover { text-decoration: underline; }
 </style>

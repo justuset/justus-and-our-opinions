@@ -47,18 +47,18 @@
   --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
   --font-serif-body: 'Newsreader', Georgia, 'Times New Roman', serif;
   --font-text: var(--font-body);                             /* the body-face decision: one token to flip */
-  --text-size: 20px;
-  --text-leading: 30px;
-  --meta-size: 14px;
+  --text-size: 1.25rem;                                      /* type in rem (px ÷ 16), unitless leading */
+  --text-leading: 1.5;                                       /* 20/30 */
+  --meta-size: 0.875rem;
 
   /* header */
   --header-h: 675px;
   --header-mt: 90px;
   --header-copy-top: 12%;
   --header-pad: 20px;
-  --kicker-size: 13px;
+  --kicker-size: 0.8125rem;
   --kicker-gap: 12px;
-  --headline-size: 58px;
+  --headline-size: 3.625rem;
   --headline-weight: 550;
   --headline-leading: 1;
   --headline-tracking: -0.02em;
@@ -72,7 +72,7 @@
   --two-up-pad: 20px;
   --two-up-gap: 12px;
   --two-up-max: none;
-  --caption-size: 15px;
+  --caption-size: 0.9375rem;
   --caption-leading: 1.2;
 
   /* connector diagram (chunk 7) */
@@ -90,23 +90,23 @@
   --marker: 9px;
 }
 @media (min-width: 740px) {
-  :root { --two-up-margin: 70px; --caption-leading: 30px; }
+  :root { --two-up-margin: 70px; --caption-leading: 2; }   /* 15/30 */
 }
 @media (min-width: 1150px) {
   :root { --two-up-margin: 100px; --two-up-pad: 64px; --two-up-max: 1440px; }
 }
 @media (max-width: 739.98px) {
-  :root { --text-size: 18px; --text-leading: 27px; }
+  :root { --text-size: 1.125rem; }   /* 18/27 */
 }
 @media screen and (max-width: 359px) {
-  :root { --header-h: 67vh; --header-copy-top: 13%; --headline-size: 44px; --dek-size: .85rem; }
+  :root { --header-h: 67vh; --header-copy-top: 13%; --headline-size: 2.75rem; --dek-size: .85rem; }
 }
 @media screen and (min-width: 740px) {
   :root {
-    --headline-size: clamp(72px, 7.2vw, 96px);
+    --headline-size: clamp(4.5rem, 7.2vw, 6rem);
     --headline-leading: .92;
     --headline-measure: 12ch;
-    --dek-size: clamp(16px, 1.4vw, 20px);
+    --dek-size: clamp(1rem, 1.4vw, 1.25rem);
     --dek-measure: 32ch;
   }
 }

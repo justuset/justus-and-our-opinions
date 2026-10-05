@@ -32,7 +32,7 @@
     border-radius: 3px;
     background: var(--shell-button);
     color: var(--shell-button-text);
-    font: 600 13px / 24px var(--shell-font-label);
+    font: 600 0.8125rem / 1.8462 var(--shell-font-label); /* 13/24 */
     letter-spacing: 0.05em;
     text-transform: uppercase;
     cursor: pointer;
@@ -54,7 +54,7 @@
     border-radius: 30px;
     background: var(--shell-surface);
     color: var(--shell-ink);
-    font: 500 12px / 16px var(--shell-font-label);
+    font: 500 0.75rem / 1.3333 var(--shell-font-label); /* 12/16 */
     text-transform: uppercase;
     cursor: pointer;
   }

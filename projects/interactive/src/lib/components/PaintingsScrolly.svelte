@@ -59,8 +59,8 @@
 
 <style>
   /* No JS: every caption as a list, then a row of three cards. */
-  .c-steps { width: var(--col); margin: 0 auto 14px; padding-inline-start: 1.25em; color: var(--soft); font: 15px / 1.4 var(--font-body); }
-  .c-caption { margin: 0; text-align: center; font: 600 15px / 1.3 var(--font-body); }
+  .c-steps { width: var(--col); margin: 0 auto 14px; padding-inline-start: 1.25em; color: var(--soft); font: 0.9375rem / 1.4 var(--font-body); }
+  .c-caption { margin: 0; text-align: center; font: 600 0.9375rem / 1.3 var(--font-body); }
   .c-stage { width: var(--col); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
 

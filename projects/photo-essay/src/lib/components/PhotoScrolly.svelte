@@ -45,20 +45,20 @@
         decoding="async"
       />
     {/each}
-    {#if credit}<p class="credit"><span class="visually-hidden">Credit:</span> {credit}</p>{/if}
   </div>
   {#each steps as step, i (i)}
     <p class="card" data-step={i}>{@html inlineHtml(step.card)}</p>
   {/each}
 </section>
+{#if credit}<p class="credit"><span class="visually-hidden">Credit:</span> {credit}</p>{/if}
 
 <style>
-  .photo-scrolly { position: relative; z-index: 0; margin-block: var(--gap-scrolly); }
+  .photo-scrolly { position: relative; z-index: 0; margin-block: var(--gap-scrolly) 0; }
 
   /* No-JS layout: photos in a column, credit, then the cards as text. */
   .stage { width: var(--col-large); margin: 0 auto var(--gap-photo); display: grid; gap: 10px; }
   img { width: 100%; }
-  .credit { margin: 0; padding-inline: var(--gutter); font-size: var(--credit-size); color: var(--faint); }
+  .credit { margin: 9px 0; padding-inline: var(--gutter); font-size: var(--credit-size); line-height: var(--credit-leading); color: var(--faint); }
   .card {
     width: var(--col);
     margin: 0 auto var(--gap-para);
@@ -85,14 +85,6 @@
     transition: opacity var(--fade);
   }
   [data-enhanced] img.is-active { opacity: 1; }
-  [data-enhanced] .credit {
-    position: absolute;
-    inset-inline-start: var(--gutter);
-    inset-block-end: var(--gutter);
-    padding: 0;
-    color: var(--on-photo);
-    text-shadow: var(--photo-shadow);
-  }
   [data-enhanced] .card {
     position: relative;
     z-index: 1;

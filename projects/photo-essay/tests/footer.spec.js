@@ -41,5 +41,5 @@ test('the shell is diatour dark', async ({ page }) => {
   const ad = await css(page, '#bottom-wrapper', ['background-color']);
   expect(ad['background-color']).toBe('rgb(27, 27, 26)'); // --surface-2
   const link = await css(page, '.site-footer a', ['color']);
-  expect(link.color).toBe('rgba(235, 235, 240, 0.56)'); // --faint
+  expect(link.color).toBe('rgb(131, 131, 131)'); // --faint (Dark.json color.content.secondary-dim)
 });

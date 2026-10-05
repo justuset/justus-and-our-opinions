@@ -6,7 +6,7 @@ test('header and body type match the reference', async ({ page }) => {
   const mobile = viewport() === 'mobile';
   const h1 = await css(page, '.headline', ['font-size', 'line-height', 'text-align']);
   expect(px(h1['font-size'])).toBe(mobile ? 40 : 57);
-  expect(px(h1['line-height'])).toBe(mobile ? 44 : 60);
+  expect(Math.round(px(h1['line-height']))).toBe(mobile ? 44 : 60); // unitless ratio, so 59.998px
   expect(h1['text-align']).toBe('center');
 
   const p = await css(page, '.g-text', ['font-size']);

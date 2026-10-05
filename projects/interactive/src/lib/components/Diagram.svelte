@@ -68,7 +68,7 @@
     padding: 12px 14px;
     border: var(--node-border) solid var(--ink);
     background: var(--paper);
-    font: 600 15px / 1.3 var(--font-body);
+    font: 600 0.9375rem / 1.3 var(--font-body);
   }
   .connectors {
     position: absolute;

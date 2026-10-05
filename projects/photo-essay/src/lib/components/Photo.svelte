@@ -23,7 +23,7 @@
   .size-medium { width: var(--col); }
   img { width: 100%; }
   figcaption { padding-top: 9px; font: var(--caption-size) / 1.4 var(--font-text); color: var(--soft); }
-  .credit { display: block; font-size: var(--credit-size); color: var(--faint); }
+  .credit { display: block; font-size: var(--credit-size); line-height: var(--credit-leading); color: var(--faint); }
   @media (max-width: 739.98px) {
     .size-large figcaption { padding-inline: var(--gutter); }
   }

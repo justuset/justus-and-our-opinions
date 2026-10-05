@@ -38,7 +38,7 @@
      (caption i = 2i, page i = 2i + 1). Once enhanced, the wrappers are blocks again and `order` does nothing. */
   .b-wrapper { width: var(--col); margin: 0 auto; display: flex; flex-direction: column; }
   .b-text-overlay, .b-content { display: contents; }
-  .b-text { margin: 0 0 10px; font: 20px / 1.3 var(--font-display); text-align: center; }
+  .b-text { margin: 0 0 10px; font: 1.25rem / 1.3 var(--font-display); text-align: center; }
   .frame { margin-bottom: 40px; }
   img { display: block; width: 100%; height: auto; }
 

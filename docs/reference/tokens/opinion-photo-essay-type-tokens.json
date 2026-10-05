@@ -1,0 +1,1434 @@
+{
+  "$description": "Type tokens for the NYT Opinion photo essay: font families, weights, font sizes, line heights, letter spacing, NYT text styles (--tpl-typography-*) and the measured article text styles. Split from opinion-photo-essay-tokens.json; paths are unchanged, so loading both files together (e.g. Style Dictionary source: [\"*.json\"]) resolves every reference. Font sizes are NYT rem tokens (fixed, not viewport-based); type did not change at the 1440 breakpoint.",
+  "font": {
+    "family": {
+      "cheltenham": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-cheltenham",
+          "cheltenham-fallback-georgia",
+          "cheltenham-fallback-noto",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Libre Caslon Text",
+            "Georgia",
+            "serif"
+          ]
+        }
+      },
+      "cheltenham-sh": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-cheltenham-small",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Libre Caslon Text",
+            "Georgia",
+            "serif"
+          ]
+        }
+      },
+      "cheltenham-cond": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-cheltenham-cond",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Libre Caslon Text",
+            "Georgia",
+            "serif"
+          ]
+        }
+      },
+      "cheltenham-text-cond": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-cheltenham-text-cond",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Libre Caslon Text",
+            "Georgia",
+            "serif"
+          ]
+        }
+      },
+      "franklin": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-franklin",
+          "helvetica",
+          "arial",
+          "sans-serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Libre Franklin",
+            "helvetica",
+            "arial",
+            "sans-serif"
+          ]
+        }
+      },
+      "franklin-all-caps": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-franklin",
+          "helvetica",
+          "arial",
+          "sans-serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Libre Franklin",
+            "helvetica",
+            "arial",
+            "sans-serif"
+          ]
+        }
+      },
+      "imperial": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-imperial",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Georgia",
+            "Times New Roman",
+            "serif"
+          ]
+        }
+      },
+      "karnak": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-karnak",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Georgia",
+            "serif"
+          ]
+        }
+      },
+      "karnak-cond": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-karnak-cond",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Georgia",
+            "serif"
+          ]
+        }
+      },
+      "karnak-text": {
+        "$type": "fontFamily",
+        "$value": [
+          "nyt-karnak-text",
+          "georgia",
+          "times new roman",
+          "times",
+          "serif"
+        ],
+        "$extensions": {
+          "sandbox": [
+            "Georgia",
+            "serif"
+          ]
+        }
+      }
+    },
+    "weight": {
+      "ultra-light": {
+        "$type": "fontWeight",
+        "$value": 100
+      },
+      "thin": {
+        "$type": "fontWeight",
+        "$value": 200
+      },
+      "extra-light": {
+        "$type": "fontWeight",
+        "$value": 200
+      },
+      "light": {
+        "$type": "fontWeight",
+        "$value": 300
+      },
+      "book": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "regular": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "normal": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "text": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": 500
+      },
+      "semi-bold": {
+        "$type": "fontWeight",
+        "$value": 600
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": 700
+      },
+      "text-bold": {
+        "$type": "fontWeight",
+        "$value": 700
+      },
+      "extra-bold": {
+        "$type": "fontWeight",
+        "$value": 800
+      },
+      "black": {
+        "$type": "fontWeight",
+        "$value": 900
+      }
+    }
+  },
+  "size": {
+    "$description": "NYT --tpl-size-font-* in rem. resolved1440 = px at the 16px root",
+    "font": {
+      "10": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.625,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 10,
+            "unit": "px"
+          }
+        }
+      },
+      "11": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.6875,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 11,
+            "unit": "px"
+          }
+        }
+      },
+      "12": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.75,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 12,
+            "unit": "px"
+          }
+        }
+      },
+      "14": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.875,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 14,
+            "unit": "px"
+          }
+        }
+      },
+      "16": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 16,
+            "unit": "px"
+          }
+        }
+      },
+      "18": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.125,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 18,
+            "unit": "px"
+          }
+        }
+      },
+      "20": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.25,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 20,
+            "unit": "px"
+          }
+        }
+      },
+      "22": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.375,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 22,
+            "unit": "px"
+          }
+        }
+      },
+      "24": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 24,
+            "unit": "px"
+          }
+        }
+      },
+      "26": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.625,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 26,
+            "unit": "px"
+          }
+        }
+      },
+      "28": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.75,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 28,
+            "unit": "px"
+          }
+        }
+      },
+      "30": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.875,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 30,
+            "unit": "px"
+          }
+        }
+      },
+      "32": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 32,
+            "unit": "px"
+          }
+        }
+      },
+      "36": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2.25,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 36,
+            "unit": "px"
+          }
+        }
+      },
+      "40": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 40,
+            "unit": "px"
+          }
+        }
+      },
+      "48": {
+        "$type": "dimension",
+        "$value": {
+          "value": 3,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 48,
+            "unit": "px"
+          }
+        }
+      },
+      "56": {
+        "$type": "dimension",
+        "$value": {
+          "value": 3.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 56,
+            "unit": "px"
+          }
+        }
+      },
+      "64": {
+        "$type": "dimension",
+        "$value": {
+          "value": 4,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 64,
+            "unit": "px"
+          }
+        }
+      },
+      "72": {
+        "$type": "dimension",
+        "$value": {
+          "value": 4.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "resolved1440": {
+            "value": 72,
+            "unit": "px"
+          }
+        }
+      }
+    }
+  },
+  "line-height": {
+    "1": {
+      "$type": "number",
+      "$value": 1
+    },
+    "1-1": {
+      "$type": "number",
+      "$value": 1.1
+    },
+    "1-15": {
+      "$type": "number",
+      "$value": 1.15
+    },
+    "1-2": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "1-25": {
+      "$type": "number",
+      "$value": 1.25
+    },
+    "1-28": {
+      "$type": "number",
+      "$value": 1.28
+    },
+    "1-3": {
+      "$type": "number",
+      "$value": 1.3
+    },
+    "1-35": {
+      "$type": "number",
+      "$value": 1.35
+    },
+    "1-39": {
+      "$type": "number",
+      "$value": 1.39
+    },
+    "1-5": {
+      "$type": "number",
+      "$value": 1.5
+    }
+  },
+  "letter-spacing": {
+    "0-0025": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.0025,
+        "unit": "em"
+      }
+    },
+    "0-01": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.01,
+        "unit": "em"
+      }
+    },
+    "0-04": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.04,
+        "unit": "em"
+      }
+    },
+    "0-05": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.05,
+        "unit": "em"
+      }
+    },
+    "0-06": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.06,
+        "unit": "em"
+      }
+    },
+    "0-08": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.08,
+        "unit": "em"
+      }
+    },
+    "0-09": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.09,
+        "unit": "em"
+      }
+    },
+    "0-1": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.1,
+        "unit": "em"
+      }
+    }
+  },
+  "typography": {
+    "$description": "--tpl-typography-*. Shipped as CSS font shorthands with separate -ls (letter-spacing) and -tt (text-transform) variables",
+    "text": {
+      "12": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.12}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "14": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.14}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "16": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "20": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.20}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "title": {
+      "12": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.12}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "14": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.14}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "16": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "20": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.20}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "22": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.22}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "24": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.24}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "28": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.28}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "32": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.32}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "48": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.48}",
+          "lineHeight": "{line-height.1-1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "56": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.56}",
+          "lineHeight": "{line-height.1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "title-karnak": {
+      "16": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.karnak}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.karnak}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "label": {
+      "regular": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.11}",
+          "lineHeight": "{line-height.1-25}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "emphasis": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.extra-bold}",
+          "fontSize": "{size.font.11}",
+          "lineHeight": "{line-height.1-25}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "headline": {
+      "16": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.medium}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.book}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "24": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.book}",
+          "fontSize": "{size.font.24}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "28": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.book}",
+          "fontSize": "{size.font.28}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "headline-news": {
+      "16": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "20": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.20}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "22": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.22}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "28": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.28}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "32": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.32}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "36": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.36}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "40": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.40}",
+          "lineHeight": "{line-height.1-1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "48": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.48}",
+          "lineHeight": "{line-height.1-1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "headline-feature": {
+      "24": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.light}",
+          "fontSize": "{size.font.24}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "28": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.extra-light}",
+          "fontSize": "{size.font.28}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "32": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.extra-light}",
+          "fontSize": "{size.font.32}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "48": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.extra-light}",
+          "fontSize": "{size.font.48}",
+          "lineHeight": "{line-height.1-1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "56": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.extra-light}",
+          "fontSize": "{size.font.56}",
+          "lineHeight": "{line-height.1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    },
+    "headline-opinion": {
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.text-bold}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "20": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.text-bold}",
+          "fontSize": "{size.font.20}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "22": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.text-bold}",
+          "fontSize": "{size.font.22}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "24": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.text-bold}",
+          "fontSize": "{size.font.24}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "36": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.text-bold}",
+          "fontSize": "{size.font.36}",
+          "lineHeight": "{line-height.1-15}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "56": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.56}",
+          "lineHeight": "{line-height.1-1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "$description": "Opinion-specific headline styles in Cheltenham Condensed"
+    },
+    "body": {
+      "14": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.imperial}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.14}",
+          "lineHeight": "{line-height.1-39}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "16": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.imperial}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-39}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "18": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.imperial}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": "{line-height.1-39}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "20": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.imperial}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.20}",
+          "lineHeight": "{line-height.1-5}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "compact": {
+        "$type": "typography",
+        "$value": "{typography.body.18}",
+        "$description": "Used at the compact UI size (mobile)"
+      },
+      "regular": {
+        "$type": "typography",
+        "$value": "{typography.body.20}",
+        "$description": "Used at the regular UI size (desktop)"
+      }
+    },
+    "utility": {
+      "1": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.20}",
+          "lineHeight": "{line-height.1-2}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "2": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.16}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      },
+      "3": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.semi-bold}",
+          "fontSize": "{size.font.14}",
+          "lineHeight": "{line-height.1-3}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        }
+      }
+    }
+  },
+  "article": {
+    "$description": "Measured article text styles (not NYT tokens), aliased onto NYT tokens where one matches. Colors for these stay in the core file",
+    "headline": {
+      "desktop": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": {
+            "value": 57,
+            "unit": "px"
+          },
+          "lineHeight": 1.0526,
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        },
+        "$description": "Measured 57/60. Nearest token: typography.headline-opinion.56"
+      },
+      "mobile": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham-cond}",
+          "fontWeight": "{font.weight.bold}",
+          "fontSize": "{size.font.40}",
+          "lineHeight": "{line-height.1-1}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        },
+        "$description": "Measured 40/44"
+      }
+    },
+    "kicker": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.cheltenham}",
+        "fontWeight": "{font.weight.bold}",
+        "fontSize": "{size.font.16}",
+        "lineHeight": "{line-height.1-5}",
+        "letterSpacing": {
+          "value": 1.12,
+          "unit": "px"
+        }
+      },
+      "$description": "'Guest Essay'. Uppercase. Measured"
+    },
+    "body": {
+      "desktop": {
+        "$type": "typography",
+        "$value": "{typography.body.20}",
+        "$description": "Measured 20/30, matches token"
+      },
+      "mobile": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.imperial}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.18}",
+          "lineHeight": 1.3889,
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        },
+        "$description": "Measured 18/25. Token body.18 gives 18/1.39, effectively the same"
+      }
+    },
+    "caption": {
+      "credit": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.franklin}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": {
+            "value": 13,
+            "unit": "px"
+          },
+          "lineHeight": 1.3077,
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        },
+        "$description": "Measured 13/17"
+      }
+    },
+    "bio": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.franklin}",
+        "fontWeight": "{font.weight.medium}",
+        "fontSize": "{size.font.16}",
+        "lineHeight": 1.375,
+        "letterSpacing": {
+          "value": 0,
+          "unit": "em"
+        }
+      },
+      "$description": "Measured 16/22 italic"
+    },
+    "related-title": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.cheltenham}",
+        "fontWeight": "{font.weight.medium}",
+        "fontSize": {
+          "value": 19,
+          "unit": "px"
+        },
+        "lineHeight": 1.2105,
+        "letterSpacing": {
+          "value": 0,
+          "unit": "em"
+        }
+      },
+      "$description": "Measured 19/23"
+    },
+    "scroller": {
+      "card-desktop": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.28}",
+          "lineHeight": 1.1429,
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        },
+        "$description": "28/32"
+      },
+      "card-mobile": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{font.family.cheltenham}",
+          "fontWeight": "{font.weight.regular}",
+          "fontSize": "{size.font.24}",
+          "lineHeight": "{line-height.1-25}",
+          "letterSpacing": {
+            "value": 0,
+            "unit": "em"
+          }
+        },
+        "$description": "24/30"
+      }
+    }
+  }
+}

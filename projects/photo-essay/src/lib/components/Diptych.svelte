@@ -23,7 +23,7 @@
   .diptych { width: var(--col-large); margin: var(--gap-photo) auto; }
   .pair { display: flex; flex-direction: column; gap: 10px; }
   img { width: 100%; }
-  figcaption { padding: 9px var(--gutter) 0; font-size: var(--credit-size); color: var(--faint); }
+  figcaption { padding: 9px var(--gutter) 0; font-size: var(--credit-size); line-height: var(--credit-leading); color: var(--faint); }
   @media (min-width: 740px) {
     .pair { flex-direction: row; gap: var(--diptych-gap); }
     img { flex: 1 1 0; min-width: 0; }

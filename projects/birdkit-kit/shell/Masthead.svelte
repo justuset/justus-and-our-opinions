@@ -34,7 +34,7 @@
     .masthead-section { top: -7px; height: 42px; padding: 4px 15px 2px; }
   }
   .wordmark {
-    font: 550 22px / 1 var(--shell-font-wordmark); /* diatour's display weight */
+    font: 550 1.375rem / 1 var(--shell-font-wordmark); /* diatour's display weight */
     color: var(--shell-wordmark);
     text-decoration: none;
     white-space: nowrap;
@@ -48,7 +48,7 @@
     border-radius: 3px;
     background: var(--shell-bg);
     color: var(--shell-ink);
-    font: 700 11px / 1 var(--shell-font-label);
+    font: 700 0.6875rem / 1 var(--shell-font-label);
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
