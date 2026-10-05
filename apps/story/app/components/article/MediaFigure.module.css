@@ -1,0 +1,22 @@
+.figure {
+  margin: var(--gap-photo) auto;
+}
+.large {
+  inline-size: var(--col-large);
+}
+.medium {
+  inline-size: var(--col);
+}
+.img {
+  inline-size: 100%;
+}
+.caption {
+  padding-block-start: 0.5625rem;
+  font: var(--caption-size) / 1.4 var(--font-text);
+  color: var(--color-content-secondary);
+}
+@media (max-width: 739.98px) {
+  .large .caption {
+    padding-inline: var(--gutter);
+  }
+}

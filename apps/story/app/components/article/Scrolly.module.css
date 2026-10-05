@@ -1,0 +1,86 @@
+/* No-JS layout: photos in a column, the credit, then the cards as text. */
+.scrolly {
+  position: relative;
+  z-index: 0;
+  margin-block: var(--gap-scrolly) 0;
+}
+.stage {
+  inline-size: var(--col-large);
+  margin: 0 auto var(--gap-photo);
+  display: grid;
+  gap: 0.625rem;
+}
+.img {
+  inline-size: 100%;
+}
+.credit {
+  margin: 0.5625rem 0;
+  padding-inline: var(--gutter);
+  font-size: var(--credit-size);
+  line-height: var(--credit-leading);
+  color: var(--color-content-secondary-dim);
+}
+.card {
+  inline-size: var(--col);
+  margin: 0 auto var(--gap-para);
+  font: var(--card-size) / var(--card-leading) var(--font-display);
+}
+
+/* Enhanced: one sticky screen, photos stacked, cards scroll over it. */
+.scrolly[data-enhanced] .stage {
+  position: sticky;
+  inset-block-start: var(--masthead-h);
+  inline-size: 100%;
+  block-size: 100vh;
+  block-size: 100svh;
+  margin: 0;
+  display: block;
+  overflow: hidden;
+}
+.scrolly[data-enhanced] {
+  padding-block-end: 2.25rem;
+}
+/* the credit sits under the scroller once the cards are done */
+.scrolly[data-enhanced] .credit {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+}
+.scrolly[data-enhanced] .img {
+  position: absolute;
+  inset: 0;
+  block-size: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--fade);
+}
+.scrolly[data-enhanced] .img[data-visible] {
+  opacity: 1;
+}
+.scrolly[data-enhanced] .card {
+  position: relative;
+  z-index: 1;
+  inline-size: min(var(--w-body), 100%);
+  margin: 0 auto 100svh;
+  padding-inline: 2.5rem;
+  box-sizing: content-box;
+  color: var(--on-photo);
+  text-shadow: var(--photo-shadow);
+}
+.scrolly[data-enhanced] .card[data-style='black'] {
+  color: var(--color-background-primary);
+  text-shadow: none;
+}
+/* by step, not :first-of-type: the credit is a <p> too */
+.scrolly[data-enhanced] .card[data-step='0'] {
+  margin-block-start: -33svh;
+}
+.scrolly[data-enhanced] .card:last-child {
+  margin-block-end: 0;
+  padding-block-end: 66svh;
+}
+@media (max-width: 739.98px) {
+  .scrolly[data-enhanced] .card {
+    inline-size: calc(100% - 5rem);
+  }
+}

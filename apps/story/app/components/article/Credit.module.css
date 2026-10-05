@@ -1,0 +1,7 @@
+.credit {
+  display: block;
+  margin-block-start: 0.25rem;
+  font-size: var(--credit-size);
+  line-height: var(--credit-leading);
+  color: var(--color-content-secondary-dim);
+}

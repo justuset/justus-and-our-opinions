@@ -10,7 +10,7 @@
 import sharp from 'sharp';
 import { readdirSync, statSync, existsSync, mkdirSync } from 'node:fs';
 import { join, parse } from 'node:path';
-import { renditionWidths, renditionPath } from '../src/lib/renditions.js';
+import { renditionWidths, renditionPath } from './renditions.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SRC = join(ROOT, 'photos');

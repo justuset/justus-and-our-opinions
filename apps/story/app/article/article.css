@@ -1,0 +1,139 @@
+@import '../../../../projects/birdkit-kit/tpl.css';
+
+/* article.css: the photo essay's tokens for the React story app. Imported once by routes/photo-essay.tsx.
+   Colors, the font faces and the theme switch come from the shared tpl.css (G1–G3): --color-* roles written once with
+   light-dark(), and g-theme-<name> on #story only sets color-scheme. This file adds the measured layout and type.
+   Values measured from the reference (the photo essay template, before it moved here from Svelte),
+   converted for Phase 2: px → rem (÷ 16), and logical properties in the components. Breakpoints stay
+   740 / 1150 and are repeated as numbers in each @media rule (custom properties can't go in a media query). */
+:root {
+  /* layout */
+  --gutter: 1.25rem; /* 20px: a 350px column on a 390px phone */
+  --w-body: 37.5rem; /* 600px companion column */
+  --col: min(calc(100% - var(--gutter) * 2), var(--w-body));
+  --col-large: min(59.0625rem, 100%); /* 945px lead and large photos */
+  --diptych-gap: 0.9375rem; /* 15px: 2 × 465 inside 945 */
+  --gap-para: 0.9375rem;
+  --gap-photo: 2.5rem;
+  --gap-scrolly: 3.75rem;
+  --masthead-h: 0rem; /* the masthead scrolls away */
+  --header-top: 6.25rem; /* 100px, Figma header.essay-header */
+
+  /* spacing: size.spacing.* (Dark.json) */
+  --space-1-5: 0.75rem; /* 12px */
+  --space-2: 1rem; /* 16px */
+  --space-3: 1.5rem; /* 24px */
+  --space-4: 2rem; /* 32px */
+
+  /* type: rem sizes, unitless leading */
+  --headline-size: 3.5625rem;
+  --headline-leading: 1.0526; /* 57/60 */
+  --kicker-size: 0.875rem;
+  --kicker-leading: 1.7143; /* 14/24, Figma p.kicker */
+  --kicker-tracking: 0.08em; /* 1.12px at 14px */
+  --text-size: 1.25rem;
+  --text-leading: 1.5; /* 20/30 */
+  --card-size: 1.75rem;
+  --card-leading: 1.1429; /* 28/32 */
+  --caption-size: 0.9375rem;
+  --credit-size: 0.8125rem;
+  --credit-leading: 1.3077; /* 13/17 */
+  --bio-size: 1rem;
+  --bio-leading: 1.375;
+  --byline-size: 0.9375rem; /* 15/21, Figma byline name */
+  --meta-size: 0.875rem; /* 14px */
+  --tool-size: 0.75rem; /* 12px, Figma share tools */
+
+  --fade: 0.35s ease-in-out;
+
+  /* text over a photo, in both themes: the measured near-white with a soft shadow */
+  --on-photo: #f8f8f8;
+  --photo-shadow: rgba(18, 18, 18, 0.5) 0 2px 4px;
+
+  /* the platform shell's tokens: aliases of the tpl.css color roles, as in projects/birdkit-kit/shell/shell.css.
+     The shell sits outside #story, so it follows :root's dark color-scheme whatever theme the story picks. */
+  --shell-font-label: var(--font-body);
+  --shell-font-wordmark: var(--font-display);
+  --shell-bg: var(--color-background-primary);
+  --shell-bg-secondary: #1b1b1a; /* diatour --surface-2: the ad slot, recirc placeholders */
+  --shell-surface: var(--color-background-secondary);
+  --shell-ink: var(--color-content-primary);
+  --shell-muted: var(--color-content-secondary-dim);
+  --shell-rule: var(--color-stroke-tertiary);
+  --shell-rule-strong: var(--color-stroke-primary);
+  --shell-border: var(--color-stroke-tertiary);
+  --shell-button: var(--color-content-primary);
+  --shell-button-text: var(--color-background-primary);
+  --shell-button-hover: var(--color-content-secondary);
+  --shell-wordmark: var(--color-background-primary);
+  --shell-wordmark-inverse: var(--color-content-primary);
+  --shell-gutter: 1.25rem;
+  --shell-col: 37.5rem;
+  --shell-page-max: 75rem;
+}
+@media (max-width: 739.98px) {
+  :root {
+    --headline-size: 2.5rem;
+    --headline-leading: 1.1; /* 40/44 */
+    --text-size: 1.125rem;
+    --text-leading: 1.3889; /* 18/25 */
+    --card-size: 1.5rem;
+    --card-leading: 1.25; /* 24/30 */
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  overflow-x: clip;
+  background: var(--shell-bg);
+  color: var(--shell-ink);
+}
+html {
+  scroll-padding-block-start: var(--masthead-h);
+}
+body {
+  font-family: var(--font-body);
+}
+
+/* :where() keeps these at zero specificity, so any component class wins over them (like the Svelte template). */
+#story {
+  display: flow-root;
+  background: var(--color-background-primary);
+  color: var(--color-content-primary);
+}
+:where(#story) img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+:where(#story) a {
+  color: var(--color-content-accent-dim);
+  text-underline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}
