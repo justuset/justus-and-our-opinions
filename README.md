@@ -39,10 +39,12 @@ justus-and-our-opinions/
 ├─ docs/                       plans, references, learning log, guides/ (how-tos), and the guides below
 ├─ prototype/index.html        Phase 1 sandbox: plain HTML/CSS/JS, one idea per chunk
 └─ projects/
+   ├─ birdkit-kit/             code both templates share: platform shell, Blocks renderer, hash-assets.js, SvelteKit config ($kit/…)
+   ├─ photo-essay/             the photo-essay template (demo story: photo-essay-demo)
    └─ interactive/             the interactive-article template, holding the demo story "the-second-draft" (SvelteKit → dist/index.html + _app.<hash>/ + _big_assets.<hash>/)
       ├─ content/doc.json      the words, as one ordered body of blocks (the NYT payload shape)
       ├─ big_assets/           media, hashed and deployed separately
-      ├─ scripts/              hash-assets.js, deploy.js
+      ├─ scripts/              deploy.js, parity.js, Lottie generators
       └─ src/                  app.html, app.css, routes/, lib/ (assets.js, scroll.js, lottie.js, components/)
 ```
 

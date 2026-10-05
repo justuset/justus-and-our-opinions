@@ -5,7 +5,7 @@
 // srcset() turns each path into its hashed media URL. The browser then picks the smallest file that's sharp enough for
 // the slot the `sizes` attribute describes. Always keep width/height on the <img> too: they reserve the space (no CLS).
 import { asset } from '$lib/assets.js';
-import { list } from '$lib/doc.js';
+import { list } from '$kit/doc.js';
 
 /** "images/a-400w.webp 400w, images/a.webp 800w" → "./_big_assets.<hash>/images/a-400w.webp 400w, …" */
 export const srcset = (value) =>

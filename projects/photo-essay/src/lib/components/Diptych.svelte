@@ -1,8 +1,8 @@
 <!-- Diptych: two photos side by side (measured: 2 × 465px with a 15px gap inside 945px), stacked on phones.
-     Flat props from content/doc.json: url1, alt1, width1, height1, url2, … (see $lib/doc.js), plus one shared credit. -->
+     Flat props from content/doc.json: url1, alt1, width1, height1, url2, … (see $kit/doc.js), plus one shared credit. -->
 <script>
   import { photo } from '$lib/media.js';
-  import { series } from '$lib/doc.js';
+  import { series } from '$kit/doc.js';
   let { credit, ...props } = $props();
   const images = $derived(series(props, ['url', 'alt', 'width', 'height']).slice(0, 2));
 </script>

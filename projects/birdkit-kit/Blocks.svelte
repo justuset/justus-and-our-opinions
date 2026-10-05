@@ -2,13 +2,13 @@
      Walks the doc's `body` in order: a text block becomes a paragraph, a svelte block becomes the registered component,
      with the block's flat props spread onto it. This is the whole "page template": the doc decides what appears.
      A block the renderer can't draw shows a visible placeholder in dev. In a production build, +page.js stops the
-     build instead, so a typo in the doc can never ship as a silently missing section. -->
+     build instead, so a typo in the doc can never ship as a silently missing section.
+     Shared by every template (birdkit-kit): each template passes its own `registry` (src/lib/blocks.js). -->
 <script>
   import { dev } from '$app/environment';
-  import Text from './components/Text.svelte';
-  import { registry } from './blocks.js';
+  import Text from './Text.svelte';
 
-  let { body = [] } = $props();
+  let { body = [], registry } = $props();
 </script>
 
 {#each body as block, i (i)}

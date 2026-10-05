@@ -6,8 +6,8 @@
 <script>
   import { asset } from '$lib/assets.js';
   import { srcset } from '$lib/media.js';
-  import { series } from '$lib/doc.js';
-  // Flat props from content/doc.json: url1, alt1, width1, height1, srcset1, url2, … (see $lib/doc.js)
+  import { series } from '$kit/doc.js';
+  // Flat props from content/doc.json: url1, alt1, width1, height1, srcset1, url2, … (see $kit/doc.js)
   let { groupCaption, credit, sizes, ...props } = $props();
   const images = $derived(series(props, ['url', 'alt', 'width', 'height', 'srcset']));
 </script>

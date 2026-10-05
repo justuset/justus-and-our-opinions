@@ -141,7 +141,7 @@
 
 /* ============ 2. BASE ============ */
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; }   /* the page's background and text color belong to the platform shell (src/lib/shell/shell.css) */
+html, body { margin: 0; }   /* the page's background and text color belong to the platform shell (../birdkit-kit/shell/shell.css) */
 html, body { overflow-x: clip; }       /* stops 100vw breakouts from causing sideways scroll; clip keeps sticky working */
 html { scroll-padding-top: var(--masthead-h); }   /* #anchor jumps land below a sticky masthead, if there is one */
 body { font-family: var(--font-body); }

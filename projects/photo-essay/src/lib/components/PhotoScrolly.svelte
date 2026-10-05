@@ -5,11 +5,11 @@
        rootMargin -50% 0 -50% 0 (a one-pixel line). No scroll library, like the reference.
      No JS: the base CSS is the readable layout, every photo in flow followed by the cards as plain paragraphs.
      The attachment adds data-enhanced, and only then do the sticky stage and the overlay apply.
-     Flat props: url1, alt1, width1, height1, card1, url2, … (see $lib/doc.js), plus one credit. -->
+     Flat props: url1, alt1, width1, height1, card1, url2, … (see $kit/doc.js), plus one credit. -->
 <script>
   import { photo } from '$lib/media.js';
-  import { series } from '$lib/doc.js';
-  import { inlineHtml } from '$lib/inline-html.js';
+  import { series } from '$kit/doc.js';
+  import { inlineHtml } from '$kit/inline-html.js';
 
   let { credit, ...props } = $props();
   const steps = $derived(series(props, ['url', 'alt', 'width', 'height', 'card']));

@@ -5,7 +5,7 @@
   import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
   import { srcset } from '$lib/media.js';
-  import { series } from '$lib/doc.js';
+  import { series } from '$kit/doc.js';
   // Flat props from content/doc.json: image1, srcset1, alt1, caption1, image2, … (one numbered set per page)
   let { label, height, sizes, ...props } = $props();
   const steps = $derived(series(props, ['image', 'srcset', 'alt', 'caption']));

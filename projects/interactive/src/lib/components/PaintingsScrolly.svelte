@@ -5,7 +5,7 @@
 <script>
   import StickyScroller from './StickyScroller.svelte';
   import { asset } from '$lib/assets.js';
-  import { series } from '$lib/doc.js';
+  import { series } from '$kit/doc.js';
   // Flat props from content/doc.json: image1/alt1… are the cards, caption1… the steps. `layouts` (one array per step,
   // one object per card) has no flat form yet; it moves to the doc's `sheets` data slot in chunk S6.
   let { label, height, layouts, portraitScale = 1.6, ...props } = $props();
