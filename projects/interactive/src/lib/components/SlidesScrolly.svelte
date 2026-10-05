@@ -43,8 +43,8 @@
     top: 100%;
     inset-inline: 0;
     margin: 12px 0 0;
-    color: var(--soft);
-    font: 600 0.9375rem / 1.3 var(--font-body);
+    color: var(--color-content-secondary);
+    font: var(--type-title-15);
   }
   .a-arrow { display: none; }
 
@@ -73,7 +73,7 @@
     transform: translateY(-50%);
     overflow: visible;
   }
-  .a-arrow line { stroke: var(--ink); stroke-width: var(--arrow-stroke, 2); }
+  .a-arrow line { stroke: var(--color-content-primary); stroke-width: var(--arrow-stroke, 2); }
   @media (orientation: portrait) {
     .a-arrow line { stroke-width: var(--arrow-mobile-stroke, 1.5); }
     .enhanced .a-arrow.hide-portrait { display: none; }

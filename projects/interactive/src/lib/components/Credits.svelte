@@ -12,8 +12,8 @@
     width: var(--col);
     margin-inline: auto;
     margin-block: var(--gap-credits);
-    font: var(--meta-size) / 1.4 var(--font-body);
-    color: var(--faint);
+    font: var(--type-text-14);
+    color: var(--color-content-secondary-dim);
   }
   p { margin: 0; }
 </style>

@@ -1,0 +1,103 @@
+/* tpl.css: the global CSS every template shares, imported first by each template's src/routes/+layout.svelte.
+   Modeled on the shipped NYT Opinion page's global stylesheet (decoded in docs/plan/2026-10-05-global-css.md):
+   the same semantic token NAMES, our own values. Built in chunks G1–G5: G1 the color roles, G2 the size scales and rules, G3 the typography roles.
+
+   Layers: everything here sits in a tpl.* layer, and a template's app.css stays unlayered, so a template rule always
+   beats a kit rule, whatever its specificity. */
+@layer tpl.tokens, tpl.base;
+
+/* ============ G1. COLOR ROLES ============
+   One declaration per color: light-dark(<light>, <dark>). Values: light from docs/reference/tokens/Light.json
+   (the NYT's own light palette), dark from Dark.json (diatour's dark, in NYT's role structure).
+   The NYT page does this with a "space toggle" (two switch variables, one valid and one invalid, picking a fallback);
+   light-dark() is the native version of the same trick. A custom property keeps light-dark() unresolved until it's
+   used, so each element picks the side that matches ITS color-scheme. Setting color-scheme on any subtree re-colors
+   it: that's the whole theme switch. */
+@layer tpl.tokens {
+  :root {
+    color-scheme: dark;   /* the platform shell, and any story without a theme class */
+
+    --color-content-primary:       light-dark(#121212, #ededeb);   /* headlines, strong text, icons */
+    --color-content-primary-dim:   light-dark(#363636, #acacac);   /* body text */
+    --color-content-secondary:     light-dark(#5a5a5a, #969696);   /* deks, captions, dates */
+    --color-content-secondary-dim: light-dark(#727272, #838383);   /* credits, meta: 4.8:1 light, 4.9:1 dark */
+    --color-content-accent:        light-dark(#346eb7, #ddf160);   /* section labels */
+    --color-content-accent-dim:    light-dark(#326891, #9f8be7);   /* inline links */
+    --color-stroke-primary:        light-dark(#121212, #ededeb);   /* strong rules */
+    --color-stroke-tertiary:       light-dark(#dfdfdf, #333332);   /* hairlines, dividers */
+    --color-background-primary:    light-dark(#ffffff, #121211);   /* the page */
+    --color-background-secondary:  light-dark(#f8f8f8, #1c1c1c);   /* pills, cards, ad slots */
+  }
+
+  /* Themes. A story's doc.json `theme` puts g-theme-<name> on <article>; the always-* classes flip any section
+     inside it (a dark scrolly in a light story). */
+  .g-theme-opinion, .always-light { color-scheme: light; }
+  .g-theme-diatour, .always-dark  { color-scheme: dark; }
+}
+
+/* ============ G2. SCALES ============
+   The NYT's size.* primitives, in rem so they follow the reader's browser font size (px in each comment). Names are the
+   token paths in docs/reference/tokens/Dark.json (size.font.14 → --size-font-14). Only the steps a template uses;
+   add a step from the token file when a component needs it. Measured values that fall between steps (a 15px caption,
+   a 57px headline) stay literal in the template's app.css. */
+@layer tpl.tokens {
+  :root {
+    --size-font-12: 0.75rem;     /* 12px */
+    --size-font-14: 0.875rem;    /* 14px */
+    --size-font-16: 1rem;        /* 16px */
+    --size-font-18: 1.125rem;    /* 18px */
+    --size-font-20: 1.25rem;     /* 20px */
+    --size-font-24: 1.5rem;      /* 24px */
+    --size-font-28: 1.75rem;     /* 28px */
+    --size-font-40: 2.5rem;      /* 40px */
+
+    /* spacing: an 8px base; the suffix counts 8px steps (1-5 = 1.5 × 8 = 12px) */
+    --size-spacing-0-5: 0.25rem; /* 4px */
+    --size-spacing-1: 0.5rem;    /* 8px */
+    --size-spacing-1-5: 0.75rem; /* 12px */
+    --size-spacing-2: 1rem;      /* 16px */
+    --size-spacing-2-5: 1.25rem; /* 20px */
+    --size-spacing-3: 1.5rem;    /* 24px */
+    --size-spacing-4: 2rem;      /* 32px */
+    --size-spacing-5: 2.5rem;    /* 40px */
+
+    --size-border-1: 0.0625rem;   /* 1px */
+    --size-border-1-5: 0.09375rem; /* 1.5px */
+    --size-border-2: 0.125rem;    /* 2px */
+
+    /* rules: whole border shorthands, so a divider is one token. The color stays light-dark() until used, so a rule
+       follows the color-scheme of the element that draws it (G1). */
+    --rule-horizontal-primary: var(--size-border-2) solid var(--color-stroke-primary);    /* section tops */
+    --rule-horizontal-tertiary: var(--size-border-1) solid var(--color-stroke-tertiary);  /* hairline dividers */
+  }
+}
+
+/* ============ G3. TYPOGRAPHY ROLES ============
+   As on the NYT page, a role is ONE `font` shorthand (weight size/leading family), so a component writes
+   `font: var(--type-body)` and never picks a size. `font` can't carry letter-spacing or case, so a role that needs
+   them adds --type-<role>-ls and --type-<role>-tt beside it (the NYT ships both for every role; we only add them
+   where they aren't the default).
+   A role composes other custom properties, and they're substituted on the element that declares the role (:root).
+   So a breakpoint changes a role by redefining it, or a primitive it uses, on :root. Changing a primitive on
+   some inner element wouldn't reach the role. (The NYT re-declares every role on `:where(:root *)` to allow that;
+   nothing here needs it.)
+   Faces are diatour's, standing in for the NYT's: Newsreader for Cheltenham (display), the system sans for Franklin
+   (UI), and --font-text for Imperial (body text). Only the roles both templates share live here; each template's
+   app.css adds its own measured roles (headline, kicker, caption …). */
+@layer tpl.tokens {
+  :root {
+    --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    --font-text: var(--font-body);   /* the body-face decision: one token to flip */
+
+    /* typography.body: "compact" 18/25 on phones, "regular" 20/30 from the tablet tier. The NYT's platform switches
+       at 480px; Birdkit stories measured so far switch at 740px (docs/plan/2026-10-02-nyt-page-shell.md). Not yet
+       measured between the two, so this keeps 740. */
+    --type-body: 400 var(--size-font-20) / 1.5 var(--font-text);
+    --type-text-14: 400 var(--size-font-14) / 1.4 var(--font-body);    /* meta, credits (NYT text-14, weight 500) */
+    --type-title-14: 600 var(--size-font-14) / 1.4 var(--font-body);   /* bylines (NYT title-14) */
+  }
+  @media (max-width: 739.98px) {
+    :root { --type-body: 400 var(--size-font-18) / 1.3889 var(--font-text); }   /* NYT body-compact, 18/1.39 */
+  }
+}

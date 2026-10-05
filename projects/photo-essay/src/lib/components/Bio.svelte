@@ -10,6 +10,6 @@
 </footer>
 
 <style>
-  .bio { width: var(--col); margin: var(--gap-photo) auto; padding-top: 20px; border-top: 1px solid var(--line); }
-  p { margin: 0 0 12px; font: var(--bio-size) / var(--bio-leading) var(--font-body); color: var(--soft); }
+  .bio { width: var(--col); margin: var(--gap-photo) auto; padding-top: var(--size-spacing-2-5); border-top: var(--rule-horizontal-tertiary); }
+  p { margin: 0 0 12px; font: var(--type-bio); color: var(--color-content-secondary); }
 </style>
