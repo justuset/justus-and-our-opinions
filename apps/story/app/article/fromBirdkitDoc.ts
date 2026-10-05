@@ -80,7 +80,9 @@ export function fromBirdkitDoc(doc: BirdkitDoc): Article {
           media: p.url ? image(p) : undefined,
           ...(p.listenTime ? { listenTime: String(p.listenTime) } : {}),
           commentCount: Number(p.comments ?? 0),
-          ...(p.author ? { byline: { author: String(p.author), bio: p.bio ? toInlines(String(p.bio)) : undefined } } : {}),
+          ...(p.author
+            ? { byline: { author: String(p.author), bio: p.bio ? toInlines(String(p.bio)) : undefined } }
+            : {}),
           ...(p.promoText
             ? { promo: { text: String(p.promoText), cta: String(p.promoCta), url: String(p.promoHref ?? '#') } }
             : {}),
