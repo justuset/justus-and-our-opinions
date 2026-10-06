@@ -52,6 +52,7 @@ GitHub repo yourself, see the manual walkthrough [`docs/guides/github-repo-from-
 | 36 | [The photo essay in the reference page's React components](36-react-photo-essay.md) | 2026-10-05 |
 | 37 | [Svelte for interactives, React for the photo essay](37-svelte-interactive-react-photo-essay.md) | 2026-10-05 |
 | 38 | [The React app on the tpl.css color roles](38-react-on-tpl-color-roles.md) | 2026-10-05 |
+| 39 | [The photo essay drops its Svelte names](39-photo-essay-drop-svelte-names.md) | 2026-10-05 |
 
 ## Entry template
 

@@ -1,5 +1,5 @@
-// Responsive photo attributes, ported from projects/photo-essay/src/lib/media.js and renditions.js so both templates
-// ask for the same files. `npm run photos` (in projects/photo-essay) makes them; scripts/copy-photos.mjs copies them
+// Responsive photo attributes. WIDTHS matches projects/photo-essay/scripts/renditions.js, so the page asks for the
+// files that script makes. `npm run photos` (in projects/photo-essay) makes them; scripts/copy-photos.mjs copies them
 // into public/images for this app.
 //
 // The reference picks ONE file in JavaScript (a `mobile` state from matchMedia, then src = mobile ? mobileUrl : url).

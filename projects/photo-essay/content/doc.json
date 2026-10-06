@@ -4,7 +4,7 @@
   "theme": "diatour",
   "body": [
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "Header",
         "seoTitle": "Placeholder SEO Headline for Search and Social",
@@ -41,7 +41,7 @@
       "value": "Set up the pair of photos that follows."
     },
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "Diptych",
         "url1": "images/walk-off",
@@ -56,7 +56,7 @@
       }
     },
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "PhotoScrolly",
         "url1": "images/neon-cowboy",
@@ -78,7 +78,7 @@
       }
     },
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "Photo",
         "url": "images/thrown",
@@ -93,7 +93,7 @@
       "value": "The argument builds between photo moments. Keep text runs short enough that images keep the rhythm."
     },
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "PhotoScrolly",
         "url1": "images/scrolly-2-1",
@@ -119,7 +119,7 @@
       "value": "Close the argument."
     },
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "Photo",
         "url": "images/large-2",
@@ -129,7 +129,7 @@
       }
     },
     {
-      "type": "svelte",
+      "type": "block",
       "value": {
         "component": "Bio",
         "text": "Photographer Name is a photographer based in Somewhere. (Demo bio.)",
