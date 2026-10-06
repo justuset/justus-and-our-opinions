@@ -55,3 +55,9 @@ This was written against an older base and applied to `main` by hand (3-way merg
   variant.
 - The patch's `--link` and `--ink-dim` became `--color-content-accent` and `--color-content-primary-dim` (entry 38).
 - `main`'s spacing tokens, its theme-flip test and its photo-essay README were kept.
+- **Nav over the scroller:** on the reference the nav disappears while the scroller's stage is pinned. Here
+  `.scrolly[data-enhanced]` gets `z-index: 1001`, one above the masthead's 1000, so the pinned stage covers the bar.
+  The bar comes back once the scroller scrolls past. It's CSS only and has no layout shift. The stage has an opaque
+  background, so the bar can't show through mid-crossfade. The no-JS column keeps `z-index: 0` and scrolls under the
+  bar. This is inferred from the measured `sticky; top: 0`, not confirmed on the live page: if the reference turns out
+  to slide the bar away, switch to an IntersectionObserver that toggles a class on the masthead.

@@ -26,7 +26,11 @@
   font: var(--card-size) / var(--card-leading) var(--font-display);
 }
 
-/* Enhanced: one sticky screen, photos stacked, cards scroll over it. */
+/* Enhanced: one sticky screen, photos stacked, cards scroll over it. The scroller stacks above the fixed masthead
+   (z-index 1000 in Shell.module.css), so the pinned stage covers the nav until the scroller scrolls past. CSS only. */
+.scrolly[data-enhanced] {
+  z-index: 1001;
+}
 .scrolly[data-enhanced] .stage {
   position: sticky;
   inset-block-start: var(--masthead-h);
@@ -36,6 +40,7 @@
   margin: 0;
   display: block;
   overflow: hidden;
+  background: var(--color-background-primary); /* opaque mid-crossfade, so the nav never shows through */
 }
 /* the credit rides on the photo, 20px from the bottom of the stage (measured: 11px serif, near-white) */
 .scrolly[data-enhanced] .credit {

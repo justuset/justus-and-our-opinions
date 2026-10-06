@@ -196,3 +196,22 @@ test.describe('JavaScript off', () => {
     await expect(s.locator('p[data-step]').last()).toBeVisible();
   });
 });
+
+test('Scrolly: the pinned stage covers the fixed masthead, which returns after the scroller', async ({ page }) => {
+  const s = page.locator('[data-testid=scrolly]').first();
+  await expect(s).toHaveAttribute('data-enhanced', 'true');
+  // the top-centre pixel, where the masthead sits: is it drawn by the scroller or by the masthead?
+  const topIs = () =>
+    page.evaluate(() => {
+      const el = document.elementFromPoint(innerWidth / 2, 20)!;
+      return el.closest('[data-testid=scrolly]')
+        ? 'scrolly'
+        : el.closest('[data-testid=masthead-container]')
+          ? 'masthead'
+          : 'other';
+    });
+  await s.evaluate((el) => scrollTo(0, el.getBoundingClientRect().top + scrollY + innerHeight));
+  expect(await topIs()).toBe('scrolly');
+  await s.evaluate((el) => scrollTo(0, el.getBoundingClientRect().bottom + scrollY + 10));
+  expect(await topIs()).toBe('masthead');
+});
