@@ -8,7 +8,7 @@ import { docProblems, fromDoc, type StoryDoc } from '~/article/fromDoc';
 import { HeaderBasic } from '~/components/article/HeaderBasic';
 import { Body } from '~/components/article/Body';
 import { withErrorBoundary } from '~/components/article/withErrorBoundary';
-import { Shell } from '~/components/shell/Shell';
+import { ArticleBottom, Shell } from '~/components/shell/Shell';
 import '~/article/article.css';
 
 const Header = withErrorBoundary(HeaderBasic);
@@ -30,10 +30,13 @@ export function meta({ loaderData }: Route.MetaArgs): Route.MetaDescriptors {
 
 export default function PhotoEssay({ loaderData: { article } }: Route.ComponentProps) {
   return (
-    <Shell inverse={article.theme !== 'opinion'}>
+    // An article page, so the masthead is fixed (a Birdkit page's floats). The share tools, recirculation and bottom
+    // ad close the article itself, as on the reference.
+    <Shell inverse={article.theme !== 'opinion'} fixedMasthead>
       <article id="story" className={`g-theme-${article.theme}`} data-slug={article.slug}>
         <Header {...article.header} />
         <Body blocks={article.body} />
+        <ArticleBottom date={article.header.timestampBlock.text} />
       </article>
     </Shell>
   );

@@ -41,11 +41,11 @@ test('HeaderBasic: headline 57/60, 40/44 on phones, centered', async ({ page }) 
 });
 
 test('ParagraphBlock: 20/30 in the 600 column, 18 on phones', async ({ page }) => {
-  const p = await box(page, '[data-testid=article-body] > p', ['font-size']);
+  const p = await box(page, 'section[name=articleBody] p', ['font-size']);
   expect(px(p['font-size'] as string)).toBe(tier() === 'mobile' ? 18 : 20);
   expect(Math.round(p.width as number)).toBe(Math.min(600, (p.vw as number) - 40));
   // inline formats are real elements, not parsed HTML
-  await expect(page.locator('[data-testid=article-body] > p em').first()).toHaveText('emphasis');
+  await expect(page.locator('section[name=articleBody] p em').first()).toHaveText('emphasis');
 });
 
 test('MediaFigure: the lead photo is 945, full width on phones, and loads first', async ({ page }) => {
@@ -58,10 +58,12 @@ test('MediaFigure: the lead photo is 945, full width on phones, and loads first'
 });
 
 test('Diptych: side by side from 740 (465 each at 1440), stacked on phones', async ({ page }) => {
-  const pair = await box(page, '[data-testid=diptych] > div', ['flex-direction']);
+  const pair = await box(page, '[data-testid^=DiptychBlock-] > div', ['flex-direction']);
   expect(pair['flex-direction']).toBe(tier() === 'mobile' ? 'column' : 'row');
   if (tier() === 'desktop')
-    expect(Math.round((await box(page, '[data-testid=diptych] img')).width as number)).toBe(465);
+    expect(Math.round((await box(page, '[data-testid^=DiptychBlock-] img')).width as number)).toBe(465);
+  // like the reference: one whole figure per half
+  await expect(page.locator('[data-testid^=DiptychBlock-] figure')).toHaveCount(2);
 });
 
 test('Scrolly: stage pins, photos reveal cumulatively as cards come on screen', async ({ page }) => {
@@ -97,7 +99,7 @@ test('QA fixes: real alt text and no duplicate ids', async ({ page }) => {
 });
 
 test('platform blocks: ad slots and related links sit in the body', async ({ page }) => {
-  await expect(page.locator('#story [data-testid=ad-slot]')).toHaveCount(2);
+  expect(await page.locator('section[name=articleBody] [data-testid^=Dropzone-]').count()).toBeGreaterThanOrEqual(2);
   await expect(page.locator('[data-testid=related-links] li')).toHaveCount(2);
 });
 
@@ -112,6 +114,67 @@ test('theme class flips the color roles inside the story only', async ({ page })
   expect(await colors()).toEqual(['rgb(18, 18, 17)', 'rgb(18, 18, 17)']);
   await page.evaluate(() => (document.querySelector('#story')!.className = 'g-theme-opinion'));
   expect(await colors()).toEqual(['rgb(255, 255, 255)', 'rgb(18, 18, 17)']);
+});
+
+test('structure matches the reference article', async ({ page }) => {
+  // header order (the Figma header, not the reference's): kicker, headline, date, lead photo, then one div with the
+  // tools row, byline and promo
+  const header = await page
+    .locator('#story > header > *')
+    .evaluateAll((els) =>
+      els.map(
+        (e) =>
+          e.getAttribute('data-testid') ?? e.tagName.toLowerCase() + (e.className.includes('byline') ? '.byline' : ''),
+      ),
+    );
+  expect(header).toEqual(['p', 'headline', 'time', 'imageblock-wrapper', 'div']);
+  // body: paragraph runs are companion columns; other blocks are wrapped as <__typename>-<position>
+  const units = await page
+    .locator('section[name=articleBody] > *')
+    .evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+  expect(units[0]).toBe('companionColumn-0');
+  for (const u of units)
+    expect(u).toMatch(
+      /^(companionColumn-\d+|(ImageBlock|DiptychBlock|UnstructuredBlock|Dropzone|RelatedLinksBlock)-\d+)$/,
+    );
+  expect(units.at(-1)).toMatch(/^companionColumn-/); // the bio closes the body
+  expect(units.at(-2)).toMatch(/^RelatedLinksBlock-/);
+  // the article ends with its own bottom: date, share tools, recirculation, bottom ad
+  await expect(page.locator('#story .bottom-of-article [data-testid=todays-date]')).toBeVisible();
+  await expect(page.locator('#story [data-testid=recirculation]')).toHaveCount(1);
+  await expect(page.locator('#story #bottom-wrapper')).toHaveCount(1);
+  // site index and footer follow <main>
+  await expect(page.locator('main + nav#site-index + footer')).toHaveCount(1);
+});
+
+test('fixed 43px masthead; header starts 100px down', async ({ page }) => {
+  const m = await box(page, '[data-testid=masthead-container]', ['position']);
+  expect(m.position).toBe('fixed');
+  expect(Math.round((await page.locator('[data-testid=masthead-container]').boundingBox())!.height)).toBe(43);
+  expect(Math.round((await box(page, '#story > header')).top as number)).toBe(0);
+  const pad = await box(page, '#story > header', ['padding-top']);
+  expect(px(pad['padding-top'] as string)).toBe(100);
+});
+
+test('bio: sans 16/22, not italic, in the last companion column', async ({ page }) => {
+  const bio = await box(page, '[data-testid^=companionColumn-]:last-child p', [
+    'font-size',
+    'line-height',
+    'font-style',
+  ]);
+  expect(px(bio['font-size'] as string)).toBe(16);
+  expect(px(bio['line-height'] as string)).toBe(22);
+  expect(bio['font-style']).toBe('normal');
+});
+
+test('Scrolly: the credit sits inside the stage, 20px from its bottom', async ({ page }) => {
+  const s = page.locator('[data-testid=scrolly]').first();
+  await expect(s).toHaveAttribute('data-enhanced', 'true');
+  const credit = s.locator('img + p[id^=scrolly-credit-], p[id^=scrolly-credit-]').first();
+  expect(await credit.evaluate((el) => el.parentElement!.querySelector('img') !== null)).toBe(true);
+  const c = await box(page, '[data-testid=scrolly] p[id^=scrolly-credit-]', ['position', 'bottom']);
+  expect(c.position).toBe('absolute');
+  expect(px(c.bottom as string)).toBe(20);
 });
 
 test('no console errors (hydration included)', async ({ page }) => {
@@ -132,4 +195,23 @@ test.describe('JavaScript off', () => {
     for (const img of await s.locator('img').all()) await expect(img).toBeVisible();
     await expect(s.locator('p[data-step]').last()).toBeVisible();
   });
+});
+
+test('Scrolly: the pinned stage covers the fixed masthead, which returns after the scroller', async ({ page }) => {
+  const s = page.locator('[data-testid=scrolly]').first();
+  await expect(s).toHaveAttribute('data-enhanced', 'true');
+  // the top-centre pixel, where the masthead sits: is it drawn by the scroller or by the masthead?
+  const topIs = () =>
+    page.evaluate(() => {
+      const el = document.elementFromPoint(innerWidth / 2, 20)!;
+      return el.closest('[data-testid=scrolly]')
+        ? 'scrolly'
+        : el.closest('[data-testid=masthead-container]')
+          ? 'masthead'
+          : 'other';
+    });
+  await s.evaluate((el) => scrollTo(0, el.getBoundingClientRect().top + scrollY + innerHeight));
+  expect(await topIs()).toBe('scrolly');
+  await s.evaluate((el) => scrollTo(0, el.getBoundingClientRect().bottom + scrollY + 10));
+  expect(await topIs()).toBe('masthead');
 });

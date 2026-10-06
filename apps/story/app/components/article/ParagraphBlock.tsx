@@ -28,9 +28,9 @@ export function Inlines({ content }: Pick<Data, 'content'>) {
   );
 }
 
-export function ParagraphBlock({ content }: Data) {
+export function ParagraphBlock({ content, variant }: Data) {
   return (
-    <p className={styles.p}>
+    <p className={variant === 'bio' ? `${styles.p} ${styles.bio}` : styles.p}>
       <Inlines content={content} />
     </p>
   );

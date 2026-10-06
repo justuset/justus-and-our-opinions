@@ -9,3 +9,7 @@
     text-wrap: pretty;
   }
 }
+.bio {
+  /* the closing author note: sans 16/22, medium weight, not italic (measured) */
+  font: 500 var(--bio-size) / var(--bio-leading) var(--font-body);
+}

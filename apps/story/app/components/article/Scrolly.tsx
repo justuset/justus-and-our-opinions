@@ -2,8 +2,9 @@
 // that enters the screen reveals its photo. A class component, like the reference's (WithTheme(Scrolly)).
 //
 // Kept from the reference:
-//   - the markup and ids: #scrolly-instance-{n}, img.scrolly-image-{n}#scrolly-image-{n}-{id}, p#scrolly-credit-{id},
-//     cards with the class scrolly-text-{id};
+//   - the markup and ids: #scrolly-instance-{n}, img.scrolly-image-{n}#scrolly-image-{n}-{id}, and p#scrolly-credit-{id}
+//     inside the sticky stage after the photos (it sits over the photo, 20px from the bottom), then the cards with
+//     the class scrolly-text-{id};
 //   - ONE IntersectionObserver with default options (the viewport, threshold 0): a card counts as "active" while any
 //     part of it is on screen;
 //   - the step index read from the card's id ("scrolly-{n}-{id}".split('-')[1]);
@@ -91,13 +92,13 @@ export class Scrolly extends Component<Props, State> {
               decoding="async"
             />
           ))}
+          {credit && (
+            <p id={`scrolly-credit-${id}`} className={styles.credit}>
+              <span className="visually-hidden">Credit: </span>
+              {credit}
+            </p>
+          )}
         </div>
-        {credit && (
-          <p id={`scrolly-credit-${id}`} className={styles.credit}>
-            <span className="visually-hidden">Credit: </span>
-            {credit}
-          </p>
-        )}
         {media.map((m, n) => (
           <p
             key={m.name}

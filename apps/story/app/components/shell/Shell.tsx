@@ -1,13 +1,27 @@
-// The mock platform shell around the article, ported from projects/birdkit-kit/shell/. The reference page's
-// components: Masthead (NYTLogo inside; here the "Our Opinions" wordmark), share tools, recirculation, the bottom
-// AdSlot and the site footer. The story never styles the shell, and the shell never styles the story.
+// The mock platform shell around the article, ported from projects/birdkit-kit/shell/ and re-checked against the
+// reference React article (the photo essay), whose order is:
+//   masthead (fixed) · main#site-content > article#story [header · section[name=articleBody] · ArticleBottom]
+//   · nav#site-index · footer
+// ArticleBottom (date, share tools, recirculation, bottom ad) sits INSIDE the article on the reference, unlike the
+// Birdkit page, where it follows the story. The story never styles the shell, and the shell never styles the story.
 import type { ReactNode } from 'react';
 import { ResponsiveAd } from '../article/ResponsiveAd';
 import styles from './Shell.module.css';
 
-export function Masthead({ name = 'Our Opinions', inverse = false }: { name?: string; inverse?: boolean }) {
+interface MastheadProps {
+  name?: string;
+  inverse?: boolean;
+  /** Article pages: fixed to the top, 43px, on the shell background. Birdkit pages: floats and scrolls away. */
+  fixed?: boolean;
+}
+
+export function Masthead({ name = 'Our Opinions', inverse = false, fixed = false }: MastheadProps) {
   return (
-    <div className={styles.mastheadContainer} data-testid="masthead-container">
+    <div
+      className={`${styles.mastheadContainer} ${fixed ? styles.fixed : ''}`}
+      data-testid="masthead-container"
+      data-fixed={fixed || undefined}
+    >
       <header className={styles.mastheadWrapper}>
         <section className={styles.mastheadSection} aria-label="Site masthead">
           <a className={styles.skipLink} href="#site-content">
@@ -22,15 +36,16 @@ export function Masthead({ name = 'Our Opinions', inverse = false }: { name?: st
   );
 }
 
-export function ShareTools({ comments = 0 }: { comments?: number }) {
+/** Share tools at the end of the article: the comment button, then the pills. */
+function ShareTools({ comments = 0 }: { comments?: number }) {
   return (
     <div className={styles.shareTools} data-testid="share-tools" role="toolbar" aria-label="Share, save and comments">
       <div className={styles.commentRow}>
-        <button type="button" className={styles.commentButton}>
+        <button type="button" className={styles.commentButton} data-testid="comment-button-bigBottom">
           Read {comments} comments
         </button>
       </div>
-      <ul className={styles.shareList}>
+      <ul className={styles.shareList} data-testid="share-tools-list">
         <li>
           <button type="button" className={styles.pill}>
             Share full article
@@ -112,18 +127,57 @@ export function SiteFooter({ name = 'Our Opinions' }: { name?: string }) {
   );
 }
 
-/** Masthead on top, the story in <main>, then the platform's standalone footer. */
-export function Shell({ children, inverse }: { children: ReactNode; inverse: boolean }) {
+/** The end of the article, inside article#story: today's date, share tools, related content, the bottom ad. */
+export function ArticleBottom({ date }: { date: string }) {
+  return (
+    <div>
+      <div className={`bottom-of-article ${styles.bottomOfArticle}`}>
+        <p className={styles.todaysDate}>
+          <span data-testid="todays-date">{date}</span>
+        </p>
+        <ShareTools />
+      </div>
+      <Recirc />
+      <ResponsiveAd id="bottom" />
+    </div>
+  );
+}
+
+/** nav#site-index: the platform's section index above the footer. Placeholder links. */
+export function SiteIndex() {
+  const sections = ['Opinion', 'Guest Essays', 'Letters', 'Columnists'];
+  return (
+    <nav id="site-index" className={styles.siteIndex} data-testid="site-index" aria-labelledby="site-index-label">
+      <h2 id="site-index-label" className="visually-hidden">
+        Site Index
+      </h2>
+      <ul>
+        {sections.map((s) => (
+          <li key={s}>
+            <a href="#site-content">{s}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/** Masthead, the story in <main>, then the site index and footer. */
+export function Shell({
+  children,
+  inverse,
+  fixedMasthead = false,
+}: {
+  children: ReactNode;
+  inverse: boolean;
+  fixedMasthead?: boolean;
+}) {
   return (
     <div id="app">
-      <Masthead inverse={inverse} />
+      <Masthead inverse={inverse} fixed={fixedMasthead} />
       <main id="site-content">{children}</main>
-      <div id="standalone-footer">
-        <ShareTools />
-        <Recirc />
-        <ResponsiveAd id="bottom" />
-        <SiteFooter />
-      </div>
+      <SiteIndex />
+      <SiteFooter />
     </div>
   );
 }

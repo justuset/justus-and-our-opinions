@@ -42,6 +42,8 @@ export interface HeaderBasicBlock {
 export interface ParagraphBlock {
   __typename: 'ParagraphBlock';
   content: TextInline[];
+  /** The closing author note: sans 16/22 on the reference, not italic, in its own companion column. */
+  variant?: 'bio';
 }
 
 export interface ImageBlock {

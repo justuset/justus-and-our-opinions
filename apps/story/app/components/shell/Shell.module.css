@@ -213,3 +213,47 @@
 .footerNav a:hover {
   text-decoration: underline;
 }
+
+/* Article pages: the masthead is fixed and opaque (measured: position fixed, top 0, 43px, shell background). */
+.fixed {
+  position: fixed;
+  inset-block-start: 0;
+  block-size: 2.6875rem;
+  background: var(--shell-bg);
+}
+.fixed .mastheadWrapper,
+.fixed .mastheadSection {
+  position: static;
+  block-size: 100%;
+}
+
+.bottomOfArticle {
+  padding-block-start: 1rem;
+}
+.todaysDate {
+  inline-size: calc(100% - 2 * var(--shell-gutter));
+  max-inline-size: var(--shell-col);
+  margin: 0 auto;
+  font: 0.875rem / 1.4286 var(--shell-font-label); /* 14/20 */
+  color: var(--shell-muted);
+}
+
+.siteIndex {
+  max-inline-size: var(--shell-page-max);
+  margin: 2rem auto 0;
+  padding: 1rem var(--shell-gutter);
+  border-block-start: 1px solid var(--shell-rule);
+}
+.siteIndex ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.siteIndex a {
+  font: 600 0.8125rem var(--shell-font-label);
+  color: var(--shell-ink);
+  text-decoration: none;
+}
