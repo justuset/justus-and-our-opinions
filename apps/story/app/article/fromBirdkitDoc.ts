@@ -8,7 +8,7 @@
 //   svelte · Photo                     ImageBlock                        MediaFigure
 //   svelte · Diptych                   DiptychBlock                      Diptych
 //   svelte · PhotoScrolly              UnstructuredBlock (Scrolly)       Scrolly
-//   svelte · Bio                       ParagraphBlock (italic)           ParagraphBlock + Italic
+//   svelte · Bio                       ParagraphBlock (variant 'bio')    ParagraphBlock
 //   (platform adds)                    Dropzone                          ResponsiveAd › AdSlot
 //   (platform adds)                    RelatedLinksBlock                 RelatedLinks › RelatedLink
 import { toInlines } from './inline';
@@ -40,10 +40,7 @@ const image = (p: Props, n = ''): Image => ({
   ...(p.credit && n === '' ? { credit: String(p.credit) } : {}),
 });
 
-const italic = (text: string): Block => ({
-  __typename: 'ParagraphBlock',
-  content: toInlines(text).map((i) => ({ ...i, formats: [{ __typename: 'ItalicFormat' }, ...i.formats] })),
-});
+const bio = (text: string): Block => ({ __typename: 'ParagraphBlock', content: toInlines(text), variant: 'bio' });
 
 /** Every block the converter can't map. Empty means the doc is fine. The loader fails the request on any. */
 export function docProblems(doc: BirdkitDoc): string[] {
@@ -95,7 +92,8 @@ export function fromBirdkitDoc(doc: BirdkitDoc): Article {
         body.push({
           __typename: 'DiptychBlock',
           imageLeft: image(p, '1'),
-          imageRight: image(p, '2'),
+          // The reference gives each half its own figure and caption; the doc has one credit, so it goes under the right.
+          imageRight: { ...image(p, '2'), ...(p.credit ? { credit: String(p.credit) } : {}) },
           ...(p.credit ? { credit: String(p.credit) } : {}),
         });
         break;
@@ -118,9 +116,9 @@ export function fromBirdkitDoc(doc: BirdkitDoc): Article {
         });
         break;
       case 'Bio':
-        // The reference ends a guest essay with italic paragraphs, not a special block.
-        body.push(italic(String(p.text)));
-        if (p.note) body.push(italic(String(p.note)));
+        // The reference ends a guest essay with plain paragraphs in a sans face (not italic), not a special block.
+        body.push(bio(String(p.text)));
+        if (p.note) body.push(bio(String(p.note)));
         break;
     }
   }
@@ -135,23 +133,31 @@ export function fromBirdkitDoc(doc: BirdkitDoc): Article {
 }
 
 /**
- * The platform, not the story, adds ad Dropzones and the related-links box. Demo rule: a Dropzone after the 3rd
- * paragraph and after the 2nd photo block; related links before the closing bio.
+ * The platform, not the story, adds ad Dropzones and the related-links box. On the reference (21 rendered units):
+ * a Dropzone right after the first run of paragraphs, then one every 4 to 5 units (positions 1, 7, 13, 18), and the
+ * related links just before the closing bio. The real rule likely measures text length; this approximates it with
+ * a count of rendered units, where a run of paragraphs is one unit (it renders as one companion column).
  */
+const ZONE_EVERY = 5;
 function withPlatformBlocks(body: Block[]): Block[] {
   const out: Block[] = [];
-  let paragraphs = 0;
-  let photos = 0;
+  const isBio = (b: Block) => b.__typename === 'ParagraphBlock' && b.variant === 'bio';
+  const isText = (b?: Block) => b?.__typename === 'ParagraphBlock' && !isBio(b);
+  const bioStart = body.findIndex(isBio);
   let zones = 0;
-  const bioStart = body.findIndex(
-    (b) => b.__typename === 'ParagraphBlock' && b.content[0]?.formats[0]?.__typename === 'ItalicFormat',
-  );
+  let since = -1; // units since the last Dropzone; -1 = no Dropzone yet
   body.forEach((b, i) => {
     if (i === bioStart) out.push(RELATED);
     out.push(b);
-    if (b.__typename === 'ParagraphBlock' && ++paragraphs === 3) out.push({ __typename: 'Dropzone', index: zones++ });
-    if ((b.__typename === 'ImageBlock' || b.__typename === 'DiptychBlock') && ++photos === 2)
+    const next = body[i + 1];
+    const endsUnit = !(isText(b) && isText(next)); // a paragraph run is one unit until it ends
+    if (!endsUnit || isBio(b)) return;
+    if (since >= 0) since++;
+    const firstRunEnded = since === -1 && isText(b);
+    if ((firstRunEnded || since >= ZONE_EVERY) && next && !isBio(next)) {
       out.push({ __typename: 'Dropzone', index: zones++ });
+      since = 0;
+    }
   });
   if (bioStart === -1) out.push(RELATED);
   return out;

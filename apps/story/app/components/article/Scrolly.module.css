@@ -37,14 +37,16 @@
   display: block;
   overflow: hidden;
 }
-.scrolly[data-enhanced] {
-  padding-block-end: 2.25rem;
-}
-/* the credit sits under the scroller once the cards are done */
+/* the credit rides on the photo, 20px from the bottom of the stage (measured: 11px serif, near-white) */
 .scrolly[data-enhanced] .credit {
   position: absolute;
-  inset-block-end: 0;
+  z-index: 1;
+  inset-block-end: 1.25rem;
   inset-inline: 0;
+  margin: 0;
+  font: 0.6875rem / 1.3 var(--font-display);
+  color: var(--on-photo);
+  text-shadow: var(--photo-shadow);
 }
 .scrolly[data-enhanced] .img {
   position: absolute;

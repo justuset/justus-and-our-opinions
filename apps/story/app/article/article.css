@@ -16,8 +16,8 @@
   --gap-para: 0.9375rem;
   --gap-photo: 2.5rem;
   --gap-scrolly: 3.75rem;
-  --masthead-h: 0rem; /* the masthead scrolls away */
-  --header-top: 6.25rem; /* 100px, Figma header.essay-header */
+  --masthead-h: 0rem; /* the scroller pins at the very top, under the fixed masthead (measured: sticky top 0) */
+  --header-top: 6.25rem; /* the header starts 100px down, below the fixed 43px masthead (measured) */
 
   /* spacing: size.spacing.* (Dark.json) */
   --space-1-5: 0.75rem; /* 12px */
@@ -95,7 +95,7 @@ body {
   color: var(--shell-ink);
 }
 html {
-  scroll-padding-block-start: var(--masthead-h);
+  scroll-padding-block-start: 2.6875rem; /* anchors land below the fixed 43px masthead */
 }
 body {
   font-family: var(--font-body);

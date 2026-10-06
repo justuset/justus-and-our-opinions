@@ -1,11 +1,19 @@
-.figure {
+.wrapper {
   margin: var(--gap-photo) auto;
 }
-.large {
+.LARGE {
   inline-size: var(--col-large);
 }
-.medium {
+.MEDIUM {
   inline-size: var(--col);
+}
+.HALF {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  margin: 0;
+}
+.figure {
+  margin: 0;
 }
 .img {
   inline-size: 100%;
@@ -16,7 +24,8 @@
   color: var(--color-content-secondary);
 }
 @media (max-width: 739.98px) {
-  .large .caption {
+  .LARGE .caption,
+  .HALF .caption {
     padding-inline: var(--gutter);
   }
 }
