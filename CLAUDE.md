@@ -23,7 +23,7 @@ Read first: `docs/plan/README.md` (current phase and chunk), `docs/project-struc
 
 ## The interactive template (`projects/interactive/`): Birdkit-style SvelteKit
 
-Svelte is for interactives, React for standard articles, as at the NYT. `projects/interactive/` is the Birdkit (Svelte) build. The photo essay is a standard article: its words and photos live in `projects/photo-essay/` (`content/doc.json`, `photos/`, `big_assets/`), and React draws it in `apps/story` (`/photo-essay`, `app/article/fromBirdkitDoc.ts` → `__typename` blocks). Don't add Svelte components to the photo essay.
+Svelte is for interactives, React for standard articles, as at the NYT. `projects/interactive/` is the Birdkit (Svelte) build. The photo essay is a standard article: its words and photos live in `projects/photo-essay/` (`content/doc.json`, `photos/`, `big_assets/`), and React draws it in `apps/story` (`/photo-essay`, `app/article/fromDoc.ts` → `__typename` blocks). Don't add Svelte components to the photo essay.
 
 
 Named after the article type, like the shipped page's URL (`nytimes.com/interactive/<date>/opinion/<slug>.html`): the folder is the template, and the story it currently holds is identified by the `slug` in `content/doc.json` (`the-second-draft`, which becomes `#g-bk-the-second-draft`). `projects/interactive/` follows `docs/reference/birdkit-build-spec.md`. Its structure, pipeline and fixes are documented in `docs/project-structure.md`. Keep that doc in sync with every change.

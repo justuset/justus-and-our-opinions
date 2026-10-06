@@ -1,10 +1,10 @@
-// /photo-essay: the photo-essay template rebuilt with the reference page's React components.
-// The words come from the Svelte template's doc (projects/photo-essay/content/doc.json), converted to the platform's
+// /photo-essay: the photo essay in the reference page's React components.
+// The words come from projects/photo-essay/content/doc.json, converted to the platform's
 // block shape on the server. The page is fully rendered HTML before any JavaScript runs; JS only turns on the scroller.
 import { data } from 'react-router';
 import type { Route } from './+types/photo-essay';
 import doc from '../../../../projects/photo-essay/content/doc.json';
-import { docProblems, fromBirdkitDoc, type BirdkitDoc } from '~/article/fromBirdkitDoc';
+import { docProblems, fromDoc, type StoryDoc } from '~/article/fromDoc';
 import { HeaderBasic } from '~/components/article/HeaderBasic';
 import { Body } from '~/components/article/Body';
 import { withErrorBoundary } from '~/components/article/withErrorBoundary';
@@ -15,9 +15,9 @@ const Header = withErrorBoundary(HeaderBasic);
 
 export function loader() {
   // Error boundaries don't run on the server, so a bad doc is stopped here, before render.
-  const problems = docProblems(doc as BirdkitDoc);
+  const problems = docProblems(doc as StoryDoc);
   if (problems.length) throw data(problems.join('\n'), { status: 500 });
-  return { article: fromBirdkitDoc(doc as BirdkitDoc) };
+  return { article: fromDoc(doc as StoryDoc) };
 }
 
 export function meta({ loaderData }: Route.MetaArgs): Route.MetaDescriptors {

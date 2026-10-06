@@ -2,7 +2,7 @@
 // TextInline pieces, each with a list of formats. React then draws <em>, <strong> and <a> as elements, so no string is
 // ever passed to dangerouslySetInnerHTML.
 //
-// Same allow-list as projects/birdkit-kit/inline-html.js, so both templates accept the same docs:
+// Same allow-list as projects/birdkit-kit/inline-html.js, so the React and Svelte templates read doc strings the same way:
 //   - <em>, <strong> and <a href="…"> (https?://, /path or #anchor only) are formats;
 //   - any other "<…>" stays as literal text;
 //   - if the allowed tags are mis-nested or left open, the whole string is one plain inline.

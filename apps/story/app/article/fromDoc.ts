@@ -1,27 +1,27 @@
 // The photo essay's content (flat props in projects/photo-essay/content/doc.json) → the React platform's block shape
-// (types.ts). The words stay in that doc and nowhere else; the doc keeps the Birdkit shape (component names and flat
-// props) so a story can move between the two stacks without rewriting its content.
+// (types.ts). The words stay in that doc and nowhere else. The doc is an ordered `body` of `text` paragraphs and
+// `block`s, each block a `component` name plus flat props, like a CMS's simple content blocks.
 //
 //   doc block                          React block (__typename)          React component
 //   text                               ParagraphBlock                    ParagraphBlock
-//   svelte · Header                    HeaderBasicBlock                  HeaderBasic › ArticleTools, Byline
-//   svelte · Photo                     ImageBlock                        MediaFigure
-//   svelte · Diptych                   DiptychBlock                      Diptych
-//   svelte · PhotoScrolly              UnstructuredBlock (Scrolly)       Scrolly
-//   svelte · Bio                       ParagraphBlock (variant 'bio')    ParagraphBlock
+//   block · Header                     HeaderBasicBlock                  HeaderBasic › ArticleTools, Byline
+//   block · Photo                      ImageBlock                        MediaFigure
+//   block · Diptych                    DiptychBlock                      Diptych
+//   block · PhotoScrolly               UnstructuredBlock (Scrolly)       Scrolly
+//   block · Bio                        ParagraphBlock (variant 'bio')    ParagraphBlock
 //   (platform adds)                    Dropzone                          ResponsiveAd › AdSlot
 //   (platform adds)                    RelatedLinksBlock                 RelatedLinks › RelatedLink
 import { toInlines } from './inline';
 import type { Article, Block, HeaderBasicBlock, Image } from './types';
 
 type Props = Record<string, unknown>;
-export interface BirdkitDoc {
+export interface StoryDoc {
   slug: string;
   theme?: string;
   body: { type: string; value: string | Props }[];
 }
 
-/** series({ url1, alt1, url2, alt2 }, ['url', 'alt']) → [{ url, alt }, { url, alt }]. Port of $kit/doc.js. */
+/** series({ url1, alt1, url2, alt2 }, ['url', 'alt']) → [{ url, alt }, { url, alt }]. */
 export function series(props: Props, fields: string[]): Props[] {
   const items: Props[] = [];
   for (let n = 1; fields.some((f) => props[`${f}${n}`] !== undefined); n++) {
@@ -43,17 +43,17 @@ const image = (p: Props, n = ''): Image => ({
 const bio = (text: string): Block => ({ __typename: 'ParagraphBlock', content: toInlines(text), variant: 'bio' });
 
 /** Every block the converter can't map. Empty means the doc is fine. The loader fails the request on any. */
-export function docProblems(doc: BirdkitDoc): string[] {
+export function docProblems(doc: StoryDoc): string[] {
   const known = ['Header', 'Photo', 'Diptych', 'PhotoScrolly', 'Bio'];
   return doc.body.flatMap((b, i) => {
     if (b.type === 'text') return [];
-    if (b.type !== 'svelte') return [`body[${i}]: unknown block type "${b.type}"`];
+    if (b.type !== 'block') return [`body[${i}]: unknown block type "${b.type}"`];
     const name = (b.value as Props)?.component;
     return known.includes(String(name)) ? [] : [`body[${i}]: missing component "${name}"`];
   });
 }
 
-export function fromBirdkitDoc(doc: BirdkitDoc): Article {
+export function fromDoc(doc: StoryDoc): Article {
   let header: HeaderBasicBlock | undefined;
   const body: Block[] = [];
   let scrollies = 0;
