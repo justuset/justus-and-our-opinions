@@ -3,7 +3,7 @@
 A standard Opinion article, not an interactive. At the NYT, standard articles are CMS blocks drawn by the platform's
 React components; only interactives are Birdkit (SvelteKit) builds. So this folder holds the **content** and the
 **photos**, and the page is drawn by React in [`apps/story`](../../apps/story/) at `/photo-essay`
-(`app/article/fromBirdkitDoc.ts` turns `doc.json` into the platform's `__typename` blocks on the server).
+(`app/article/fromDoc.ts` turns `doc.json` into the platform's `__typename` blocks on the server).
 The Svelte template that used to live here is in git history (before `feat/story-photo-essay-react`).
 
 > Demo content. Placeholder copy; the photos are rodeo photographs whose credits are TK. Alt text is a draft for a person
@@ -26,8 +26,8 @@ npm run test:e2e -w @opinion/story   # Playwright at 390 / 800 / 1440, JS on and
 
 ## Blocks in `content/doc.json`
 
-The doc keeps the Birdkit shape (a `body` of `text` and `svelte` blocks with flat props), so a story can move to the
-interactive template without rewriting its content. Each block maps to one React block:
+The doc is an ordered `body` of `text` paragraphs and `block`s (a `component` name plus flat props). Each maps to one
+React block:
 
 | Doc block | Props (flat, numbered for lists) | React |
 |---|---|---|

@@ -1,7 +1,7 @@
 // The article's data, shaped like the platform's GraphQL payload (window.__preloadedData on the reference page).
 // Every block carries a `__typename`; the body renderer picks a component by it. Field names follow the reference
 // where we saw them (headline, summary, label, timestampBlock, media, altText, credit, displayStyle, related).
-// Demo content: the values come from projects/photo-essay/content/doc.json, converted by fromBirdkitDoc().
+// Demo content: the values come from projects/photo-essay/content/doc.json, converted by fromDoc().
 
 /** One piece of a paragraph. The platform never ships HTML strings in body text: it ships text plus formats. */
 export interface TextInline {

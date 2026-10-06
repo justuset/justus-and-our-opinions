@@ -3,7 +3,7 @@
 /* article.css: the photo essay's tokens for the React story app. Imported once by routes/photo-essay.tsx.
    Colors, the font faces and the theme switch come from the shared tpl.css (G1–G3): --color-* roles written once with
    light-dark(), and g-theme-<name> on #story only sets color-scheme. This file adds the measured layout and type.
-   Values measured from the reference (the photo essay template, before it moved here from Svelte),
+   Values measured from the reference photo essay,
    converted for Phase 2: px → rem (÷ 16), and logical properties in the components. Breakpoints stay
    740 / 1150 and are repeated as numbers in each @media rule (custom properties can't go in a media query). */
 :root {
@@ -101,7 +101,7 @@ body {
   font-family: var(--font-body);
 }
 
-/* :where() keeps these at zero specificity, so any component class wins over them (like the Svelte template). */
+/* :where() keeps these at zero specificity, so any component class wins over them. */
 #story {
   display: flow-root;
   background: var(--color-background-primary);
